@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/permission.proto.
  */
 export const file_toshi_permission: GenFile = /*@__PURE__*/
-  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSJGCgdTdXJmYWNlEhkKBGFza3MYASABKA4yCy50b3NoaS5Bc2tzEhAKCHF1ZXN0aW9uGAIgASgJEg4KBmFuc3dlchgDIAEoCSJxCgtEZXByZWNhdGlvbhIWCg5ub3RpY2VfdmVyc2lvbhgBIAEoCRIXCg9yZW1vdmFsX3ZlcnNpb24YAiABKAkSEwoLcmVwbGFjZWRfYnkYAyABKAkSDAoEZG9jcxgEIAEoCRIOCgZzdW5zZXQYBSABKAkiNwoFQXVkaXQSDgoGYWN0aW9uGAEgASgJEg4KBnRhcmdldBgCIAEoCRIOCgZyZWFzb24YAyABKAkitgEKA01DUBIWCglyZWFkX29ubHkYASABKAhIAIgBARIYCgtkZXN0cnVjdGl2ZRgCIAEoCEgBiAEBEhcKCmlkZW1wb3RlbnQYAyABKAhIAogBARIXCgpvcGVuX3dvcmxkGAQgASgISAOIAQESDwoHZXhjbHVkZRgFIAEoCEIMCgpfcmVhZF9vbmx5Qg4KDF9kZXN0cnVjdGl2ZUINCgtfaWRlbXBvdGVudEINCgtfb3Blbl93b3JsZCK4AgoFQm91bmQSDAoEbmFtZRgBIAEoCRIfCgR1bml0GAIgASgOMhEudG9zaGkuQm91bmQuVW5pdBIUCgdkZWZhdWx0GAMgASgDSACIAQESEAoDbWluGAQgASgDSAGIAQESEAoDbWF4GAUgASgDSAKIAQESFgoJdGhyZXNob2xkGAYgASgDSAOIAQESEgoKaHR0cF9ob3N0cxgHIAMoCRIUCgdwYXR0ZXJuGAggASgJSASIAQEiTgoEVW5pdBIUChBVTklUX1VOU1BFQ0lGSUVEEAASEAoMVU5JVF9TRUNPTkRTEAESDgoKVU5JVF9CWVRFUxACEg4KClVOSVRfQ09VTlQQA0IKCghfZGVmYXVsdEIGCgRfbWluQgYKBF9tYXhCDAoKX3RocmVzaG9sZEIKCghfcGF0dGVybio5CgdLZXlNb2RlEhgKFEtFWV9NT0RFX1VOU1BFQ0lGSUVEEAASBwoDS0VZEAESCwoHTkFUVVJBTBACKkEKBEFza3MSFAoQQVNLU19VTlNQRUNJRklFRBAAEg8KC0FTS1NfQUxXQVlTEAESEgoOQVNLU19PTkVfQ0xJQ0sQAjpACgpwZXJtaXNzaW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuI4DIAEoCVIKcGVybWlzc2lvbjo2CgVzY29wZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLmOAyABKAlSBXNjb3BlOkQKBWF1ZGl0Eh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuo4DIAEoCzIMLnRvc2hpLkF1ZGl0UgVhdWRpdDo7CghieV9maWVsZBIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGLyOAyABKAhSB2J5RmllbGQ6PgoDbWNwEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvY4DIAEoCzIKLnRvc2hpLk1DUFIDbWNwOjIKA293bhIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGL6OAyABKAhSA293bjpLCghrZXlfbW9kZRIeLmdvb2dsZS5wcm90b2J1Zi5NZXRob2RPcHRpb25zGMKOAyABKA4yDi50b3NoaS5LZXlNb2RlUgdrZXlNb2RlOlYKC2RlcHJlY2F0aW9uEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYw44DIAEoCzISLnRvc2hpLkRlcHJlY2F0aW9uUgtkZXByZWNhdGlvbjpKCgdzdXJmYWNlEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYv44DIAEoCzIOLnRvc2hpLlN1cmZhY2VSB3N1cmZhY2U6SgoQZmllbGRfcGVybWlzc2lvbhIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9wdGlvbnMYu44DIAEoCVIPZmllbGRQZXJtaXNzaW9uOkMKBWJvdW5kEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxjBjgMgASgLMgwudG9zaGkuQm91bmRSBWJvdW5kQh5aHGdvLnRvc2hpY2xvdWQuaW8vYXBpL3Rvc2hpcGJiBnByb3RvMw", [file_google_protobuf_descriptor]);
+  fileDesc("ChZ0b3NoaS9wZXJtaXNzaW9uLnByb3RvEgV0b3NoaSJGCgdTdXJmYWNlEhkKBGFza3MYASABKA4yCy50b3NoaS5Bc2tzEhAKCHF1ZXN0aW9uGAIgASgJEg4KBmFuc3dlchgDIAEoCSJxCgtEZXByZWNhdGlvbhIWCg5ub3RpY2VfdmVyc2lvbhgBIAEoCRIXCg9yZW1vdmFsX3ZlcnNpb24YAiABKAkSEwoLcmVwbGFjZWRfYnkYAyABKAkSDAoEZG9jcxgEIAEoCRIOCgZzdW5zZXQYBSABKAkiNwoFQXVkaXQSDgoGYWN0aW9uGAEgASgJEg4KBnRhcmdldBgCIAEoCRIOCgZyZWFzb24YAyABKAkitgEKA01DUBIWCglyZWFkX29ubHkYASABKAhIAIgBARIYCgtkZXN0cnVjdGl2ZRgCIAEoCEgBiAEBEhcKCmlkZW1wb3RlbnQYAyABKAhIAogBARIXCgpvcGVuX3dvcmxkGAQgASgISAOIAQESDwoHZXhjbHVkZRgFIAEoCEIMCgpfcmVhZF9vbmx5Qg4KDF9kZXN0cnVjdGl2ZUINCgtfaWRlbXBvdGVudEINCgtfb3Blbl93b3JsZCLhAgoFQm91bmQSDAoEbmFtZRgBIAEoCRIfCgR1bml0GAIgASgOMhEudG9zaGkuQm91bmQuVW5pdBIUCgdkZWZhdWx0GAMgASgDSACIAQESEAoDbWluGAQgASgDSAGIAQESEAoDbWF4GAUgASgDSAKIAQESFgoJdGhyZXNob2xkGAYgASgDSAOIAQESEgoKaHR0cF9ob3N0cxgHIAMoCRIUCgdwYXR0ZXJuGAggASgJSASIAQESCwoDcmVmGAkgASgJEhoKEmRlcHJlY2F0ZWRfYWxpYXNlcxgKIAMoCSJOCgRVbml0EhQKEFVOSVRfVU5TUEVDSUZJRUQQABIQCgxVTklUX1NFQ09ORFMQARIOCgpVTklUX0JZVEVTEAISDgoKVU5JVF9DT1VOVBADQgoKCF9kZWZhdWx0QgYKBF9taW5CBgoEX21heEIMCgpfdGhyZXNob2xkQgoKCF9wYXR0ZXJuKjkKB0tleU1vZGUSGAoUS0VZX01PREVfVU5TUEVDSUZJRUQQABIHCgNLRVkQARILCgdOQVRVUkFMEAIqQQoEQXNrcxIUChBBU0tTX1VOU1BFQ0lGSUVEEAASDwoLQVNLU19BTFdBWVMQARISCg5BU0tTX09ORV9DTElDSxACOkAKCnBlcm1pc3Npb24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi4jgMgASgJUgpwZXJtaXNzaW9uOjYKBXNjb3BlEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYuY4DIAEoCVIFc2NvcGU6RAoFYXVkaXQSHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi6jgMgASgLMgwudG9zaGkuQXVkaXRSBWF1ZGl0OjsKCGJ5X2ZpZWxkEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvI4DIAEoCFIHYnlGaWVsZDo+CgNtY3ASHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi9jgMgASgLMgoudG9zaGkuTUNQUgNtY3A6MgoDb3duEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYvo4DIAEoCFIDb3duOksKCGtleV9tb2RlEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMYwo4DIAEoDjIOLnRvc2hpLktleU1vZGVSB2tleU1vZGU6VgoLZGVwcmVjYXRpb24SHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxjDjgMgASgLMhIudG9zaGkuRGVwcmVjYXRpb25SC2RlcHJlY2F0aW9uOkoKB3N1cmZhY2USHi5nb29nbGUucHJvdG9idWYuTWV0aG9kT3B0aW9ucxi/jgMgASgLMg4udG9zaGkuU3VyZmFjZVIHc3VyZmFjZTpKChBmaWVsZF9wZXJtaXNzaW9uEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxi7jgMgASgJUg9maWVsZFBlcm1pc3Npb246QwoFYm91bmQSHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25zGMGOAyABKAsyDC50b3NoaS5Cb3VuZFIFYm91bmRCHlocZ28udG9zaGljbG91ZC5pby9hcGkvdG9zaGlwYmIGcHJvdG8z", [file_google_protobuf_descriptor]);
 
 /**
  * Surface is how a call is shown to the people who make it.
@@ -377,13 +377,13 @@ export const MCPSchema: GenMessage<MCP, {jsonType: MCPJson}> = /*@__PURE__*/
   messageDesc(file_toshi_permission, 3);
 
 /**
- * Bound names fixed values and their units for a field.
+ * Bound declares fixed values and their units, or refers to a declaration.
  *
  * @generated from message toshi.Bound
  */
 export type Bound = Message<"toshi.Bound"> & {
   /**
-   * name is a snake_case name unique across the API.
+   * name is a snake_case name unique across the API, set on a declaration.
    *
    * @generated from field: string name = 1;
    */
@@ -438,16 +438,32 @@ export type Bound = Message<"toshi.Bound"> & {
    * @generated from field: optional string pattern = 8;
    */
   pattern?: string | undefined;
+
+  /**
+   * ref names an existing bound. The referenced values and field checks
+   * apply to this field too.
+   *
+   * @generated from field: string ref = 9;
+   */
+  ref: string;
+
+  /**
+   * deprecated_aliases on a declaration names old contract constants.
+   * Each alias is a unique snake_case name and refers to the declared values.
+   *
+   * @generated from field: repeated string deprecated_aliases = 10;
+   */
+  deprecatedAliases: string[];
 };
 
 /**
- * Bound names fixed values and their units for a field.
+ * Bound declares fixed values and their units, or refers to a declaration.
  *
  * @generated from message toshi.Bound
  */
 export type BoundJson = {
   /**
-   * name is a snake_case name unique across the API.
+   * name is a snake_case name unique across the API, set on a declaration.
    *
    * @generated from field: string name = 1;
    */
@@ -502,6 +518,22 @@ export type BoundJson = {
    * @generated from field: optional string pattern = 8;
    */
   pattern?: string;
+
+  /**
+   * ref names an existing bound. The referenced values and field checks
+   * apply to this field too.
+   *
+   * @generated from field: string ref = 9;
+   */
+  ref?: string;
+
+  /**
+   * deprecated_aliases on a declaration names old contract constants.
+   * Each alias is a unique snake_case name and refers to the declared values.
+   *
+   * @generated from field: repeated string deprecated_aliases = 10;
+   */
+  deprecatedAliases?: string[];
 };
 
 /**
@@ -765,7 +797,9 @@ export const field_permission: GenExtension<FieldOptions, string> = /*@__PURE__*
  * bound states a fixed number the server applies to the field: the same
  * for every deployment. Clients read it as a generated constant instead of
  * copying it; the field's comment states it in words too, and the
- * generator fails when the two differ.
+ * generator fails when the two differ. A reference sets no other
+ * semantically present fields; an implicit-presence scalar at its default,
+ * such as an empty name or UNIT_UNSPECIFIED, counts as absent.
  *
  * @generated from extension: toshi.Bound bound = 51009;
  */

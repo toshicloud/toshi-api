@@ -326,9 +326,9 @@ func (x *Trigger) GetUpdatedAt() *timestamppb.Timestamp {
 // matches whatever the filter holds.
 type TriggerFilter struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Base repositories, as owner/name.
+	// Base repositories, as owner/name, at most 64 values.
 	Repositories []string `protobuf:"bytes,1,rep,name=repositories,proto3" json:"repositories,omitempty"`
-	// Base branches, by name.
+	// Base branches, by name, at most 64 values.
 	BaseBranches  []string `protobuf:"bytes,2,rep,name=base_branches,json=baseBranches,proto3" json:"base_branches,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1329,10 +1329,11 @@ const file_toshi_workspace_v1_triggers_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"X\n" +
-	"\rTriggerFilter\x12\"\n" +
-	"\frepositories\x18\x01 \x03(\tR\frepositories\x12#\n" +
-	"\rbase_branches\x18\x02 \x03(\tR\fbaseBranches\"\xe1\x01\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x96\x01\n" +
+	"\rTriggerFilter\x12C\n" +
+	"\frepositories\x18\x01 \x03(\tB\x1f\x8a\xf4\x18\x1b\n" +
+	"\x15trigger_filter_values\x10\x03(@R\frepositories\x12@\n" +
+	"\rbase_branches\x18\x02 \x03(\tB\x1b\x8a\xf4\x18\x17J\x15trigger_filter_valuesR\fbaseBranches\"\xe1\x01\n" +
 	"\rTriggerTarget\x12>\n" +
 	"\asandbox\x18\x01 \x01(\v2\".toshi.workspace.v1.TriggerSandboxH\x00R\asandbox\x12>\n" +
 	"\apreview\x18\x02 \x01(\v2\".toshi.workspace.v1.TriggerPreviewH\x00R\apreview\x12F\n" +

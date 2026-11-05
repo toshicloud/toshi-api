@@ -3896,10 +3896,11 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\"N\n" +
 	"\x15UpdateProjectResponse\x125\n" +
-	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"R\n" +
-	"\x16ClaimRepositoryRequest\x12\x1e\n" +
+	"\aproject\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.ProjectR\aproject\"d\n" +
+	"\x16ClaimRepositoryRequest\x120\n" +
 	"\n" +
-	"repository\x18\x01 \x01(\tR\n" +
+	"repository\x18\x01 \x01(\tB\x10\x8a\xf4\x18\fJ\n" +
+	"owner_repoR\n" +
 	"repository\x12\x18\n" +
 	"\aproject\x18\x02 \x01(\tR\aproject\"\x84\x01\n" +
 	"\x17ClaimRepositoryResponse\x12>\n" +

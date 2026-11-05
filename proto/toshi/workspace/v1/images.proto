@@ -352,7 +352,7 @@ message CreateImageRequest {
   string recipe = 7;
   // The repository a container image is built from, as owner/name; empty
   // for one that is pushed. The builder defaults to AUTO.
-  string source = 8 [(toshi.bound) = {name: "image_source", pattern: "^[^/\\s]+/[^/\\s]+$"}];
+  string source = 8 [(toshi.bound) = {name: "owner_repo", pattern: "^[^/\\s]+/[^/\\s]+$", deprecated_aliases: "image_source"}];
   // The builder a container image built from a repository uses;
   // unspecified is AUTO. Must be unspecified for any other image.
   ImageBuilder builder = 9;

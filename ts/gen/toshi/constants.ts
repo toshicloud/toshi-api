@@ -7,6 +7,8 @@
 // A workload's state is read from its kind's set, JobState, SandboxState or
 // ServiceState: the three have the same values and words.
 
+const contractBoundOwnerRepo = { pattern: "^[^/\\s]+/[^/\\s]+$" } as const;
+
 export const contract = {
   admissionWebhookTimeout: { unit: "seconds", threshold: 2 },
   artifactDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
@@ -27,14 +29,17 @@ export const contract = {
   fillerEvery: { unit: "seconds", default: 86400, min: 600 },
   fillerMaxDuration: { unit: "seconds", default: 3600, max: 3600 },
   fillerName: { unit: "bytes", max: 40 },
-  imageSource: { pattern: "^[^/\\s]+/[^/\\s]+$" },
+  /** @deprecated Use contract.ownerRepo instead. */
+  imageSource: contractBoundOwnerRepo,
   inboundMailSize: { unit: "bytes", max: 26214400 },
   invitationTtl: { unit: "seconds", default: 604800, max: 2592000 },
   ipAllowlistRanges: { unit: "count", max: 32 },
   jobFailureExplanation: { unit: "bytes", max: 300 },
   keepVMStoppedLongAfter: { unit: "seconds", threshold: 2592000 },
+  modelCredentialName: { unit: "bytes", min: 1, max: 64 },
   networkDenials: { unit: "count", threshold: 20 },
   newVolumeSizeCap: { unit: "bytes", default: 10737418240 },
+  ownerRepo: contractBoundOwnerRepo,
   poolSuggestionDays: { unit: "count", default: 28, max: 90 },
   previewShareLinkExpiry: { unit: "seconds", default: 86400 },
   recentSignIn: { unit: "seconds", threshold: 7200 },
@@ -48,6 +53,7 @@ export const contract = {
   tokenCreatorLeftLifetime: { unit: "seconds", threshold: 2592000 },
   tokenName: { unit: "bytes", max: 64 },
   triggerEvents: { unit: "count", max: 32 },
+  triggerFilterValues: { unit: "count", max: 64 },
   triggerIdleTimeout: { unit: "seconds", default: 7200 },
   triggerSandboxMaxDuration: { unit: "seconds", default: 86400 },
   utilisationHourRange: { unit: "seconds", max: 2678400 },

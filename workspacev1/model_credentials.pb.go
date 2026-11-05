@@ -136,9 +136,9 @@ type ModelCredential struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// "mcr-" and 26 characters, given by the control plane.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// 1 to 64 characters: lowercase letters, digits and "-", starting with
-	// a letter. Unique among the workspace's credentials, and among each
-	// person's own.
+	// The credential's name is at least 1 byte and at most 64 bytes:
+	// lowercase letters, digits and "-", starting with a letter. Unique among
+	// the workspace's credentials, and among each person's own.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The model provider: "anthropic", "openai", "kimi", "mistral", "xai" or
 	// "gemini".
@@ -411,8 +411,9 @@ func (x *ModelCredentialDefault) GetModelCredential() string {
 // its provider and place, its key, and optionally the key's next value.
 type CreateModelCredentialRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The credential's name: 1 to 64 lowercase letters, digits and "-",
-	// starting with a letter; unique among its owner's credentials.
+	// The credential's name is at least 1 byte and at most 64 bytes:
+	// lowercase letters, digits and "-", starting with a letter; unique
+	// among its owner's credentials.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// "anthropic", "openai", "kimi", "mistral", "xai" or "gemini"; any
 	// other is INVALID_ARGUMENT.
@@ -424,7 +425,7 @@ type CreateModelCredentialRequest struct {
 	Environment string `protobuf:"bytes,4,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The key is in the workspace's shared set, not an environment's.
 	Shared bool `protobuf:"varint,5,opt,name=shared,proto3" json:"shared,omitempty"`
-	// The key's name, as PutSecret takes it.
+	// The key's name, at most 128 bytes, as PutSecret takes it.
 	Secret string `protobuf:"bytes,6,opt,name=secret,proto3" json:"secret,omitempty"`
 	// When set, the key's next version; never returned.
 	Value []byte `protobuf:"bytes,7,opt,name=value,proto3" json:"value,omitempty"`
@@ -1171,8 +1172,9 @@ type StartModelSignInRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The provider to sign in to, one of the six a credential may serve.
 	Provider string `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	// The credential's name. Signing in again with the name of an existing
-	// credential replaces its grant and keeps its id.
+	// The credential's name is at least 1 byte and at most 64 bytes.
+	// Signing in again with the name of an existing credential replaces its
+	// grant and keeps its id.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The credential's place: the project and exactly one of environment or
 	// shared, as CreateModelCredential takes them.
@@ -1746,10 +1748,10 @@ var File_toshi_workspace_v1_model_credentials_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\n" +
-	"*toshi/workspace/v1/model_credentials.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\xf8\x05\n" +
+	"*toshi/workspace/v1/model_credentials.proto\x12\x12toshi.workspace.v1\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a\x1etoshi/workspace/v1/roles.proto\"\x95\x06\n" +
 	"\x0fModelCredential\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12/\n" +
+	"\x04name\x18\x02 \x01(\tB\x1b\x8a\xf4\x18\x17J\x15model_credential_nameR\x04name\x12\x1a\n" +
 	"\bprovider\x18\x03 \x01(\tR\bprovider\x12;\n" +
 	"\x04kind\x18\x04 \x01(\x0e2'.toshi.workspace.v1.ModelCredentialKindR\x04kind\x12\x14\n" +
 	"\x05owner\x18\x05 \x01(\tR\x05owner\x12\x12\n" +
@@ -1774,14 +1776,15 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"created_by\x18\x14 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedByJ\x04\b\r\x10\x0e\"_\n" +
 	"\x16ModelCredentialDefault\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12)\n" +
-	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\x83\x02\n" +
-	"\x1cCreateModelCredentialRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
+	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\xb9\x02\n" +
+	"\x1cCreateModelCredentialRequest\x125\n" +
+	"\x04name\x18\x01 \x01(\tB!\x8a\xf4\x18\x1d\n" +
+	"\x15model_credential_name\x10\x02 \x01(@R\x04name\x12\x1a\n" +
 	"\bprovider\x18\x02 \x01(\tR\bprovider\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x16\n" +
-	"\x06shared\x18\x05 \x01(\bR\x06shared\x12\x16\n" +
-	"\x06secret\x18\x06 \x01(\tR\x06secret\x12\x14\n" +
+	"\x06shared\x18\x05 \x01(\bR\x06shared\x12)\n" +
+	"\x06secret\x18\x06 \x01(\tB\x11\x8a\xf4\x18\rJ\vsecret_nameR\x06secret\x12\x14\n" +
 	"\x05value\x18\a \x01(\fR\x05value\x12\x10\n" +
 	"\x03own\x18\b \x01(\bR\x03own\x12\x1f\n" +
 	"\vrequest_key\x18\t \x01(\tR\n" +
@@ -1820,10 +1823,10 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\"\x91\x01\n" +
 	" ListModelSignInProvidersResponse\x12E\n" +
 	"\tproviders\x18\x01 \x03(\v2'.toshi.workspace.v1.ModelSignInProviderR\tproviders\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xbc\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xd9\x01\n" +
 	"\x17StartModelSignInRequest\x12\x1a\n" +
-	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
+	"\bprovider\x18\x01 \x01(\tR\bprovider\x12/\n" +
+	"\x04name\x18\x02 \x01(\tB\x1b\x8a\xf4\x18\x17J\x15model_credential_nameR\x04name\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x16\n" +
 	"\x06shared\x18\x05 \x01(\bR\x06shared\x12\x15\n" +

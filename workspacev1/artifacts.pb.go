@@ -23,6 +23,76 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ArtifactState is where an artifact is in its upload's life.
+type ArtifactState int32
+
+const (
+	// Never sent: a stored artifact is in one of the states below.
+	ArtifactState_ARTIFACT_STATE_UNSPECIFIED ArtifactState = 0
+	// The upload is reserved and its presigned PUTs are issued; nothing is
+	// final yet.
+	ArtifactState_ARTIFACT_STATE_RESERVED ArtifactState = 1
+	// A completion is copying the parts; a second completion is refused.
+	ArtifactState_ARTIFACT_STATE_COMPLETING ArtifactState = 2
+	// The parts are at their final keys; only a complete artifact downloads.
+	ArtifactState_ARTIFACT_STATE_COMPLETE ArtifactState = 3
+	// The upload deadline passed before the upload completed.
+	ArtifactState_ARTIFACT_STATE_ABANDONED ArtifactState = 4
+	// The artifact's objects were removed.
+	ArtifactState_ARTIFACT_STATE_DELETED ArtifactState = 5
+	// The artifact's storage provider was retired; reason says why.
+	ArtifactState_ARTIFACT_STATE_LOST ArtifactState = 6
+)
+
+// Enum value maps for ArtifactState.
+var (
+	ArtifactState_name = map[int32]string{
+		0: "ARTIFACT_STATE_UNSPECIFIED",
+		1: "ARTIFACT_STATE_RESERVED",
+		2: "ARTIFACT_STATE_COMPLETING",
+		3: "ARTIFACT_STATE_COMPLETE",
+		4: "ARTIFACT_STATE_ABANDONED",
+		5: "ARTIFACT_STATE_DELETED",
+		6: "ARTIFACT_STATE_LOST",
+	}
+	ArtifactState_value = map[string]int32{
+		"ARTIFACT_STATE_UNSPECIFIED": 0,
+		"ARTIFACT_STATE_RESERVED":    1,
+		"ARTIFACT_STATE_COMPLETING":  2,
+		"ARTIFACT_STATE_COMPLETE":    3,
+		"ARTIFACT_STATE_ABANDONED":   4,
+		"ARTIFACT_STATE_DELETED":     5,
+		"ARTIFACT_STATE_LOST":        6,
+	}
+)
+
+func (x ArtifactState) Enum() *ArtifactState {
+	p := new(ArtifactState)
+	*p = x
+	return p
+}
+
+func (x ArtifactState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ArtifactState) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_artifacts_proto_enumTypes[0].Descriptor()
+}
+
+func (ArtifactState) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_artifacts_proto_enumTypes[0]
+}
+
+func (x ArtifactState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ArtifactState.Descriptor instead.
+func (ArtifactState) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_artifacts_proto_rawDescGZIP(), []int{0}
+}
+
 // Artifact is an uploaded file's record: what it is, who uploaded it, and
 // where its parts are kept, never a key, a URL or key material.
 type Artifact struct {
@@ -52,11 +122,6 @@ type Artifact struct {
 	PartSizes []int64 `protobuf:"varint,10,rep,packed,name=part_sizes,json=partSizes,proto3" json:"part_sizes,omitempty"`
 	// The index object's size; 0 when part_count is 1.
 	IndexSize int64 `protobuf:"varint,11,opt,name=index_size,json=indexSize,proto3" json:"index_size,omitempty"`
-	// reserved, completing, complete, abandoned, deleted or lost. A completion
-	// moves the row to completing while it copies the parts, so a second
-	// completion is refused before it copies anything. lost is an artifact
-	// whose storage provider was retired; reason says why.
-	State string `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty"`
 	// none or envelope-v1.
 	Encryption string `protobuf:"bytes,13,opt,name=encryption,proto3" json:"encryption,omitempty"`
 	// created_at is when the reservation was stored.
@@ -70,7 +135,13 @@ type Artifact struct {
 	WorkloadKind string `protobuf:"bytes,16,opt,name=workload_kind,json=workloadKind,proto3" json:"workload_kind,omitempty"`
 	// Why the artifact is lost, as a recording's reason says it; empty in
 	// every other state.
-	Reason        string `protobuf:"bytes,17,opt,name=reason,proto3" json:"reason,omitempty"`
+	Reason string `protobuf:"bytes,17,opt,name=reason,proto3" json:"reason,omitempty"`
+	// Where the artifact is in its life: reserved, completing, complete,
+	// abandoned, deleted or lost. A completion moves the row to completing
+	// while it copies the parts, so a second completion is refused before it
+	// copies anything. lost is an artifact whose storage provider was retired;
+	// reason says why.
+	State         ArtifactState `protobuf:"varint,18,opt,name=state,proto3,enum=toshi.workspace.v1.ArtifactState" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -182,13 +253,6 @@ func (x *Artifact) GetIndexSize() int64 {
 	return 0
 }
 
-func (x *Artifact) GetState() string {
-	if x != nil {
-		return x.State
-	}
-	return ""
-}
-
 func (x *Artifact) GetEncryption() string {
 	if x != nil {
 		return x.Encryption
@@ -222,6 +286,13 @@ func (x *Artifact) GetReason() string {
 		return x.Reason
 	}
 	return ""
+}
+
+func (x *Artifact) GetState() ArtifactState {
+	if x != nil {
+		return x.State
+	}
+	return ArtifactState_ARTIFACT_STATE_UNSPECIFIED
 }
 
 // Upload is one presigned PUT. Send method to url with every header and
@@ -1002,7 +1073,7 @@ var File_toshi_workspace_v1_artifacts_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
-	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a#toshi/workspace/v1/recordings.proto\"\xb9\x04\n" +
+	"\"toshi/workspace/v1/artifacts.proto\x12\x12toshi.workspace.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a#toshi/workspace/v1/recordings.proto\"\xe2\x04\n" +
 	"\bArtifact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1020,8 +1091,7 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"part_sizes\x18\n" +
 	" \x03(\x03R\tpartSizes\x12\x1d\n" +
 	"\n" +
-	"index_size\x18\v \x01(\x03R\tindexSize\x12\x14\n" +
-	"\x05state\x18\f \x01(\tR\x05state\x12\x1e\n" +
+	"index_size\x18\v \x01(\x03R\tindexSize\x12\x1e\n" +
 	"\n" +
 	"encryption\x18\r \x01(\tR\n" +
 	"encryption\x129\n" +
@@ -1029,7 +1099,8 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"created_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12=\n" +
 	"\fcompleted_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\x12#\n" +
 	"\rworkload_kind\x18\x10 \x01(\tR\fworkloadKind\x12\x16\n" +
-	"\x06reason\x18\x11 \x01(\tR\x06reason\"\x80\x02\n" +
+	"\x06reason\x18\x11 \x01(\tR\x06reason\x127\n" +
+	"\x05state\x18\x12 \x01(\x0e2!.toshi.workspace.v1.ArtifactStateR\x05stateJ\x04\b\f\x10\r\"\x80\x02\n" +
 	"\x06Upload\x12\x12\n" +
 	"\x04part\x18\x01 \x01(\tR\x04part\x12\x16\n" +
 	"\x06method\x18\x02 \x01(\tR\x06method\x12\x10\n" +
@@ -1099,7 +1170,15 @@ const file_toshi_workspace_v1_artifacts_proto_rawDesc = "" +
 	"\n" +
 	"encryption\x18\x03 \x01(\tR\n" +
 	"encryption\x12\x19\n" +
-	"\bdata_key\x18\x04 \x01(\fR\adataKey2\xfa\x02\n" +
+	"\bdata_key\x18\x04 \x01(\fR\adataKey*\xdb\x01\n" +
+	"\rArtifactState\x12\x1e\n" +
+	"\x1aARTIFACT_STATE_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17ARTIFACT_STATE_RESERVED\x10\x01\x12\x1d\n" +
+	"\x19ARTIFACT_STATE_COMPLETING\x10\x02\x12\x1b\n" +
+	"\x17ARTIFACT_STATE_COMPLETE\x10\x03\x12\x1c\n" +
+	"\x18ARTIFACT_STATE_ABANDONED\x10\x04\x12\x1a\n" +
+	"\x16ARTIFACT_STATE_DELETED\x10\x05\x12\x17\n" +
+	"\x13ARTIFACT_STATE_LOST\x10\x062\xfa\x02\n" +
 	"\x15ArtifactUploadService\x12\xc0\x01\n" +
 	"\rReserveUpload\x12(.toshi.workspace.v1.ReserveUploadRequest\x1a).toshi.workspace.v1.ReserveUploadResponse\"Z\xc2\xf3\x18\x0fartifacts.write\xd2\xf3\x189\n" +
 	"\x18artifact_upload.reserved\x12\x1dartifact:response.artifact_id\xea\xf3\x18\x02(\x01\x90\xf4\x18\x01\x12\x9d\x01\n" +
@@ -1123,51 +1202,54 @@ func file_toshi_workspace_v1_artifacts_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_artifacts_proto_rawDescData
 }
 
+var file_toshi_workspace_v1_artifacts_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_toshi_workspace_v1_artifacts_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_toshi_workspace_v1_artifacts_proto_goTypes = []any{
-	(*Artifact)(nil),                       // 0: toshi.workspace.v1.Artifact
-	(*Upload)(nil),                         // 1: toshi.workspace.v1.Upload
-	(*ReserveUploadRequest)(nil),           // 2: toshi.workspace.v1.ReserveUploadRequest
-	(*ReserveUploadResponse)(nil),          // 3: toshi.workspace.v1.ReserveUploadResponse
-	(*CompleteUploadRequest)(nil),          // 4: toshi.workspace.v1.CompleteUploadRequest
-	(*CompleteUploadResponse)(nil),         // 5: toshi.workspace.v1.CompleteUploadResponse
-	(*ListArtifactsRequest)(nil),           // 6: toshi.workspace.v1.ListArtifactsRequest
-	(*ListArtifactsResponse)(nil),          // 7: toshi.workspace.v1.ListArtifactsResponse
-	(*GetArtifactRequest)(nil),             // 8: toshi.workspace.v1.GetArtifactRequest
-	(*GetArtifactResponse)(nil),            // 9: toshi.workspace.v1.GetArtifactResponse
-	(*GetArtifactDownloadURLRequest)(nil),  // 10: toshi.workspace.v1.GetArtifactDownloadURLRequest
-	(*GetArtifactDownloadURLResponse)(nil), // 11: toshi.workspace.v1.GetArtifactDownloadURLResponse
-	nil,                                    // 12: toshi.workspace.v1.Upload.HeadersEntry
-	(*timestamppb.Timestamp)(nil),          // 13: google.protobuf.Timestamp
-	(RecordingKind)(0),                     // 14: toshi.workspace.v1.RecordingKind
+	(ArtifactState)(0),                     // 0: toshi.workspace.v1.ArtifactState
+	(*Artifact)(nil),                       // 1: toshi.workspace.v1.Artifact
+	(*Upload)(nil),                         // 2: toshi.workspace.v1.Upload
+	(*ReserveUploadRequest)(nil),           // 3: toshi.workspace.v1.ReserveUploadRequest
+	(*ReserveUploadResponse)(nil),          // 4: toshi.workspace.v1.ReserveUploadResponse
+	(*CompleteUploadRequest)(nil),          // 5: toshi.workspace.v1.CompleteUploadRequest
+	(*CompleteUploadResponse)(nil),         // 6: toshi.workspace.v1.CompleteUploadResponse
+	(*ListArtifactsRequest)(nil),           // 7: toshi.workspace.v1.ListArtifactsRequest
+	(*ListArtifactsResponse)(nil),          // 8: toshi.workspace.v1.ListArtifactsResponse
+	(*GetArtifactRequest)(nil),             // 9: toshi.workspace.v1.GetArtifactRequest
+	(*GetArtifactResponse)(nil),            // 10: toshi.workspace.v1.GetArtifactResponse
+	(*GetArtifactDownloadURLRequest)(nil),  // 11: toshi.workspace.v1.GetArtifactDownloadURLRequest
+	(*GetArtifactDownloadURLResponse)(nil), // 12: toshi.workspace.v1.GetArtifactDownloadURLResponse
+	nil,                                    // 13: toshi.workspace.v1.Upload.HeadersEntry
+	(*timestamppb.Timestamp)(nil),          // 14: google.protobuf.Timestamp
+	(RecordingKind)(0),                     // 15: toshi.workspace.v1.RecordingKind
 }
 var file_toshi_workspace_v1_artifacts_proto_depIdxs = []int32{
-	13, // 0: toshi.workspace.v1.Artifact.created_at:type_name -> google.protobuf.Timestamp
-	13, // 1: toshi.workspace.v1.Artifact.completed_at:type_name -> google.protobuf.Timestamp
-	12, // 2: toshi.workspace.v1.Upload.headers:type_name -> toshi.workspace.v1.Upload.HeadersEntry
-	13, // 3: toshi.workspace.v1.Upload.expires_at:type_name -> google.protobuf.Timestamp
-	14, // 4: toshi.workspace.v1.ReserveUploadRequest.recording:type_name -> toshi.workspace.v1.RecordingKind
-	1,  // 5: toshi.workspace.v1.ReserveUploadResponse.uploads:type_name -> toshi.workspace.v1.Upload
-	13, // 6: toshi.workspace.v1.ReserveUploadResponse.upload_deadline:type_name -> google.protobuf.Timestamp
-	0,  // 7: toshi.workspace.v1.CompleteUploadResponse.artifact:type_name -> toshi.workspace.v1.Artifact
-	0,  // 8: toshi.workspace.v1.ListArtifactsResponse.artifacts:type_name -> toshi.workspace.v1.Artifact
-	0,  // 9: toshi.workspace.v1.GetArtifactResponse.artifact:type_name -> toshi.workspace.v1.Artifact
-	13, // 10: toshi.workspace.v1.GetArtifactDownloadURLResponse.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 11: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:input_type -> toshi.workspace.v1.ReserveUploadRequest
-	4,  // 12: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:input_type -> toshi.workspace.v1.CompleteUploadRequest
-	6,  // 13: toshi.workspace.v1.ArtifactService.ListArtifacts:input_type -> toshi.workspace.v1.ListArtifactsRequest
-	8,  // 14: toshi.workspace.v1.ArtifactService.GetArtifact:input_type -> toshi.workspace.v1.GetArtifactRequest
-	10, // 15: toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL:input_type -> toshi.workspace.v1.GetArtifactDownloadURLRequest
-	3,  // 16: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:output_type -> toshi.workspace.v1.ReserveUploadResponse
-	5,  // 17: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:output_type -> toshi.workspace.v1.CompleteUploadResponse
-	7,  // 18: toshi.workspace.v1.ArtifactService.ListArtifacts:output_type -> toshi.workspace.v1.ListArtifactsResponse
-	9,  // 19: toshi.workspace.v1.ArtifactService.GetArtifact:output_type -> toshi.workspace.v1.GetArtifactResponse
-	11, // 20: toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL:output_type -> toshi.workspace.v1.GetArtifactDownloadURLResponse
-	16, // [16:21] is the sub-list for method output_type
-	11, // [11:16] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	14, // 0: toshi.workspace.v1.Artifact.created_at:type_name -> google.protobuf.Timestamp
+	14, // 1: toshi.workspace.v1.Artifact.completed_at:type_name -> google.protobuf.Timestamp
+	0,  // 2: toshi.workspace.v1.Artifact.state:type_name -> toshi.workspace.v1.ArtifactState
+	13, // 3: toshi.workspace.v1.Upload.headers:type_name -> toshi.workspace.v1.Upload.HeadersEntry
+	14, // 4: toshi.workspace.v1.Upload.expires_at:type_name -> google.protobuf.Timestamp
+	15, // 5: toshi.workspace.v1.ReserveUploadRequest.recording:type_name -> toshi.workspace.v1.RecordingKind
+	2,  // 6: toshi.workspace.v1.ReserveUploadResponse.uploads:type_name -> toshi.workspace.v1.Upload
+	14, // 7: toshi.workspace.v1.ReserveUploadResponse.upload_deadline:type_name -> google.protobuf.Timestamp
+	1,  // 8: toshi.workspace.v1.CompleteUploadResponse.artifact:type_name -> toshi.workspace.v1.Artifact
+	1,  // 9: toshi.workspace.v1.ListArtifactsResponse.artifacts:type_name -> toshi.workspace.v1.Artifact
+	1,  // 10: toshi.workspace.v1.GetArtifactResponse.artifact:type_name -> toshi.workspace.v1.Artifact
+	14, // 11: toshi.workspace.v1.GetArtifactDownloadURLResponse.expires_at:type_name -> google.protobuf.Timestamp
+	3,  // 12: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:input_type -> toshi.workspace.v1.ReserveUploadRequest
+	5,  // 13: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:input_type -> toshi.workspace.v1.CompleteUploadRequest
+	7,  // 14: toshi.workspace.v1.ArtifactService.ListArtifacts:input_type -> toshi.workspace.v1.ListArtifactsRequest
+	9,  // 15: toshi.workspace.v1.ArtifactService.GetArtifact:input_type -> toshi.workspace.v1.GetArtifactRequest
+	11, // 16: toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL:input_type -> toshi.workspace.v1.GetArtifactDownloadURLRequest
+	4,  // 17: toshi.workspace.v1.ArtifactUploadService.ReserveUpload:output_type -> toshi.workspace.v1.ReserveUploadResponse
+	6,  // 18: toshi.workspace.v1.ArtifactUploadService.CompleteUpload:output_type -> toshi.workspace.v1.CompleteUploadResponse
+	8,  // 19: toshi.workspace.v1.ArtifactService.ListArtifacts:output_type -> toshi.workspace.v1.ListArtifactsResponse
+	10, // 20: toshi.workspace.v1.ArtifactService.GetArtifact:output_type -> toshi.workspace.v1.GetArtifactResponse
+	12, // 21: toshi.workspace.v1.ArtifactService.GetArtifactDownloadURL:output_type -> toshi.workspace.v1.GetArtifactDownloadURLResponse
+	17, // [17:22] is the sub-list for method output_type
+	12, // [12:17] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_artifacts_proto_init() }
@@ -1181,13 +1263,14 @@ func file_toshi_workspace_v1_artifacts_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_artifacts_proto_rawDesc), len(file_toshi_workspace_v1_artifacts_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
 		GoTypes:           file_toshi_workspace_v1_artifacts_proto_goTypes,
 		DependencyIndexes: file_toshi_workspace_v1_artifacts_proto_depIdxs,
+		EnumInfos:         file_toshi_workspace_v1_artifacts_proto_enumTypes,
 		MessageInfos:      file_toshi_workspace_v1_artifacts_proto_msgTypes,
 	}.Build()
 	File_toshi_workspace_v1_artifacts_proto = out.File

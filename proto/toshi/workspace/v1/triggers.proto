@@ -128,10 +128,10 @@ message Trigger {
 // value. An event that is not a pull request's is not filtered: it
 // matches whatever the filter holds.
 message TriggerFilter {
-  // Base repositories, as owner/name.
-  repeated string repositories = 1;
-  // Base branches, by name.
-  repeated string base_branches = 2;
+  // Base repositories, as owner/name, at most 64 values.
+  repeated string repositories = 1 [(toshi.bound) = {name: "trigger_filter_values", unit: UNIT_COUNT, max: 64}];
+  // Base branches, by name, at most 64 values.
+  repeated string base_branches = 2 [(toshi.bound) = {ref: "trigger_filter_values"}];
 }
 
 // TriggerAction is what a trigger does with an event it matches.

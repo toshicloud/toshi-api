@@ -67,8 +67,10 @@ const (
 	FillerMaxDurationMax time.Duration = 1 * time.Hour
 	// FillerNameMax is the max of filler_name.
 	FillerNameMax = 40
-	// ImageSourcePattern is the pattern of image_source.
-	ImageSourcePattern = "^[^/\\s]+/[^/\\s]+$"
+	// ImageSourcePattern is an alias of OwnerRepoPattern.
+	//
+	// Deprecated: Use OwnerRepoPattern instead.
+	ImageSourcePattern = OwnerRepoPattern
 	// InboundMailSizeMax is the max of inbound_mail_size.
 	InboundMailSizeMax = 25 << 20
 	// InvitationTtlDefault is the default of invitation_ttl.
@@ -81,10 +83,16 @@ const (
 	JobFailureExplanationMax = 300
 	// KeepVMStoppedLongAfterThreshold is the threshold of keep_vm_stopped_long_after.
 	KeepVMStoppedLongAfterThreshold time.Duration = 30 * 24 * time.Hour
+	// ModelCredentialNameMin is the min of model_credential_name.
+	ModelCredentialNameMin = 1
+	// ModelCredentialNameMax is the max of model_credential_name.
+	ModelCredentialNameMax = 64
 	// NetworkDenialsThreshold is the threshold of network_denials.
 	NetworkDenialsThreshold = 20
 	// NewVolumeSizeCapDefault is the default of new_volume_size_cap.
 	NewVolumeSizeCapDefault = 10240 << 20
+	// OwnerRepoPattern is the pattern of owner_repo.
+	OwnerRepoPattern = "^[^/\\s]+/[^/\\s]+$"
 	// PoolSuggestionDaysDefault is the default of pool_suggestion_days.
 	PoolSuggestionDaysDefault = 28
 	// PoolSuggestionDaysMax is the max of pool_suggestion_days.
@@ -117,6 +125,8 @@ const (
 	TokenNameMax = 64
 	// TriggerEventsMax is the max of trigger_events.
 	TriggerEventsMax = 32
+	// TriggerFilterValuesMax is the max of trigger_filter_values.
+	TriggerFilterValuesMax = 64
 	// TriggerIdleTimeoutDefault is the default of trigger_idle_timeout.
 	TriggerIdleTimeoutDefault time.Duration = 2 * time.Hour
 	// TriggerSandboxMaxDurationDefault is the default of trigger_sandbox_max_duration.

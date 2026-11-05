@@ -202,13 +202,15 @@ extend google.protobuf.FieldOptions {
   // bound states a fixed number the server applies to the field: the same
   // for every deployment. Clients read it as a generated constant instead of
   // copying it; the field's comment states it in words too, and the
-  // generator fails when the two differ.
+  // generator fails when the two differ. A reference sets no other
+  // semantically present fields; an implicit-presence scalar at its default,
+  // such as an empty name or UNIT_UNSPECIFIED, counts as absent.
   Bound bound = 51009;
 }
 
-// Bound names fixed values and their units for a field.
+// Bound declares fixed values and their units, or refers to a declaration.
 message Bound {
-  // name is a snake_case name unique across the API.
+  // name is a snake_case name unique across the API, set on a declaration.
   string name = 1;
   // unit is the unit of each value.
   Unit unit = 2;
@@ -226,6 +228,12 @@ message Bound {
   // pattern is a regular expression, in RE2 and JavaScript syntax, the whole
   // value must match. The server's own check may be stricter.
   optional string pattern = 8;
+  // ref names an existing bound. The referenced values and field checks
+  // apply to this field too.
+  string ref = 9;
+  // deprecated_aliases on a declaration names old contract constants.
+  // Each alias is a unique snake_case name and refers to the declared values.
+  repeated string deprecated_aliases = 10;
 
   // Unit identifies the unit of a bound's values.
   enum Unit {

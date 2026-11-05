@@ -73,6 +73,25 @@ service ArtifactService {
   }
 }
 
+// ArtifactState is where an artifact is in its upload's life.
+enum ArtifactState {
+  // Never sent: a stored artifact is in one of the states below.
+  ARTIFACT_STATE_UNSPECIFIED = 0;
+  // The upload is reserved and its presigned PUTs are issued; nothing is
+  // final yet.
+  ARTIFACT_STATE_RESERVED = 1;
+  // A completion is copying the parts; a second completion is refused.
+  ARTIFACT_STATE_COMPLETING = 2;
+  // The parts are at their final keys; only a complete artifact downloads.
+  ARTIFACT_STATE_COMPLETE = 3;
+  // The upload deadline passed before the upload completed.
+  ARTIFACT_STATE_ABANDONED = 4;
+  // The artifact's objects were removed.
+  ARTIFACT_STATE_DELETED = 5;
+  // The artifact's storage provider was retired; reason says why.
+  ARTIFACT_STATE_LOST = 6;
+}
+
 // Artifact is an uploaded file's record: what it is, who uploaded it, and
 // where its parts are kept, never a key, a URL or key material.
 message Artifact {
@@ -101,11 +120,7 @@ message Artifact {
   repeated int64 part_sizes = 10;
   // The index object's size; 0 when part_count is 1.
   int64 index_size = 11;
-  // reserved, completing, complete, abandoned, deleted or lost. A completion
-  // moves the row to completing while it copies the parts, so a second
-  // completion is refused before it copies anything. lost is an artifact
-  // whose storage provider was retired; reason says why.
-  string state = 12;
+  reserved 12;
   // none or envelope-v1.
   string encryption = 13;
   // created_at is when the reservation was stored.
@@ -120,6 +135,12 @@ message Artifact {
   // Why the artifact is lost, as a recording's reason says it; empty in
   // every other state.
   string reason = 17;
+  // Where the artifact is in its life: reserved, completing, complete,
+  // abandoned, deleted or lost. A completion moves the row to completing
+  // while it copies the parts, so a second completion is refused before it
+  // copies anything. lost is an artifact whose storage provider was retired;
+  // reason says why.
+  ArtifactState state = 18;
 }
 
 // Upload is one presigned PUT. Send method to url with every header and

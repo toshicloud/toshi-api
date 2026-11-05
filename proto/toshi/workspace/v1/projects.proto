@@ -631,7 +631,7 @@ message UpdateProjectResponse {
 // to claim it.
 message ClaimRepositoryRequest {
   // "owner/name".
-  string repository = 1;
+  string repository = 1 [(toshi.bound) = {ref: "owner_repo"}];
   // The name of the project that is to claim it.
   string project = 2;
 }

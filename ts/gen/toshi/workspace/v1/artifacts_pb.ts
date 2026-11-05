@@ -2,8 +2,8 @@
 // @generated from file toshi/workspace/v1/artifacts.proto (package toshi.workspace.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp, TimestampJson } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_toshi_permission } from "../../permission_pb";
@@ -15,7 +15,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/artifacts.proto.
  */
 export const file_toshi_workspace_v1_artifacts: GenFile = /*@__PURE__*/
-  fileDesc("CiJ0b3NoaS93b3Jrc3BhY2UvdjEvYXJ0aWZhY3RzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEihwMKCEFydGlmYWN0EgoKAmlkGAEgASgJEhIKCnByb2plY3RfaWQYAiABKAkSFgoOZW52aXJvbm1lbnRfaWQYAyABKAkSEwoLd29ya2xvYWRfaWQYBCABKAkSFAoMZXhlY3V0aW9uX2lkGAUgASgJEgwKBGtpbmQYBiABKAkSDAoEbmFtZRgHIAEoCRIUCgxjb250ZW50X3R5cGUYCCABKAkSEgoKcGFydF9jb3VudBgJIAEoAxISCgpwYXJ0X3NpemVzGAogAygDEhIKCmluZGV4X3NpemUYCyABKAMSDQoFc3RhdGUYDCABKAkSEgoKZW5jcnlwdGlvbhgNIAEoCRIuCgpjcmVhdGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhUKDXdvcmtsb2FkX2tpbmQYECABKAkSDgoGcmVhc29uGBEgASgJIs0BCgZVcGxvYWQSDAoEcGFydBgBIAEoCRIOCgZtZXRob2QYAiABKAkSCwoDdXJsGAMgASgJEjgKB2hlYWRlcnMYBCADKAsyJy50b3NoaS53b3Jrc3BhY2UudjEuVXBsb2FkLkhlYWRlcnNFbnRyeRIuCgpleHBpcmVzX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBouCgxIZWFkZXJzRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASK7AQoUUmVzZXJ2ZVVwbG9hZFJlcXVlc3QSDAoEa2luZBgBIAEoCRIMCgRuYW1lGAIgASgJEhQKDGNvbnRlbnRfdHlwZRgDIAEoCRISCgpwYXJ0X3NpemVzGAQgAygDEhIKCmluZGV4X3NpemUYBSABKAMSNAoJcmVjb3JkaW5nGAYgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLlJlY29yZGluZ0tpbmQSEwoLcmVxdWVzdF9rZXkYByABKAkiygEKFVJlc2VydmVVcGxvYWRSZXNwb25zZRITCgthcnRpZmFjdF9pZBgBIAEoCRIrCgd1cGxvYWRzGAIgAygLMhoudG9zaGkud29ya3NwYWNlLnYxLlVwbG9hZBIzCg91cGxvYWRfZGVhZGxpbmUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmVuY3J5cHRpb24YBCABKAkSEAoIZGF0YV9rZXkYBSABKAwSFAoMZ3Vlc3RfdXBsb2FkGAYgASgIIiwKFUNvbXBsZXRlVXBsb2FkUmVxdWVzdBITCgthcnRpZmFjdF9pZBgBIAEoCSJIChZDb21wbGV0ZVVwbG9hZFJlc3BvbnNlEi4KCGFydGlmYWN0GAEgASgLMhwudG9zaGkud29ya3NwYWNlLnYxLkFydGlmYWN0IqIBChRMaXN0QXJ0aWZhY3RzUmVxdWVzdBISCgpwcm9qZWN0X2lkGAEgASgJEhYKDmVudmlyb25tZW50X2lkGAIgASgJEhMKC3dvcmtsb2FkX2lkGAMgASgJEhQKDGV4ZWN1dGlvbl9pZBgEIAEoCRIMCgRraW5kGAUgASgJEhEKCXBhZ2Vfc2l6ZRgGIAEoBRISCgpwYWdlX3Rva2VuGAcgASgJImEKFUxpc3RBcnRpZmFjdHNSZXNwb25zZRIvCglhcnRpZmFjdHMYASADKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuQXJ0aWZhY3QSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIikKEkdldEFydGlmYWN0UmVxdWVzdBITCgthcnRpZmFjdF9pZBgBIAEoCSJFChNHZXRBcnRpZmFjdFJlc3BvbnNlEi4KCGFydGlmYWN0GAEgASgLMhwudG9zaGkud29ya3NwYWNlLnYxLkFydGlmYWN0IoABCh1HZXRBcnRpZmFjdERvd25sb2FkVVJMUmVxdWVzdBITCgthcnRpZmFjdF9pZBgBIAEoCRIMCgRwYXJ0GAIgASgJEjwKC3R0bF9zZWNvbmRzGAMgASgDQieK9BgjChlhcnRpZmFjdF9kb3dubG9hZF91cmxfdHRsEAEYrAIokBwigwEKHkdldEFydGlmYWN0RG93bmxvYWRVUkxSZXNwb25zZRILCgN1cmwYASABKAkSLgoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKZW5jcnlwdGlvbhgDIAEoCRIQCghkYXRhX2tleRgEIAEoDDL6AgoVQXJ0aWZhY3RVcGxvYWRTZXJ2aWNlEsABCg1SZXNlcnZlVXBsb2FkEigudG9zaGkud29ya3NwYWNlLnYxLlJlc2VydmVVcGxvYWRSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLlJlc2VydmVVcGxvYWRSZXNwb25zZSJawvMYD2FydGlmYWN0cy53cml0ZdLzGDkKGGFydGlmYWN0X3VwbG9hZC5yZXNlcnZlZBIdYXJ0aWZhY3Q6cmVzcG9uc2UuYXJ0aWZhY3RfaWTq8xgCKAGQ9BgBEp0BCg5Db21wbGV0ZVVwbG9hZBIpLnRvc2hpLndvcmtzcGFjZS52MS5Db21wbGV0ZVVwbG9hZFJlcXVlc3QaKi50b3NoaS53b3Jrc3BhY2UudjEuQ29tcGxldGVVcGxvYWRSZXNwb25zZSI0wvMYD2FydGlmYWN0cy53cml0ZdLzGBMKEWFydGlmYWN0LnVwbG9hZGVk6vMYAigBkPQYAjLZAwoPQXJ0aWZhY3RTZXJ2aWNlEocBCg1MaXN0QXJ0aWZhY3RzEigudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBcnRpZmFjdHNSZXF1ZXN0GikudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBcnRpZmFjdHNSZXNwb25zZSIhwvMYDmFydGlmYWN0cy5yZWFkyvMYC2Vudmlyb25tZW50EoEBCgtHZXRBcnRpZmFjdBImLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBcnRpZmFjdFJlcXVlc3QaJy50b3NoaS53b3Jrc3BhY2UudjEuR2V0QXJ0aWZhY3RSZXNwb25zZSIhwvMYDmFydGlmYWN0cy5yZWFkyvMYC2Vudmlyb25tZW50ErcBChZHZXRBcnRpZmFjdERvd25sb2FkVVJMEjEudG9zaGkud29ya3NwYWNlLnYxLkdldEFydGlmYWN0RG93bmxvYWRVUkxSZXF1ZXN0GjIudG9zaGkud29ya3NwYWNlLnYxLkdldEFydGlmYWN0RG93bmxvYWRVUkxSZXNwb25zZSI2wvMYDmFydGlmYWN0cy5yZWFkyvMYC2Vudmlyb25tZW500vMYEQoPYXJ0aWZhY3Qudmlld2VkQiJaIGdvLnRvc2hpY2xvdWQuaW8vYXBpL3dvcmtzcGFjZXYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_recordings]);
+  fileDesc("CiJ0b3NoaS93b3Jrc3BhY2UvdjEvYXJ0aWZhY3RzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEisAMKCEFydGlmYWN0EgoKAmlkGAEgASgJEhIKCnByb2plY3RfaWQYAiABKAkSFgoOZW52aXJvbm1lbnRfaWQYAyABKAkSEwoLd29ya2xvYWRfaWQYBCABKAkSFAoMZXhlY3V0aW9uX2lkGAUgASgJEgwKBGtpbmQYBiABKAkSDAoEbmFtZRgHIAEoCRIUCgxjb250ZW50X3R5cGUYCCABKAkSEgoKcGFydF9jb3VudBgJIAEoAxISCgpwYXJ0X3NpemVzGAogAygDEhIKCmluZGV4X3NpemUYCyABKAMSEgoKZW5jcnlwdGlvbhgNIAEoCRIuCgpjcmVhdGVkX2F0GA4gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgxjb21wbGV0ZWRfYXQYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhUKDXdvcmtsb2FkX2tpbmQYECABKAkSDgoGcmVhc29uGBEgASgJEjAKBXN0YXRlGBIgASgOMiEudG9zaGkud29ya3NwYWNlLnYxLkFydGlmYWN0U3RhdGVKBAgMEA0izQEKBlVwbG9hZBIMCgRwYXJ0GAEgASgJEg4KBm1ldGhvZBgCIAEoCRILCgN1cmwYAyABKAkSOAoHaGVhZGVycxgEIAMoCzInLnRvc2hpLndvcmtzcGFjZS52MS5VcGxvYWQuSGVhZGVyc0VudHJ5Ei4KCmV4cGlyZXNfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wGi4KDEhlYWRlcnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIrsBChRSZXNlcnZlVXBsb2FkUmVxdWVzdBIMCgRraW5kGAEgASgJEgwKBG5hbWUYAiABKAkSFAoMY29udGVudF90eXBlGAMgASgJEhIKCnBhcnRfc2l6ZXMYBCADKAMSEgoKaW5kZXhfc2l6ZRgFIAEoAxI0CglyZWNvcmRpbmcYBiABKA4yIS50b3NoaS53b3Jrc3BhY2UudjEuUmVjb3JkaW5nS2luZBITCgtyZXF1ZXN0X2tleRgHIAEoCSLKAQoVUmVzZXJ2ZVVwbG9hZFJlc3BvbnNlEhMKC2FydGlmYWN0X2lkGAEgASgJEisKB3VwbG9hZHMYAiADKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVXBsb2FkEjMKD3VwbG9hZF9kZWFkbGluZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEgoKZW5jcnlwdGlvbhgEIAEoCRIQCghkYXRhX2tleRgFIAEoDBIUCgxndWVzdF91cGxvYWQYBiABKAgiLAoVQ29tcGxldGVVcGxvYWRSZXF1ZXN0EhMKC2FydGlmYWN0X2lkGAEgASgJIkgKFkNvbXBsZXRlVXBsb2FkUmVzcG9uc2USLgoIYXJ0aWZhY3QYASABKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuQXJ0aWZhY3QiogEKFExpc3RBcnRpZmFjdHNSZXF1ZXN0EhIKCnByb2plY3RfaWQYASABKAkSFgoOZW52aXJvbm1lbnRfaWQYAiABKAkSEwoLd29ya2xvYWRfaWQYAyABKAkSFAoMZXhlY3V0aW9uX2lkGAQgASgJEgwKBGtpbmQYBSABKAkSEQoJcGFnZV9zaXplGAYgASgFEhIKCnBhZ2VfdG9rZW4YByABKAkiYQoVTGlzdEFydGlmYWN0c1Jlc3BvbnNlEi8KCWFydGlmYWN0cxgBIAMoCzIcLnRvc2hpLndvcmtzcGFjZS52MS5BcnRpZmFjdBIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiKQoSR2V0QXJ0aWZhY3RSZXF1ZXN0EhMKC2FydGlmYWN0X2lkGAEgASgJIkUKE0dldEFydGlmYWN0UmVzcG9uc2USLgoIYXJ0aWZhY3QYASABKAsyHC50b3NoaS53b3Jrc3BhY2UudjEuQXJ0aWZhY3QigAEKHUdldEFydGlmYWN0RG93bmxvYWRVUkxSZXF1ZXN0EhMKC2FydGlmYWN0X2lkGAEgASgJEgwKBHBhcnQYAiABKAkSPAoLdHRsX3NlY29uZHMYAyABKANCJ4r0GCMKGWFydGlmYWN0X2Rvd25sb2FkX3VybF90dGwQARisAiiQHCKDAQoeR2V0QXJ0aWZhY3REb3dubG9hZFVSTFJlc3BvbnNlEgsKA3VybBgBIAEoCRIuCgpleHBpcmVzX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgplbmNyeXB0aW9uGAMgASgJEhAKCGRhdGFfa2V5GAQgASgMKtsBCg1BcnRpZmFjdFN0YXRlEh4KGkFSVElGQUNUX1NUQVRFX1VOU1BFQ0lGSUVEEAASGwoXQVJUSUZBQ1RfU1RBVEVfUkVTRVJWRUQQARIdChlBUlRJRkFDVF9TVEFURV9DT01QTEVUSU5HEAISGwoXQVJUSUZBQ1RfU1RBVEVfQ09NUExFVEUQAxIcChhBUlRJRkFDVF9TVEFURV9BQkFORE9ORUQQBBIaChZBUlRJRkFDVF9TVEFURV9ERUxFVEVEEAUSFwoTQVJUSUZBQ1RfU1RBVEVfTE9TVBAGMvoCChVBcnRpZmFjdFVwbG9hZFNlcnZpY2USwAEKDVJlc2VydmVVcGxvYWQSKC50b3NoaS53b3Jrc3BhY2UudjEuUmVzZXJ2ZVVwbG9hZFJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuUmVzZXJ2ZVVwbG9hZFJlc3BvbnNlIlrC8xgPYXJ0aWZhY3RzLndyaXRl0vMYOQoYYXJ0aWZhY3RfdXBsb2FkLnJlc2VydmVkEh1hcnRpZmFjdDpyZXNwb25zZS5hcnRpZmFjdF9pZOrzGAIoAZD0GAESnQEKDkNvbXBsZXRlVXBsb2FkEikudG9zaGkud29ya3NwYWNlLnYxLkNvbXBsZXRlVXBsb2FkUmVxdWVzdBoqLnRvc2hpLndvcmtzcGFjZS52MS5Db21wbGV0ZVVwbG9hZFJlc3BvbnNlIjTC8xgPYXJ0aWZhY3RzLndyaXRl0vMYEwoRYXJ0aWZhY3QudXBsb2FkZWTq8xgCKAGQ9BgCMtkDCg9BcnRpZmFjdFNlcnZpY2UShwEKDUxpc3RBcnRpZmFjdHMSKC50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEFydGlmYWN0c1JlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEFydGlmYWN0c1Jlc3BvbnNlIiHC8xgOYXJ0aWZhY3RzLnJlYWTK8xgLZW52aXJvbm1lbnQSgQEKC0dldEFydGlmYWN0EiYudG9zaGkud29ya3NwYWNlLnYxLkdldEFydGlmYWN0UmVxdWVzdBonLnRvc2hpLndvcmtzcGFjZS52MS5HZXRBcnRpZmFjdFJlc3BvbnNlIiHC8xgOYXJ0aWZhY3RzLnJlYWTK8xgLZW52aXJvbm1lbnQStwEKFkdldEFydGlmYWN0RG93bmxvYWRVUkwSMS50b3NoaS53b3Jrc3BhY2UudjEuR2V0QXJ0aWZhY3REb3dubG9hZFVSTFJlcXVlc3QaMi50b3NoaS53b3Jrc3BhY2UudjEuR2V0QXJ0aWZhY3REb3dubG9hZFVSTFJlc3BvbnNlIjbC8xgOYXJ0aWZhY3RzLnJlYWTK8xgLZW52aXJvbm1lbnTS8xgRCg9hcnRpZmFjdC52aWV3ZWRCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_toshi_permission, file_toshi_workspace_v1_recordings]);
 
 /**
  * Artifact is an uploaded file's record: what it is, who uploaded it, and
@@ -105,16 +105,6 @@ export type Artifact = Message<"toshi.workspace.v1.Artifact"> & {
   indexSize: bigint;
 
   /**
-   * reserved, completing, complete, abandoned, deleted or lost. A completion
-   * moves the row to completing while it copies the parts, so a second
-   * completion is refused before it copies anything. lost is an artifact
-   * whose storage provider was retired; reason says why.
-   *
-   * @generated from field: string state = 12;
-   */
-  state: string;
-
-  /**
    * none or envelope-v1.
    *
    * @generated from field: string encryption = 13;
@@ -152,6 +142,17 @@ export type Artifact = Message<"toshi.workspace.v1.Artifact"> & {
    * @generated from field: string reason = 17;
    */
   reason: string;
+
+  /**
+   * Where the artifact is in its life: reserved, completing, complete,
+   * abandoned, deleted or lost. A completion moves the row to completing
+   * while it copies the parts, so a second completion is refused before it
+   * copies anything. lost is an artifact whose storage provider was retired;
+   * reason says why.
+   *
+   * @generated from field: toshi.workspace.v1.ArtifactState state = 18;
+   */
+  state: ArtifactState;
 };
 
 /**
@@ -242,16 +243,6 @@ export type ArtifactJson = {
   indexSize?: string;
 
   /**
-   * reserved, completing, complete, abandoned, deleted or lost. A completion
-   * moves the row to completing while it copies the parts, so a second
-   * completion is refused before it copies anything. lost is an artifact
-   * whose storage provider was retired; reason says why.
-   *
-   * @generated from field: string state = 12;
-   */
-  state?: string;
-
-  /**
    * none or envelope-v1.
    *
    * @generated from field: string encryption = 13;
@@ -289,6 +280,17 @@ export type ArtifactJson = {
    * @generated from field: string reason = 17;
    */
   reason?: string;
+
+  /**
+   * Where the artifact is in its life: reserved, completing, complete,
+   * abandoned, deleted or lost. A completion moves the row to completing
+   * while it copies the parts, so a second completion is refused before it
+   * copies anything. lost is an artifact whose storage provider was retired;
+   * reason says why.
+   *
+   * @generated from field: toshi.workspace.v1.ArtifactState state = 18;
+   */
+  state?: ArtifactStateJson;
 };
 
 /**
@@ -1110,6 +1112,76 @@ export type GetArtifactDownloadURLResponseJson = {
  */
 export const GetArtifactDownloadURLResponseSchema: GenMessage<GetArtifactDownloadURLResponse, {jsonType: GetArtifactDownloadURLResponseJson}> = /*@__PURE__*/
   messageDesc(file_toshi_workspace_v1_artifacts, 11);
+
+/**
+ * ArtifactState is where an artifact is in its upload's life.
+ *
+ * @generated from enum toshi.workspace.v1.ArtifactState
+ */
+export enum ArtifactState {
+  /**
+   * Never sent: a stored artifact is in one of the states below.
+   *
+   * @generated from enum value: ARTIFACT_STATE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * The upload is reserved and its presigned PUTs are issued; nothing is
+   * final yet.
+   *
+   * @generated from enum value: ARTIFACT_STATE_RESERVED = 1;
+   */
+  RESERVED = 1,
+
+  /**
+   * A completion is copying the parts; a second completion is refused.
+   *
+   * @generated from enum value: ARTIFACT_STATE_COMPLETING = 2;
+   */
+  COMPLETING = 2,
+
+  /**
+   * The parts are at their final keys; only a complete artifact downloads.
+   *
+   * @generated from enum value: ARTIFACT_STATE_COMPLETE = 3;
+   */
+  COMPLETE = 3,
+
+  /**
+   * The upload deadline passed before the upload completed.
+   *
+   * @generated from enum value: ARTIFACT_STATE_ABANDONED = 4;
+   */
+  ABANDONED = 4,
+
+  /**
+   * The artifact's objects were removed.
+   *
+   * @generated from enum value: ARTIFACT_STATE_DELETED = 5;
+   */
+  DELETED = 5,
+
+  /**
+   * The artifact's storage provider was retired; reason says why.
+   *
+   * @generated from enum value: ARTIFACT_STATE_LOST = 6;
+   */
+  LOST = 6,
+}
+
+/**
+ * ArtifactState is where an artifact is in its upload's life.
+ *
+ * @generated from enum toshi.workspace.v1.ArtifactState
+ */
+export type ArtifactStateJson = "ARTIFACT_STATE_UNSPECIFIED" | "ARTIFACT_STATE_RESERVED" | "ARTIFACT_STATE_COMPLETING" | "ARTIFACT_STATE_COMPLETE" | "ARTIFACT_STATE_ABANDONED" | "ARTIFACT_STATE_DELETED" | "ARTIFACT_STATE_LOST";
+
+/**
+ * Describes the enum toshi.workspace.v1.ArtifactState.
+ */
+export const ArtifactStateSchema: GenEnum<ArtifactState, ArtifactStateJson> = /*@__PURE__*/
+  enumDesc(file_toshi_workspace_v1_artifacts, 0);
 
 /**
  * ArtifactUploadService is how a job uploads what it recorded:

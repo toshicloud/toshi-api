@@ -500,10 +500,10 @@ func (x *MCP) GetExclude() bool {
 	return false
 }
 
-// Bound names fixed values and their units for a field.
+// Bound declares fixed values and their units, or refers to a declaration.
 type Bound struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// name is a snake_case name unique across the API.
+	// name is a snake_case name unique across the API, set on a declaration.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// unit is the unit of each value.
 	Unit Bound_Unit `protobuf:"varint,2,opt,name=unit,proto3,enum=toshi.Bound_Unit" json:"unit,omitempty"`
@@ -520,9 +520,15 @@ type Bound struct {
 	HttpHosts []string `protobuf:"bytes,7,rep,name=http_hosts,json=httpHosts,proto3" json:"http_hosts,omitempty"`
 	// pattern is a regular expression, in RE2 and JavaScript syntax, the whole
 	// value must match. The server's own check may be stricter.
-	Pattern       *string `protobuf:"bytes,8,opt,name=pattern,proto3,oneof" json:"pattern,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Pattern *string `protobuf:"bytes,8,opt,name=pattern,proto3,oneof" json:"pattern,omitempty"`
+	// ref names an existing bound. The referenced values and field checks
+	// apply to this field too.
+	Ref string `protobuf:"bytes,9,opt,name=ref,proto3" json:"ref,omitempty"`
+	// deprecated_aliases on a declaration names old contract constants.
+	// Each alias is a unique snake_case name and refers to the declared values.
+	DeprecatedAliases []string `protobuf:"bytes,10,rep,name=deprecated_aliases,json=deprecatedAliases,proto3" json:"deprecated_aliases,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Bound) Reset() {
@@ -609,6 +615,20 @@ func (x *Bound) GetPattern() string {
 		return *x.Pattern
 	}
 	return ""
+}
+
+func (x *Bound) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *Bound) GetDeprecatedAliases() []string {
+	if x != nil {
+		return x.DeprecatedAliases
+	}
+	return nil
 }
 
 var file_toshi_permission_proto_extTypes = []protoimpl.ExtensionInfo{
@@ -802,7 +822,9 @@ var (
 	// bound states a fixed number the server applies to the field: the same
 	// for every deployment. Clients read it as a generated constant instead of
 	// copying it; the field's comment states it in words too, and the
-	// generator fails when the two differ.
+	// generator fails when the two differ. A reference sets no other
+	// semantically present fields; an implicit-presence scalar at its default,
+	// such as an empty name or UNIT_UNSPECIFIED, counts as absent.
 	//
 	// optional toshi.Bound bound = 51009;
 	E_Bound = &file_toshi_permission_proto_extTypes[10]
@@ -841,7 +863,7 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"_read_onlyB\x0e\n" +
 	"\f_destructiveB\r\n" +
 	"\v_idempotentB\r\n" +
-	"\v_open_world\"\xf6\x02\n" +
+	"\v_open_world\"\xb7\x03\n" +
 	"\x05Bound\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12%\n" +
 	"\x04unit\x18\x02 \x01(\x0e2\x11.toshi.Bound.UnitR\x04unit\x12\x1d\n" +
@@ -851,7 +873,10 @@ const file_toshi_permission_proto_rawDesc = "" +
 	"\tthreshold\x18\x06 \x01(\x03H\x03R\tthreshold\x88\x01\x01\x12\x1d\n" +
 	"\n" +
 	"http_hosts\x18\a \x03(\tR\thttpHosts\x12\x1d\n" +
-	"\apattern\x18\b \x01(\tH\x04R\apattern\x88\x01\x01\"N\n" +
+	"\apattern\x18\b \x01(\tH\x04R\apattern\x88\x01\x01\x12\x10\n" +
+	"\x03ref\x18\t \x01(\tR\x03ref\x12-\n" +
+	"\x12deprecated_aliases\x18\n" +
+	" \x03(\tR\x11deprecatedAliases\"N\n" +
 	"\x04Unit\x12\x14\n" +
 	"\x10UNIT_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fUNIT_SECONDS\x10\x01\x12\x0e\n" +
