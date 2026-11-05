@@ -712,9 +712,8 @@ message Tunnel {
 message CreateEndpointRequest {
   // The job whose guest holds the endpoint.
   string job_id = 1;
-  // The endpoint's name: lower-case letters, digits, '-' and '_', starting
-  // with a letter or digit, at most 63. An http endpoint's defaults to its
-  // port; a stream endpoint needs one.
+  // The endpoint's name, a lowercase DNS label of at most 63 bytes. An http
+  // endpoint's defaults to its port; a stream endpoint needs one.
   string name = 2;
   // A port in the guest, for an http endpoint; give a port or a command.
   int32 port = 3;

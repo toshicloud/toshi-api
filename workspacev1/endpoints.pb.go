@@ -2256,9 +2256,8 @@ type CreateEndpointRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The job whose guest holds the endpoint.
 	JobId string `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
-	// The endpoint's name: lower-case letters, digits, '-' and '_', starting
-	// with a letter or digit, at most 63. An http endpoint's defaults to its
-	// port; a stream endpoint needs one.
+	// The endpoint's name, a lowercase DNS label of at most 63 bytes. An http
+	// endpoint's defaults to its port; a stream endpoint needs one.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// A port in the guest, for an http endpoint; give a port or a command.
 	Port int32 `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`

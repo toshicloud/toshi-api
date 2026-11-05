@@ -300,7 +300,10 @@ service WorkloadService {
     option (toshi.key_mode) = KEY;
     option (toshi.permission) = "sandboxes.write";
     option (toshi.scope) = "environment";
-    option (toshi.audit) = {action: "sandbox.executed"};
+    option (toshi.audit) = {
+      action: "sandbox.executed"
+      target: "sandbox:workload_id"
+    };
     option (toshi.mcp) = {exclude: true};
   }
 

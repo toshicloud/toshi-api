@@ -1306,8 +1306,9 @@ message ExecuteCommandRequest {
   string project = 1;
   // The environment's name.
   string environment = 2;
-  // The sandbox the command runs in.
-  string sandbox_id = 3;
+  // The ID of the sandbox the command runs in. A job's or a service's ID is
+  // FAILED_PRECONDITION.
+  string workload_id = 3;
   // The command to run.
   Command command = 4;
   // A retry with the same key does not start a second command: its stream

@@ -2396,9 +2396,8 @@ export type CreateEndpointRequest = Message<"toshi.workspace.v1.CreateEndpointRe
   jobId: string;
 
   /**
-   * The endpoint's name: lower-case letters, digits, '-' and '_', starting
-   * with a letter or digit, at most 63. An http endpoint's defaults to its
-   * port; a stream endpoint needs one.
+   * The endpoint's name, a lowercase DNS label of at most 63 bytes. An http
+   * endpoint's defaults to its port; a stream endpoint needs one.
    *
    * @generated from field: string name = 2;
    */
@@ -2458,9 +2457,8 @@ export type CreateEndpointRequestJson = {
   jobId?: string;
 
   /**
-   * The endpoint's name: lower-case letters, digits, '-' and '_', starting
-   * with a letter or digit, at most 63. An http endpoint's defaults to its
-   * port; a stream endpoint needs one.
+   * The endpoint's name, a lowercase DNS label of at most 63 bytes. An http
+   * endpoint's defaults to its port; a stream endpoint needs one.
    *
    * @generated from field: string name = 2;
    */
