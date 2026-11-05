@@ -176,12 +176,12 @@ export const reasons = {
 export type Reason = keyof typeof reasons;
 
 export const artifactStates = {
-  reserved: "reserved",
-  completing: "completing",
-  complete: "complete",
-  abandoned: "abandoned",
-  deleted: "deleted",
-  lost: "lost",
+  reserved: "ARTIFACT_STATE_RESERVED",
+  completing: "ARTIFACT_STATE_COMPLETING",
+  complete: "ARTIFACT_STATE_COMPLETE",
+  abandoned: "ARTIFACT_STATE_ABANDONED",
+  deleted: "ARTIFACT_STATE_DELETED",
+  lost: "ARTIFACT_STATE_LOST",
 } as const;
 
 export type ArtifactState = (typeof artifactStates)[keyof typeof artifactStates];

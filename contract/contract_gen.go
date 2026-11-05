@@ -377,17 +377,17 @@ const (
 // The values of Artifact.state.
 const (
 	// ArtifactStateReserved: The upload is reserved and its presigned PUTs are issued; nothing is final yet.
-	ArtifactStateReserved = "reserved"
+	ArtifactStateReserved = "ARTIFACT_STATE_RESERVED"
 	// ArtifactStateCompleting: A completion is copying the parts; a second completion is refused.
-	ArtifactStateCompleting = "completing"
+	ArtifactStateCompleting = "ARTIFACT_STATE_COMPLETING"
 	// ArtifactStateComplete: The parts are at their final keys; only a complete artifact downloads.
-	ArtifactStateComplete = "complete"
+	ArtifactStateComplete = "ARTIFACT_STATE_COMPLETE"
 	// ArtifactStateAbandoned: The upload deadline passed before the upload completed.
-	ArtifactStateAbandoned = "abandoned"
+	ArtifactStateAbandoned = "ARTIFACT_STATE_ABANDONED"
 	// ArtifactStateDeleted: The artifact's objects were removed.
-	ArtifactStateDeleted = "deleted"
+	ArtifactStateDeleted = "ARTIFACT_STATE_DELETED"
 	// ArtifactStateLost: The artifact's storage provider was retired; reason says why.
-	ArtifactStateLost = "lost"
+	ArtifactStateLost = "ARTIFACT_STATE_LOST"
 )
 
 const (
