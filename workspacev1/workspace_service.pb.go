@@ -5828,11 +5828,12 @@ func (x *Storage) GetEstimatedCents() int64 {
 }
 
 // StoredKind is one kind of stored data in a month: images, volume_versions,
-// artifacts, recordings, held_disks or service_snapshots.
+// artifacts, recordings, held_disks, service_snapshots or
+// sandbox_stop_snapshot.
 type StoredKind struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The kind: images, volume_versions, artifacts, recordings, held_disks or
-	// service_snapshots.
+	// The kind: images, volume_versions, artifacts, recordings, held_disks,
+	// service_snapshots or sandbox_stop_snapshot.
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The bytes the last sampled hour held.
 	Bytes int64 `protobuf:"varint,2,opt,name=bytes,proto3" json:"bytes,omitempty"`
@@ -5898,8 +5899,8 @@ type StorageUsageRow struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The day's first hour, UTC, as YYYY-MM-DD.
 	Day string `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
-	// The kind: images, volume_versions, artifacts, recordings, held_disks or
-	// service_snapshots.
+	// The kind: images, volume_versions, artifacts, recordings, held_disks,
+	// service_snapshots or sandbox_stop_snapshot.
 	Kind string `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
 	// The kind's GB summed over the day's sampled hours.
 	GbHours float64 `protobuf:"fixed64,3,opt,name=gb_hours,json=gbHours,proto3" json:"gb_hours,omitempty"`

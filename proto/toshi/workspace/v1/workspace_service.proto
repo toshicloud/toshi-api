@@ -1466,10 +1466,11 @@ message Storage {
 }
 
 // StoredKind is one kind of stored data in a month: images, volume_versions,
-// artifacts, recordings, held_disks or service_snapshots.
+// artifacts, recordings, held_disks, service_snapshots or
+// sandbox_stop_snapshot.
 message StoredKind {
-  // The kind: images, volume_versions, artifacts, recordings, held_disks or
-  // service_snapshots.
+  // The kind: images, volume_versions, artifacts, recordings, held_disks,
+  // service_snapshots or sandbox_stop_snapshot.
   string kind = 1;
   // The bytes the last sampled hour held.
   int64 bytes = 2;
@@ -1481,8 +1482,8 @@ message StoredKind {
 message StorageUsageRow {
   // The day's first hour, UTC, as YYYY-MM-DD.
   string day = 1;
-  // The kind: images, volume_versions, artifacts, recordings, held_disks or
-  // service_snapshots.
+  // The kind: images, volume_versions, artifacts, recordings, held_disks,
+  // service_snapshots or sandbox_stop_snapshot.
   string kind = 2;
   // The kind's GB summed over the day's sampled hours.
   double gb_hours = 3;
