@@ -27,6 +27,8 @@ const (
 	ConnectionSecretOverlapMin time.Duration = 0
 	// ConnectionSecretOverlapMax is the max of connection_secret_overlap.
 	ConnectionSecretOverlapMax time.Duration = 7 * 24 * time.Hour
+	// DeploymentRetentionDaysMax is the max of deployment_retention_days.
+	DeploymentRetentionDaysMax = 36500
 	// EgressRulesMax is the max of egress_rules.
 	EgressRulesMax = 100
 	// EmbedTokenExpiresInDefault is the default of embed_token_expires_in.
@@ -45,6 +47,8 @@ const (
 	EndpointMessageDataMax = 262144
 	// EndpointMessageNameMax is the max of endpoint_message_name.
 	EndpointMessageNameMax = 200
+	// EnvironmentJobRetentionDaysMax is the max of environment_job_retention_days.
+	EnvironmentJobRetentionDaysMax = 36500
 	// ExportAuditEventsDownloadURLTtlDefault is the default of export_audit_events_download_url_ttl.
 	ExportAuditEventsDownloadURLTtlDefault time.Duration = 5 * time.Minute
 	// ExportAuditEventsDownloadURLTtlMax is the max of export_audit_events_download_url_ttl.
@@ -93,6 +97,8 @@ const (
 	NewVolumeSizeCapDefault = 10240 << 20
 	// OwnerRepoPattern is the pattern of owner_repo.
 	OwnerRepoPattern = "^[^/\\s]+/[^/\\s]+$"
+	// PlanJobRetentionDaysMax is the max of plan_job_retention_days.
+	PlanJobRetentionDaysMax = 36500
 	// PoolSuggestionDaysDefault is the default of pool_suggestion_days.
 	PoolSuggestionDaysDefault = 28
 	// PoolSuggestionDaysMax is the max of pool_suggestion_days.
@@ -143,6 +149,8 @@ const (
 	WebhookSigningSecretMax = 64
 	// WorkspaceJobRetentionDaysMin is the min of workspace_job_retention_days.
 	WorkspaceJobRetentionDaysMin = 1
+	// WorkspaceJobRetentionDaysMax is the max of workspace_job_retention_days.
+	WorkspaceJobRetentionDaysMax = 36500
 	// WorkspaceTokenLifetimeDefault is the default of workspace_token_lifetime.
 	WorkspaceTokenLifetimeDefault time.Duration = 90 * 24 * time.Hour
 	// WorkspaceTokenLifetimeMax is the max of workspace_token_lifetime.

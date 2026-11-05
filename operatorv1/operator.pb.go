@@ -6052,8 +6052,8 @@ type Plan struct {
 	// Credit a new workspace on this plan gets once, in the smallest currency
 	// unit; 0 means none.
 	StarterCreditCents int64 `protobuf:"varint,14,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
-	// Days of finished job history workspaces on this plan keep; 0 keeps forever.
-	// Left out of configuration, 90.
+	// Days of finished job history workspaces on this plan keep, at most 36500;
+	// 0 keeps forever. Left out of configuration, 90.
 	JobRetentionDays int32 `protobuf:"varint,15,opt,name=job_retention_days,json=jobRetentionDays,proto3" json:"job_retention_days,omitempty"`
 	// Longest debug session, in minutes, a failed job on this plan may ask
 	// for with a toshi-debug-<n> label; 0 means the plan has no debug

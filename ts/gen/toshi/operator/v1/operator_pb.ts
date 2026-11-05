@@ -6277,8 +6277,8 @@ export type Plan = Message<"toshi.operator.v1.Plan"> & {
   starterCreditCents: bigint;
 
   /**
-   * Days of finished job history workspaces on this plan keep; 0 keeps forever.
-   * Left out of configuration, 90.
+   * Days of finished job history workspaces on this plan keep, at most 36500;
+   * 0 keeps forever. Left out of configuration, 90.
    *
    * @generated from field: int32 job_retention_days = 15;
    */
@@ -6459,8 +6459,8 @@ export type PlanJson = {
   starterCreditCents?: string;
 
   /**
-   * Days of finished job history workspaces on this plan keep; 0 keeps forever.
-   * Left out of configuration, 90.
+   * Days of finished job history workspaces on this plan keep, at most 36500;
+   * 0 keeps forever. Left out of configuration, 90.
    *
    * @generated from field: int32 job_retention_days = 15;
    */

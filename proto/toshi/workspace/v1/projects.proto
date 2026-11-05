@@ -822,9 +822,9 @@ message RetentionKeep {
 message EnvironmentRetention {
   // Days the environment keeps its finished jobs. In an override, 0
   // follows the workspace and a positive value is at most the
-  // workspace's period: an override cannot keep forever. In the retention
-  // that applies, 0 keeps forever.
-  int32 job_retention_days = 1;
+  // workspace's period and at most 36500: an override cannot keep forever.
+  // In the retention that applies, 0 keeps forever.
+  int32 job_retention_days = 1 [(toshi.bound) = {name: "environment_job_retention_days", unit: UNIT_COUNT, max: 36500}];
   // Each kind's keep, by kind. In an override, a kind left out follows the
   // workspace. In the retention that applies, a kind left out is kept
   // forever.

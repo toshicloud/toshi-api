@@ -1807,8 +1807,8 @@ message Plan {
   // Credit a new workspace on this plan gets once, in the smallest currency
   // unit; 0 means none.
   int64 starter_credit_cents = 14;
-  // Days of finished job history workspaces on this plan keep; 0 keeps forever.
-  // Left out of configuration, 90.
+  // Days of finished job history workspaces on this plan keep, at most 36500;
+  // 0 keeps forever. Left out of configuration, 90.
   int32 job_retention_days = 15;
   // Longest debug session, in minutes, a failed job on this plan may ask
   // for with a toshi-debug-<n> label; 0 means the plan has no debug

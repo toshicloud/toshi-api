@@ -16,6 +16,7 @@ export const contract = {
   channelBufferKeep: { unit: "bytes", threshold: 8388608 },
   connectionName: { unit: "bytes", max: 63 },
   connectionSecretOverlap: { unit: "seconds", default: 86400, min: 0, max: 604800 },
+  deploymentRetentionDays: { unit: "count", max: 36500 },
   egressRules: { unit: "count", max: 100 },
   embedTokenExpiresIn: { unit: "seconds", default: 600 },
   embedTokenOrigins: { unit: "count", max: 10, httpHosts: ["localhost", "127.0.0.1", "::1"] },
@@ -23,6 +24,7 @@ export const contract = {
   endpointLogExport: { unit: "bytes", default: 67108864 },
   endpointMessageData: { unit: "bytes", max: 262144 },
   endpointMessageName: { unit: "bytes", max: 200 },
+  environmentJobRetentionDays: { unit: "count", max: 36500 },
   exportAuditEventsDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
   exportEndpointLogDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
   exportEventsDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
@@ -40,6 +42,7 @@ export const contract = {
   networkDenials: { unit: "count", threshold: 20 },
   newVolumeSizeCap: { unit: "bytes", default: 10737418240 },
   ownerRepo: contractBoundOwnerRepo,
+  planJobRetentionDays: { unit: "count", max: 36500 },
   poolSuggestionDays: { unit: "count", default: 28, max: 90 },
   previewShareLinkExpiry: { unit: "seconds", default: 86400 },
   recentSignIn: { unit: "seconds", threshold: 7200 },
@@ -59,7 +62,7 @@ export const contract = {
   utilisationHourRange: { unit: "seconds", max: 2678400 },
   webhookFilterEntries: { unit: "count", max: 64 },
   webhookSigningSecret: { unit: "bytes", default: 32, min: 24, max: 64 },
-  workspaceJobRetentionDays: { unit: "count", min: 1 },
+  workspaceJobRetentionDays: { unit: "count", min: 1, max: 36500 },
   workspaceTokenLifetime: { unit: "seconds", default: 7776000, max: 7776000 },
 } as const;
 

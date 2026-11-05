@@ -4119,7 +4119,8 @@ type WorkspaceSettings struct {
 	// applies, and 0 keeps forever. A member may set it from 1 up to the
 	// plan's period, and 0 only on a plan that keeps forever; a longer one
 	// fails with INVALID_ARGUMENT. Naming it in the update mask with no value
-	// clears it, so the plan's applies again. The maximum is the plan's.
+	// clears it, so the plan's applies again. The maximum is the plan's, and
+	// never above 36500 days.
 	JobRetentionDays *int32 `protobuf:"varint,3,opt,name=job_retention_days,json=jobRetentionDays,proto3,oneof" json:"job_retention_days,omitempty"`
 	// The workspace's jobs wait for its own hosts and never run on shared ones.
 	OwnHostsOnly bool `protobuf:"varint,4,opt,name=own_hosts_only,json=ownHostsOnly,proto3" json:"own_hosts_only,omitempty"`
@@ -6691,8 +6692,8 @@ type Plan struct {
 	// Credit a new workspace on this plan gets once, in the smallest currency
 	// unit; 0 means none.
 	StarterCreditCents int64 `protobuf:"varint,14,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
-	// Days of finished job history workspaces on this plan keep; 0 keeps forever.
-	// Left out of configuration, 90.
+	// Days of finished job history workspaces on this plan keep, at most 36500;
+	// 0 keeps forever. Left out of configuration, 90.
 	JobRetentionDays int32 `protobuf:"varint,15,opt,name=job_retention_days,json=jobRetentionDays,proto3" json:"job_retention_days,omitempty"`
 	// Longest debug session, in minutes, a failed job on this plan may ask
 	// for with a toshi-debug-<n> label; 0 means the plan has no debug
@@ -7387,13 +7388,13 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tnot_after\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bnotAfter\x125\n" +
 	"\brenew_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\arenewAt\x125\n" +
 	"\bretry_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aretryAt\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error\"\xf5\t\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"\xf9\t\n" +
 	"\x11WorkspaceSettings\x12\x1f\n" +
 	"\vmember_join\x18\x01 \x01(\tR\n" +
 	"memberJoin\x12R\n" +
-	"\asign_in\x18\x02 \x01(\v2#.toshi.workspace.v1.WorkspaceSignInB\x14\xda\xf3\x18\x10workspace.signinR\x06signIn\x12Y\n" +
-	"\x12job_retention_days\x18\x03 \x01(\x05B&\x8a\xf4\x18\"\n" +
-	"\x1cworkspace_job_retention_days\x10\x03 \x01H\x00R\x10jobRetentionDays\x88\x01\x01\x12$\n" +
+	"\asign_in\x18\x02 \x01(\v2#.toshi.workspace.v1.WorkspaceSignInB\x14\xda\xf3\x18\x10workspace.signinR\x06signIn\x12]\n" +
+	"\x12job_retention_days\x18\x03 \x01(\x05B*\x8a\xf4\x18&\n" +
+	"\x1cworkspace_job_retention_days\x10\x03 \x01(\x94\x9d\x02H\x00R\x10jobRetentionDays\x88\x01\x01\x12$\n" +
 	"\x0eown_hosts_only\x18\x04 \x01(\bR\fownHostsOnly\x12%\n" +
 	"\x0eallow_overflow\x18\x05 \x01(\bR\rallowOverflow\x12(\n" +
 	"\x10allow_cache_warm\x18\x06 \x01(\bR\x0eallowCacheWarm\x122\n" +
@@ -7631,7 +7632,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\vp50_seconds\x18\b \x01(\x03R\n" +
 	"p50Seconds\x12\x1f\n" +
 	"\vp95_seconds\x18\t \x01(\x03R\n" +
-	"p95Seconds\"\x8d\x06\n" +
+	"p95Seconds\"\xb2\x06\n" +
 	"\x04Plan\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vconcurrency\x18\x02 \x01(\x05R\vconcurrency\x12&\n" +
@@ -7650,8 +7651,9 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x11card_required_for\x18\v \x03(\tR\x0fcardRequiredFor\x12)\n" +
 	"\x11max_jobs_per_hour\x18\f \x01(\x05R\x0emaxJobsPerHour\x12(\n" +
 	"\x10burst_guard_jobs\x18\r \x01(\x05R\x0eburstGuardJobs\x120\n" +
-	"\x14starter_credit_cents\x18\x0e \x01(\x03R\x12starterCreditCents\x12,\n" +
-	"\x12job_retention_days\x18\x0f \x01(\x05R\x10jobRetentionDays\x12#\n" +
+	"\x14starter_credit_cents\x18\x0e \x01(\x03R\x12starterCreditCents\x12Q\n" +
+	"\x12job_retention_days\x18\x0f \x01(\x05B#\x8a\xf4\x18\x1f\n" +
+	"\x17plan_job_retention_days\x10\x03(\x94\x9d\x02R\x10jobRetentionDays\x12#\n" +
 	"\rdebug_minutes\x18\x10 \x01(\x05R\fdebugMinutes\x12\"\n" +
 	"\rmax_own_hosts\x18\x11 \x01(\x05R\vmaxOwnHosts\x12\x1f\n" +
 	"\vopen_source\x18\x12 \x01(\bR\n" +
