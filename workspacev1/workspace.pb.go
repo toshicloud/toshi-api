@@ -3082,15 +3082,15 @@ type ServiceBackup struct {
 	// The number of its newest saved version; zero when it has none.
 	LatestVersion int64 `protobuf:"varint,2,opt,name=latest_version,json=latestVersion,proto3" json:"latest_version,omitempty"`
 	// When its newest version was saved; unset when it has none.
-	LatestVersionTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=latest_version_time,json=latestVersionTime,proto3" json:"latest_version_time,omitempty"`
+	LatestVersionAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=latest_version_at,json=latestVersionAt,proto3" json:"latest_version_at,omitempty"`
 	// Why its newest failed save or snapshot saved no version. Empty when
 	// none failed. A later version does not clear it: compare
-	// last_save_failure_time with latest_version_time.
+	// last_save_failed_at with latest_version_at.
 	LastSaveFailure string `protobuf:"bytes,4,opt,name=last_save_failure,json=lastSaveFailure,proto3" json:"last_save_failure,omitempty"`
 	// When that save or snapshot failed; unset when none failed.
-	LastSaveFailureTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_save_failure_time,json=lastSaveFailureTime,proto3" json:"last_save_failure_time,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	LastSaveFailedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_save_failed_at,json=lastSaveFailedAt,proto3" json:"last_save_failed_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ServiceBackup) Reset() {
@@ -3137,9 +3137,9 @@ func (x *ServiceBackup) GetLatestVersion() int64 {
 	return 0
 }
 
-func (x *ServiceBackup) GetLatestVersionTime() *timestamppb.Timestamp {
+func (x *ServiceBackup) GetLatestVersionAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LatestVersionTime
+		return x.LatestVersionAt
 	}
 	return nil
 }
@@ -3151,9 +3151,9 @@ func (x *ServiceBackup) GetLastSaveFailure() string {
 	return ""
 }
 
-func (x *ServiceBackup) GetLastSaveFailureTime() *timestamppb.Timestamp {
+func (x *ServiceBackup) GetLastSaveFailedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LastSaveFailureTime
+		return x.LastSaveFailedAt
 	}
 	return nil
 }
@@ -5528,11 +5528,11 @@ type TelemetrySample struct {
 	// Time the VM's threads were ready to run but waited for a host CPU, in
 	// milliseconds.
 	CpuWaitMs int64 `protobuf:"varint,5,opt,name=cpu_wait_ms,json=cpuWaitMs,proto3" json:"cpu_wait_ms,omitempty"`
-	// Memory in use inside the guest at its highest in the window, in MiB.
+	// Memory in use inside the guest at its highest in the window, in bytes.
 	// Unset when the guest does not report it.
-	GuestMemoryMib *int64 `protobuf:"varint,6,opt,name=guest_memory_mib,json=guestMemoryMib,proto3,oneof" json:"guest_memory_mib,omitempty"`
-	// Host memory the VM held (resident) at its highest in the window, in MiB.
-	HostMemoryMib int64 `protobuf:"varint,7,opt,name=host_memory_mib,json=hostMemoryMib,proto3" json:"host_memory_mib,omitempty"`
+	GuestMemoryBytes *int64 `protobuf:"varint,6,opt,name=guest_memory_bytes,json=guestMemoryBytes,proto3,oneof" json:"guest_memory_bytes,omitempty"`
+	// Host memory the VM held (resident) at its highest in the window, in bytes.
+	HostMemoryBytes int64 `protobuf:"varint,7,opt,name=host_memory_bytes,json=hostMemoryBytes,proto3" json:"host_memory_bytes,omitempty"`
 	// Bytes the VM read from and wrote to its disks.
 	DiskReadBytes int64 `protobuf:"varint,8,opt,name=disk_read_bytes,json=diskReadBytes,proto3" json:"disk_read_bytes,omitempty"`
 	// Bytes the VM wrote to its disks.
@@ -5614,16 +5614,16 @@ func (x *TelemetrySample) GetCpuWaitMs() int64 {
 	return 0
 }
 
-func (x *TelemetrySample) GetGuestMemoryMib() int64 {
-	if x != nil && x.GuestMemoryMib != nil {
-		return *x.GuestMemoryMib
+func (x *TelemetrySample) GetGuestMemoryBytes() int64 {
+	if x != nil && x.GuestMemoryBytes != nil {
+		return *x.GuestMemoryBytes
 	}
 	return 0
 }
 
-func (x *TelemetrySample) GetHostMemoryMib() int64 {
+func (x *TelemetrySample) GetHostMemoryBytes() int64 {
 	if x != nil {
-		return x.HostMemoryMib
+		return x.HostMemoryBytes
 	}
 	return 0
 }
@@ -13920,9 +13920,9 @@ type ServiceUpgrade struct {
 	// The window's length: the recipe's upgrade_window, 5 minutes unless set.
 	Window *durationpb.Duration `protobuf:"bytes,3,opt,name=window,proto3" json:"window,omitempty"`
 	// When the window started; unset until the revision's first run starts.
-	WindowStartTime *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=window_start_time,json=windowStartTime,proto3" json:"window_start_time,omitempty"`
+	WindowStartsAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=window_starts_at,json=windowStartsAt,proto3" json:"window_starts_at,omitempty"`
 	// When the window ends; unset until it starts.
-	WindowEndTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=window_end_time,json=windowEndTime,proto3" json:"window_end_time,omitempty"`
+	WindowEndsAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=window_ends_at,json=windowEndsAt,proto3" json:"window_ends_at,omitempty"`
 	// The state volume's version a rollback restores: the one saved when the
 	// deploy stopped the run before; 0 when none was saved.
 	VolumeVersion int64 `protobuf:"varint,6,opt,name=volume_version,json=volumeVersion,proto3" json:"volume_version,omitempty"`
@@ -13932,12 +13932,12 @@ type ServiceUpgrade struct {
 	RollbackReason string `protobuf:"bytes,7,opt,name=rollback_reason,json=rollbackReason,proto3" json:"rollback_reason,omitempty"`
 	// When it passed, was rolled back or ended; unset while it is saving,
 	// watched or rolling back.
-	FinishTime *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=finish_time,json=finishTime,proto3" json:"finish_time,omitempty"`
+	FinishedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
 	// When the deploy started the state volume's save; unset when the
 	// service has no state volume or the save was skipped.
-	VolumeSaveStartTime *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=volume_save_start_time,json=volumeSaveStartTime,proto3" json:"volume_save_start_time,omitempty"`
+	VolumeSaveStartedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=volume_save_started_at,json=volumeSaveStartedAt,proto3" json:"volume_save_started_at,omitempty"`
 	// When the save ended; unset while it is SAVING.
-	VolumeSaveFinishTime *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=volume_save_finish_time,json=volumeSaveFinishTime,proto3" json:"volume_save_finish_time,omitempty"`
+	VolumeSaveFinishedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=volume_save_finished_at,json=volumeSaveFinishedAt,proto3" json:"volume_save_finished_at,omitempty"`
 	// How the save ended: "saved as version N", "nothing to save; version N
 	// pinned", "nothing to save; the volume has no saved version", or "not
 	// saved: <why>; started without a saved version as the deploy allowed". Empty while it is SAVING, and when the save was
@@ -14001,16 +14001,16 @@ func (x *ServiceUpgrade) GetWindow() *durationpb.Duration {
 	return nil
 }
 
-func (x *ServiceUpgrade) GetWindowStartTime() *timestamppb.Timestamp {
+func (x *ServiceUpgrade) GetWindowStartsAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.WindowStartTime
+		return x.WindowStartsAt
 	}
 	return nil
 }
 
-func (x *ServiceUpgrade) GetWindowEndTime() *timestamppb.Timestamp {
+func (x *ServiceUpgrade) GetWindowEndsAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.WindowEndTime
+		return x.WindowEndsAt
 	}
 	return nil
 }
@@ -14029,23 +14029,23 @@ func (x *ServiceUpgrade) GetRollbackReason() string {
 	return ""
 }
 
-func (x *ServiceUpgrade) GetFinishTime() *timestamppb.Timestamp {
+func (x *ServiceUpgrade) GetFinishedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.FinishTime
+		return x.FinishedAt
 	}
 	return nil
 }
 
-func (x *ServiceUpgrade) GetVolumeSaveStartTime() *timestamppb.Timestamp {
+func (x *ServiceUpgrade) GetVolumeSaveStartedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.VolumeSaveStartTime
+		return x.VolumeSaveStartedAt
 	}
 	return nil
 }
 
-func (x *ServiceUpgrade) GetVolumeSaveFinishTime() *timestamppb.Timestamp {
+func (x *ServiceUpgrade) GetVolumeSaveFinishedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.VolumeSaveFinishTime
+		return x.VolumeSaveFinishedAt
 	}
 	return nil
 }
@@ -14944,13 +14944,13 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\btaken_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\atakenAt\x12\x14\n" +
 	"\x05bytes\x18\x02 \x01(\x03R\x05bytes\x12\x1a\n" +
 	"\brevision\x18\x03 \x01(\x03R\brevision\x12\x17\n" +
-	"\ahost_id\x18\x04 \x01(\tR\x06hostId\"\x9c\x02\n" +
+	"\ahost_id\x18\x04 \x01(\tR\x06hostId\"\x92\x02\n" +
 	"\rServiceBackup\x12\x1b\n" +
 	"\tvolume_id\x18\x01 \x01(\tR\bvolumeId\x12%\n" +
-	"\x0elatest_version\x18\x02 \x01(\x03R\rlatestVersion\x12J\n" +
-	"\x13latest_version_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x11latestVersionTime\x12*\n" +
-	"\x11last_save_failure\x18\x04 \x01(\tR\x0flastSaveFailure\x12O\n" +
-	"\x16last_save_failure_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x13lastSaveFailureTime\">\n" +
+	"\x0elatest_version\x18\x02 \x01(\x03R\rlatestVersion\x12F\n" +
+	"\x11latest_version_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0flatestVersionAt\x12*\n" +
+	"\x11last_save_failure\x18\x04 \x01(\tR\x0flastSaveFailure\x12I\n" +
+	"\x13last_save_failed_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x10lastSaveFailedAt\">\n" +
 	"\fProvidedName\x12\x1a\n" +
 	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\x12\n" +
 	"\x04host\x18\x02 \x01(\tR\x04host\"\xe8\x02\n" +
@@ -15110,15 +15110,15 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x06sample\x18\x01 \x01(\v2#.toshi.workspace.v1.TelemetrySampleH\x00R\x06sample\x12=\n" +
 	"\tkeepalive\x18\x02 \x01(\v2\x1d.toshi.workspace.v1.KeepaliveH\x00R\tkeepalive\x124\n" +
 	"\x03end\x18\x03 \x01(\v2 .toshi.workspace.v1.TelemetryEndH\x00R\x03endB\t\n" +
-	"\amessage\"\x87\x04\n" +
+	"\amessage\"\x91\x04\n" +
 	"\x0fTelemetrySample\x12\x16\n" +
 	"\x06cursor\x18\x01 \x01(\tR\x06cursor\x12*\n" +
 	"\x02at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02at\x12\x1b\n" +
 	"\twindow_ms\x18\x03 \x01(\x05R\bwindowMs\x12\x15\n" +
 	"\x06cpu_ms\x18\x04 \x01(\x03R\x05cpuMs\x12\x1e\n" +
-	"\vcpu_wait_ms\x18\x05 \x01(\x03R\tcpuWaitMs\x12-\n" +
-	"\x10guest_memory_mib\x18\x06 \x01(\x03H\x00R\x0eguestMemoryMib\x88\x01\x01\x12&\n" +
-	"\x0fhost_memory_mib\x18\a \x01(\x03R\rhostMemoryMib\x12&\n" +
+	"\vcpu_wait_ms\x18\x05 \x01(\x03R\tcpuWaitMs\x121\n" +
+	"\x12guest_memory_bytes\x18\x06 \x01(\x03H\x00R\x10guestMemoryBytes\x88\x01\x01\x12*\n" +
+	"\x11host_memory_bytes\x18\a \x01(\x03R\x0fhostMemoryBytes\x12&\n" +
 	"\x0fdisk_read_bytes\x18\b \x01(\x03R\rdiskReadBytes\x12(\n" +
 	"\x10disk_write_bytes\x18\t \x01(\x03R\x0ediskWriteBytes\x12%\n" +
 	"\fnet_rx_bytes\x18\n" +
@@ -15126,8 +15126,8 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"netRxBytes\x88\x01\x01\x12%\n" +
 	"\fnet_tx_bytes\x18\v \x01(\x03H\x02R\n" +
 	"netTxBytes\x88\x01\x01\x12 \n" +
-	"\toom_kills\x18\f \x01(\x05H\x03R\boomKills\x88\x01\x01B\x13\n" +
-	"\x11_guest_memory_mibB\x0f\n" +
+	"\toom_kills\x18\f \x01(\x05H\x03R\boomKills\x88\x01\x01B\x15\n" +
+	"\x13_guest_memory_bytesB\x0f\n" +
 	"\r_net_rx_bytesB\x0f\n" +
 	"\r_net_tx_bytesB\f\n" +
 	"\n" +
@@ -15758,20 +15758,20 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	" \x01(\v2-.toshi.workspace.v1.ServiceRevisionImageCheckR\n" +
 	"imageCheck\x12<\n" +
 	"\aupgrade\x18\v \x01(\v2\".toshi.workspace.v1.ServiceUpgradeR\aupgrade\x12-\n" +
-	"\x12compatibility_date\x18\f \x01(\tR\x11compatibilityDate\"\xc6\x05\n" +
+	"\x12compatibility_date\x18\f \x01(\tR\x11compatibilityDate\"\xc2\x05\n" +
 	"\x0eServiceUpgrade\x12=\n" +
 	"\x05state\x18\x01 \x01(\x0e2'.toshi.workspace.v1.ServiceUpgradeStateR\x05state\x12#\n" +
 	"\rfrom_revision\x18\x02 \x01(\x03R\ffromRevision\x121\n" +
-	"\x06window\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\x06window\x12F\n" +
-	"\x11window_start_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0fwindowStartTime\x12B\n" +
-	"\x0fwindow_end_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\rwindowEndTime\x12%\n" +
+	"\x06window\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\x06window\x12D\n" +
+	"\x10window_starts_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x0ewindowStartsAt\x12@\n" +
+	"\x0ewindow_ends_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\fwindowEndsAt\x12%\n" +
 	"\x0evolume_version\x18\x06 \x01(\x03R\rvolumeVersion\x12'\n" +
 	"\x0frollback_reason\x18\a \x01(\tR\x0erollbackReason\x12;\n" +
-	"\vfinish_time\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"finishTime\x12O\n" +
-	"\x16volume_save_start_time\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x13volumeSaveStartTime\x12Q\n" +
-	"\x17volume_save_finish_time\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x14volumeSaveFinishTime\x12.\n" +
+	"\vfinished_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"finishedAt\x12O\n" +
+	"\x16volume_save_started_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x13volumeSaveStartedAt\x12Q\n" +
+	"\x17volume_save_finished_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x14volumeSaveFinishedAt\x12.\n" +
 	"\x13volume_save_message\x18\v \x01(\tR\x11volumeSaveMessage\x120\n" +
 	"\x14allow_unsaved_volume\x18\f \x01(\bR\x12allowUnsavedVolume\"\xd3\x01\n" +
 	"\x19ServiceRevisionImageCheck\x12I\n" +
@@ -16281,8 +16281,8 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	180, // 71: toshi.workspace.v1.ServiceStatus.held_at:type_name -> google.protobuf.Timestamp
 	31,  // 72: toshi.workspace.v1.ServiceStatus.held_snapshot:type_name -> toshi.workspace.v1.ServiceHeldSnapshot
 	180, // 73: toshi.workspace.v1.ServiceHeldSnapshot.taken_at:type_name -> google.protobuf.Timestamp
-	180, // 74: toshi.workspace.v1.ServiceBackup.latest_version_time:type_name -> google.protobuf.Timestamp
-	180, // 75: toshi.workspace.v1.ServiceBackup.last_save_failure_time:type_name -> google.protobuf.Timestamp
+	180, // 74: toshi.workspace.v1.ServiceBackup.latest_version_at:type_name -> google.protobuf.Timestamp
+	180, // 75: toshi.workspace.v1.ServiceBackup.last_save_failed_at:type_name -> google.protobuf.Timestamp
 	51,  // 76: toshi.workspace.v1.JobSpec.command:type_name -> toshi.workspace.v1.Command
 	35,  // 77: toshi.workspace.v1.JobSpec.bindings:type_name -> toshi.workspace.v1.Binding
 	36,  // 78: toshi.workspace.v1.Binding.service:type_name -> toshi.workspace.v1.ServiceEndpoint
@@ -16421,11 +16421,11 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	167, // 211: toshi.workspace.v1.ServiceRevision.upgrade:type_name -> toshi.workspace.v1.ServiceUpgrade
 	16,  // 212: toshi.workspace.v1.ServiceUpgrade.state:type_name -> toshi.workspace.v1.ServiceUpgradeState
 	183, // 213: toshi.workspace.v1.ServiceUpgrade.window:type_name -> google.protobuf.Duration
-	180, // 214: toshi.workspace.v1.ServiceUpgrade.window_start_time:type_name -> google.protobuf.Timestamp
-	180, // 215: toshi.workspace.v1.ServiceUpgrade.window_end_time:type_name -> google.protobuf.Timestamp
-	180, // 216: toshi.workspace.v1.ServiceUpgrade.finish_time:type_name -> google.protobuf.Timestamp
-	180, // 217: toshi.workspace.v1.ServiceUpgrade.volume_save_start_time:type_name -> google.protobuf.Timestamp
-	180, // 218: toshi.workspace.v1.ServiceUpgrade.volume_save_finish_time:type_name -> google.protobuf.Timestamp
+	180, // 214: toshi.workspace.v1.ServiceUpgrade.window_starts_at:type_name -> google.protobuf.Timestamp
+	180, // 215: toshi.workspace.v1.ServiceUpgrade.window_ends_at:type_name -> google.protobuf.Timestamp
+	180, // 216: toshi.workspace.v1.ServiceUpgrade.finished_at:type_name -> google.protobuf.Timestamp
+	180, // 217: toshi.workspace.v1.ServiceUpgrade.volume_save_started_at:type_name -> google.protobuf.Timestamp
+	180, // 218: toshi.workspace.v1.ServiceUpgrade.volume_save_finished_at:type_name -> google.protobuf.Timestamp
 	17,  // 219: toshi.workspace.v1.ServiceRevisionImageCheck.outcome:type_name -> toshi.workspace.v1.ServiceRevisionImageOutcome
 	180, // 220: toshi.workspace.v1.ServiceRevisionImageCheck.checked_at:type_name -> google.protobuf.Timestamp
 	27,  // 221: toshi.workspace.v1.RollbackServiceResponse.service:type_name -> toshi.workspace.v1.Service

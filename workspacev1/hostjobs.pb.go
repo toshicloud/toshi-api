@@ -46,7 +46,7 @@ const (
 	// The job is being stopped: its host destroys the VM after a grace period.
 	HostJobState_HOST_JOB_STATE_STOPPING HostJobState = 8
 	// GitHub concluded the job failed and its host keeps the VM for a debug
-	// session until debug_until. It counts as running.
+	// session until debug_expires_at. It counts as running.
 	HostJobState_HOST_JOB_STATE_DEBUGGING HostJobState = 9
 )
 
@@ -1106,7 +1106,7 @@ type HostJob struct {
 	HoldReason string `protobuf:"bytes,20,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
 	// When the job's hold_reason is start_rate: the earliest time every start
 	// window of the workspace has room again. Unset otherwise.
-	NextStartAt *timestamppb.Timestamp `protobuf:"bytes,56,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
+	NextAt *timestamppb.Timestamp `protobuf:"bytes,56,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
 	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.
 	OwnHost bool `protobuf:"varint,21,opt,name=own_host,json=ownHost,proto3" json:"own_host,omitempty"`
@@ -1122,7 +1122,7 @@ type HostJob struct {
 	// that never had one.
 	DebugStartedAt *timestamppb.Timestamp `protobuf:"bytes,25,opt,name=debug_started_at,json=debugStartedAt,proto3" json:"debug_started_at,omitempty"`
 	// When the debug session ends.
-	DebugUntil *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=debug_until,json=debugUntil,proto3" json:"debug_until,omitempty"`
+	DebugExpiresAt *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=debug_expires_at,json=debugExpiresAt,proto3" json:"debug_expires_at,omitempty"`
 	// What the job's resource samples add up to; unset when it has none.
 	Telemetry *HostJobTelemetrySummary `protobuf:"bytes,27,opt,name=telemetry,proto3" json:"telemetry,omitempty"`
 	// Why the latest runner started for the job exited without running it,
@@ -1448,9 +1448,9 @@ func (x *HostJob) GetHoldReason() string {
 	return ""
 }
 
-func (x *HostJob) GetNextStartAt() *timestamppb.Timestamp {
+func (x *HostJob) GetNextAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextStartAt
+		return x.NextAt
 	}
 	return nil
 }
@@ -1490,9 +1490,9 @@ func (x *HostJob) GetDebugStartedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *HostJob) GetDebugUntil() *timestamppb.Timestamp {
+func (x *HostJob) GetDebugExpiresAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.DebugUntil
+		return x.DebugExpiresAt
 	}
 	return nil
 }
@@ -1871,9 +1871,9 @@ type HostJobTelemetrySummary struct {
 	// How long the VM's threads waited for a host CPU, as a percentage of the
 	// CPU time they used plus that wait. 0 when they never waited.
 	CpuThrottledPct float64 `protobuf:"fixed64,2,opt,name=cpu_throttled_pct,json=cpuThrottledPct,proto3" json:"cpu_throttled_pct,omitempty"`
-	// The most memory in use inside the guest, in MiB; the host's resident
+	// The most memory in use inside the guest, in bytes; the host's resident
 	// memory of the VM when the guest does not report it.
-	PeakMemoryMib int64 `protobuf:"varint,3,opt,name=peak_memory_mib,json=peakMemoryMib,proto3" json:"peak_memory_mib,omitempty"`
+	PeakMemoryBytes int64 `protobuf:"varint,3,opt,name=peak_memory_bytes,json=peakMemoryBytes,proto3" json:"peak_memory_bytes,omitempty"`
 	// CPU time used as a percentage of the VM's vCPUs over the sampled time.
 	CpuUtilisationPct float64 `protobuf:"fixed64,4,opt,name=cpu_utilisation_pct,json=cpuUtilisationPct,proto3" json:"cpu_utilisation_pct,omitempty"`
 	// How many samples the job has.
@@ -1946,9 +1946,9 @@ func (x *HostJobTelemetrySummary) GetCpuThrottledPct() float64 {
 	return 0
 }
 
-func (x *HostJobTelemetrySummary) GetPeakMemoryMib() int64 {
+func (x *HostJobTelemetrySummary) GetPeakMemoryBytes() int64 {
 	if x != nil {
-		return x.PeakMemoryMib
+		return x.PeakMemoryBytes
 	}
 	return 0
 }
@@ -2124,11 +2124,11 @@ type HostJobTelemetrySample struct {
 	// The time the VM's threads waited for a host CPU in the window, in
 	// milliseconds.
 	CpuWaitMs int64 `protobuf:"varint,4,opt,name=cpu_wait_ms,json=cpuWaitMs,proto3" json:"cpu_wait_ms,omitempty"`
-	// The most memory in use inside the guest in the window, in MiB. Unset
+	// The most memory in use inside the guest in the window, in bytes. Unset
 	// when the guest does not report it.
-	GuestMemoryMib *int64 `protobuf:"varint,5,opt,name=guest_memory_mib,json=guestMemoryMib,proto3,oneof" json:"guest_memory_mib,omitempty"`
-	// The host resident memory of the VM at its highest in the window, in MiB.
-	HostMemoryMib int64 `protobuf:"varint,6,opt,name=host_memory_mib,json=hostMemoryMib,proto3" json:"host_memory_mib,omitempty"`
+	GuestMemoryBytes *int64 `protobuf:"varint,5,opt,name=guest_memory_bytes,json=guestMemoryBytes,proto3,oneof" json:"guest_memory_bytes,omitempty"`
+	// The host resident memory of the VM at its highest in the window, in bytes.
+	HostMemoryBytes int64 `protobuf:"varint,6,opt,name=host_memory_bytes,json=hostMemoryBytes,proto3" json:"host_memory_bytes,omitempty"`
 	// The bytes the VM read from its disks in the window.
 	DiskReadBytes int64 `protobuf:"varint,7,opt,name=disk_read_bytes,json=diskReadBytes,proto3" json:"disk_read_bytes,omitempty"`
 	// The bytes the VM wrote to its disks in the window.
@@ -2204,16 +2204,16 @@ func (x *HostJobTelemetrySample) GetCpuWaitMs() int64 {
 	return 0
 }
 
-func (x *HostJobTelemetrySample) GetGuestMemoryMib() int64 {
-	if x != nil && x.GuestMemoryMib != nil {
-		return *x.GuestMemoryMib
+func (x *HostJobTelemetrySample) GetGuestMemoryBytes() int64 {
+	if x != nil && x.GuestMemoryBytes != nil {
+		return *x.GuestMemoryBytes
 	}
 	return 0
 }
 
-func (x *HostJobTelemetrySample) GetHostMemoryMib() int64 {
+func (x *HostJobTelemetrySample) GetHostMemoryBytes() int64 {
 	if x != nil {
-		return x.HostMemoryMib
+		return x.HostMemoryBytes
 	}
 	return 0
 }
@@ -2430,7 +2430,7 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\x17StopHostJobDebugRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
 	"\x18StopHostJobDebugResponse\x126\n" +
-	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xe6\x12\n" +
+	"\bhost_job\x18\x01 \x01(\v2\x1b.toshi.workspace.v1.HostJobR\ahostJob\"\xe4\x12\n" +
 	"\aHostJob\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1e\n" +
 	"\n" +
@@ -2462,16 +2462,15 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"stopReason\x12F\n" +
 	"\x11stop_requested_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\x0fstopRequestedAt\x12\x1f\n" +
 	"\vhold_reason\x18\x14 \x01(\tR\n" +
-	"holdReason\x12>\n" +
-	"\rnext_start_at\x188 \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAt\x12\x19\n" +
+	"holdReason\x123\n" +
+	"\anext_at\x188 \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAt\x12\x19\n" +
 	"\bown_host\x18\x15 \x01(\bR\aownHost\x126\n" +
 	"\x17debug_requested_minutes\x18\x16 \x01(\x05R\x15debugRequestedMinutes\x12#\n" +
 	"\rdebug_minutes\x18\x17 \x01(\x05R\fdebugMinutes\x12\x1d\n" +
 	"\n" +
 	"debug_note\x18\x18 \x01(\tR\tdebugNote\x12D\n" +
-	"\x10debug_started_at\x18\x19 \x01(\v2\x1a.google.protobuf.TimestampR\x0edebugStartedAt\x12;\n" +
-	"\vdebug_until\x18\x1a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"debugUntil\x12I\n" +
+	"\x10debug_started_at\x18\x19 \x01(\v2\x1a.google.protobuf.TimestampR\x0edebugStartedAt\x12D\n" +
+	"\x10debug_expires_at\x18\x1a \x01(\v2\x1a.google.protobuf.TimestampR\x0edebugExpiresAt\x12I\n" +
 	"\ttelemetry\x18\x1b \x01(\v2+.toshi.workspace.v1.HostJobTelemetrySummaryR\ttelemetry\x12,\n" +
 	"\x12runner_exit_reason\x18\x1c \x01(\tR\x10runnerExitReason\x12\x1a\n" +
 	"\boverflow\x18\x1d \x01(\bR\boverflow\x12L\n" +
@@ -2528,12 +2527,12 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"conclusion\x18\n" +
 	" \x01(\tR\n" +
 	"conclusion\x12\x10\n" +
-	"\x03end\x18\v \x01(\tR\x03end\"\xf7\x02\n" +
+	"\x03end\x18\v \x01(\tR\x03end\"\xfb\x02\n" +
 	"\x17HostJobTelemetrySummary\x12\x1d\n" +
 	"\n" +
 	"oom_killed\x18\x01 \x01(\bR\toomKilled\x12*\n" +
-	"\x11cpu_throttled_pct\x18\x02 \x01(\x01R\x0fcpuThrottledPct\x12&\n" +
-	"\x0fpeak_memory_mib\x18\x03 \x01(\x03R\rpeakMemoryMib\x12.\n" +
+	"\x11cpu_throttled_pct\x18\x02 \x01(\x01R\x0fcpuThrottledPct\x12*\n" +
+	"\x11peak_memory_bytes\x18\x03 \x01(\x03R\x0fpeakMemoryBytes\x12.\n" +
 	"\x13cpu_utilisation_pct\x18\x04 \x01(\x01R\x11cpuUtilisationPct\x12\x18\n" +
 	"\asamples\x18\x05 \x01(\x05R\asamples\x12(\n" +
 	"\x10memory_limit_mib\x18\x06 \x01(\x03R\x0ememoryLimitMib\x12\x15\n" +
@@ -2552,14 +2551,14 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"skipReason\x12)\n" +
 	"\x10generation_bytes\x18\x05 \x01(\x03R\x0fgenerationBytes\x12\"\n" +
 	"\rwrite_back_ms\x18\x06 \x01(\x03R\vwriteBackMs\x12\x12\n" +
-	"\x04line\x18\a \x01(\tR\x04line\"\xf6\x03\n" +
+	"\x04line\x18\a \x01(\tR\x04line\"\x80\x04\n" +
 	"\x16HostJobTelemetrySample\x12*\n" +
 	"\x02at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x02at\x12\x1b\n" +
 	"\twindow_ms\x18\x02 \x01(\x05R\bwindowMs\x12\x15\n" +
 	"\x06cpu_ms\x18\x03 \x01(\x03R\x05cpuMs\x12\x1e\n" +
-	"\vcpu_wait_ms\x18\x04 \x01(\x03R\tcpuWaitMs\x12-\n" +
-	"\x10guest_memory_mib\x18\x05 \x01(\x03H\x00R\x0eguestMemoryMib\x88\x01\x01\x12&\n" +
-	"\x0fhost_memory_mib\x18\x06 \x01(\x03R\rhostMemoryMib\x12&\n" +
+	"\vcpu_wait_ms\x18\x04 \x01(\x03R\tcpuWaitMs\x121\n" +
+	"\x12guest_memory_bytes\x18\x05 \x01(\x03H\x00R\x10guestMemoryBytes\x88\x01\x01\x12*\n" +
+	"\x11host_memory_bytes\x18\x06 \x01(\x03R\x0fhostMemoryBytes\x12&\n" +
 	"\x0fdisk_read_bytes\x18\a \x01(\x03R\rdiskReadBytes\x12(\n" +
 	"\x10disk_write_bytes\x18\b \x01(\x03R\x0ediskWriteBytes\x12%\n" +
 	"\fnet_rx_bytes\x18\t \x01(\x03H\x01R\n" +
@@ -2567,8 +2566,8 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"\fnet_tx_bytes\x18\n" +
 	" \x01(\x03H\x02R\n" +
 	"netTxBytes\x88\x01\x01\x12 \n" +
-	"\toom_kills\x18\v \x01(\x05H\x03R\boomKills\x88\x01\x01B\x13\n" +
-	"\x11_guest_memory_mibB\x0f\n" +
+	"\toom_kills\x18\v \x01(\x05H\x03R\boomKills\x88\x01\x01B\x15\n" +
+	"\x13_guest_memory_bytesB\x0f\n" +
 	"\r_net_rx_bytesB\x0f\n" +
 	"\r_net_tx_bytesB\f\n" +
 	"\n" +
@@ -2669,9 +2668,9 @@ var file_toshi_workspace_v1_hostjobs_proto_depIdxs = []int32{
 	22, // 13: toshi.workspace.v1.HostJob.started_at:type_name -> google.protobuf.Timestamp
 	22, // 14: toshi.workspace.v1.HostJob.finished_at:type_name -> google.protobuf.Timestamp
 	22, // 15: toshi.workspace.v1.HostJob.stop_requested_at:type_name -> google.protobuf.Timestamp
-	22, // 16: toshi.workspace.v1.HostJob.next_start_at:type_name -> google.protobuf.Timestamp
+	22, // 16: toshi.workspace.v1.HostJob.next_at:type_name -> google.protobuf.Timestamp
 	22, // 17: toshi.workspace.v1.HostJob.debug_started_at:type_name -> google.protobuf.Timestamp
-	22, // 18: toshi.workspace.v1.HostJob.debug_until:type_name -> google.protobuf.Timestamp
+	22, // 18: toshi.workspace.v1.HostJob.debug_expires_at:type_name -> google.protobuf.Timestamp
 	18, // 19: toshi.workspace.v1.HostJob.telemetry:type_name -> toshi.workspace.v1.HostJobTelemetrySummary
 	22, // 20: toshi.workspace.v1.HostJob.runner_request_since:type_name -> google.protobuf.Timestamp
 	19, // 21: toshi.workspace.v1.HostJob.cache:type_name -> toshi.workspace.v1.HostJobCache

@@ -517,13 +517,13 @@ message ServiceBackup {
   // The number of its newest saved version; zero when it has none.
   int64 latest_version = 2;
   // When its newest version was saved; unset when it has none.
-  google.protobuf.Timestamp latest_version_time = 3;
+  google.protobuf.Timestamp latest_version_at = 3;
   // Why its newest failed save or snapshot saved no version. Empty when
   // none failed. A later version does not clear it: compare
-  // last_save_failure_time with latest_version_time.
+  // last_save_failed_at with latest_version_at.
   string last_save_failure = 4;
   // When that save or snapshot failed; unset when none failed.
-  google.protobuf.Timestamp last_save_failure_time = 5;
+  google.protobuf.Timestamp last_save_failed_at = 5;
 }
 
 // ProvidedName is the name one http endpoint of a service is reached at.
@@ -1159,11 +1159,11 @@ message TelemetrySample {
   // Time the VM's threads were ready to run but waited for a host CPU, in
   // milliseconds.
   int64 cpu_wait_ms = 5;
-  // Memory in use inside the guest at its highest in the window, in MiB.
+  // Memory in use inside the guest at its highest in the window, in bytes.
   // Unset when the guest does not report it.
-  optional int64 guest_memory_mib = 6;
-  // Host memory the VM held (resident) at its highest in the window, in MiB.
-  int64 host_memory_mib = 7;
+  optional int64 guest_memory_bytes = 6;
+  // Host memory the VM held (resident) at its highest in the window, in bytes.
+  int64 host_memory_bytes = 7;
   // Bytes the VM read from and wrote to its disks.
   int64 disk_read_bytes = 8;
   // Bytes the VM wrote to its disks.
@@ -2789,9 +2789,9 @@ message ServiceUpgrade {
   // The window's length: the recipe's upgrade_window, 5 minutes unless set.
   google.protobuf.Duration window = 3;
   // When the window started; unset until the revision's first run starts.
-  google.protobuf.Timestamp window_start_time = 4;
+  google.protobuf.Timestamp window_starts_at = 4;
   // When the window ends; unset until it starts.
-  google.protobuf.Timestamp window_end_time = 5;
+  google.protobuf.Timestamp window_ends_at = 5;
   // The state volume's version a rollback restores: the one saved when the
   // deploy stopped the run before; 0 when none was saved.
   int64 volume_version = 6;
@@ -2801,12 +2801,12 @@ message ServiceUpgrade {
   string rollback_reason = 7;
   // When it passed, was rolled back or ended; unset while it is saving,
   // watched or rolling back.
-  google.protobuf.Timestamp finish_time = 8;
+  google.protobuf.Timestamp finished_at = 8;
   // When the deploy started the state volume's save; unset when the
   // service has no state volume or the save was skipped.
-  google.protobuf.Timestamp volume_save_start_time = 9;
+  google.protobuf.Timestamp volume_save_started_at = 9;
   // When the save ended; unset while it is SAVING.
-  google.protobuf.Timestamp volume_save_finish_time = 10;
+  google.protobuf.Timestamp volume_save_finished_at = 10;
   // How the save ended: "saved as version N", "nothing to save; version N
   // pinned", "nothing to save; the volume has no saved version", or "not
   // saved: <why>; started without a saved version as the deploy allowed". Empty while it is SAVING, and when the save was

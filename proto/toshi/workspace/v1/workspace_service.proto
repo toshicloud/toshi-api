@@ -543,9 +543,9 @@ message GetQueueTimesResponse {
   // Nearest-rank percentiles and maximum of started_at - queued_at, in whole
   // milliseconds. All 0 when jobs is 0.
   int64 p50_ms = 2;
-  // The nearest-rank 90th percentile of the start delays, in whole
+  // The nearest-rank 95th percentile of the start delays, in whole
   // milliseconds; 0 when jobs is 0.
-  int64 p90_ms = 3;
+  int64 p95_ms = 3;
   // The longest start delay, in whole milliseconds; 0 when jobs is 0.
   int64 max_ms = 4;
   // Share of those jobs assigned to a warm instance, from 0 to 1.
@@ -573,9 +573,9 @@ message GetStartWindowsResponse {
   // The minute, hour and day windows, in that order, always all three.
   repeated StartWindow windows = 2;
   // The earliest time every window at its ceiling has room again, which is
-  // the next_start_at a refused CreateSandbox names; unset when no window is
+  // the next_at a refused CreateSandbox names; unset when no window is
   // at its ceiling.
-  google.protobuf.Timestamp next_start_at = 3;
+  google.protobuf.Timestamp next_at = 3;
 }
 
 // GetWorkspaceLimitsRequest reads the caller's own workspace.
@@ -588,7 +588,7 @@ message GetWorkspaceLimitsResponse {
   // The same minute, hour and day windows, in order, as GetStartWindows.
   repeated StartWindow windows = 2;
   // When every full start window has room; unset when none is full.
-  google.protobuf.Timestamp next_start_at = 3;
+  google.protobuf.Timestamp next_at = 3;
   // The shared-host concurrent job limit.
   WorkspaceLimitRow running_at_once = 4;
   // The shared-host vCPU limit.
@@ -767,7 +767,7 @@ message StartWindow {
   google.protobuf.Timestamp resets_at = 8;
   // When the window has room for one more start; unset while used is below
   // ceiling.
-  google.protobuf.Timestamp next_start_at = 9;
+  google.protobuf.Timestamp next_at = 9;
 }
 
 // GetWorkflowUsageRequest selects the jobs to count. A job is in the window
@@ -971,7 +971,7 @@ message Workspace {
   // When a closed workspace's read-only period ends: closed_at plus 30 days.
   // Set while that period lasts, for a caller the closed workspace stays
   // open to; unset otherwise.
-  google.protobuf.Timestamp read_only_until = 44;
+  google.protobuf.Timestamp read_only_expires_at = 44;
 
   reserved 8, 9, 10, 14, 15, 21, 23, 32;
   reserved "own_hosts_only", "spend_cap_cents", "max_jobs_per_hour", "allow_overflow", "allow_cache_warm", "history_days", "cancel_run_on_vm_death", "member_join";
@@ -1246,7 +1246,7 @@ message WorkspaceBilling {
     google.protobuf.Timestamp since = 25;
     // For reason start_rate: the earliest time every start window of the
     // workspace has room again. Unset otherwise.
-    google.protobuf.Timestamp next_start_at = 26;
+    google.protobuf.Timestamp next_at = 26;
   }
 }
 
@@ -1549,9 +1549,9 @@ message HoldTimes {
   // The nearest-rank 50th percentile of the held times, in whole
   // milliseconds; 0 when jobs is 0.
   int64 p50_ms = 3;
-  // The nearest-rank 90th percentile of the held times, in whole
+  // The nearest-rank 95th percentile of the held times, in whole
   // milliseconds; 0 when jobs is 0.
-  int64 p90_ms = 4;
+  int64 p95_ms = 4;
   // The longest held time, in whole milliseconds; 0 when jobs is 0.
   int64 max_ms = 5;
   // The jobs held for this reason now, whenever they were queued. 0 when

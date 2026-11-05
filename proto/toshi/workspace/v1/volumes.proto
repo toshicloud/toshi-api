@@ -180,19 +180,19 @@ message Volume {
   VolumeMode mode = 5;
   // The most it holds, in bytes.
   int64 size_cap_bytes = 6;
-  // create_time is when the volume was created.
-  google.protobuf.Timestamp create_time = 7;
+  // When the volume was created.
+  google.protobuf.Timestamp created_at = 7;
   // The service or sandbox it is attached to; empty when it is attached to
   // none.
   string attached_workload_id = 8;
   // The number of its newest saved version; zero when it has none.
   int64 latest_version = 9;
   // When its newest version was saved; unset when it has none.
-  google.protobuf.Timestamp latest_version_time = 10;
+  google.protobuf.Timestamp latest_version_at = 10;
   // When it was lost: it had no saved version when the host that held its
   // only copy was removed, and no run mounts it again. Unset while it is
   // not lost.
-  google.protobuf.Timestamp lost_time = 11;
+  google.protobuf.Timestamp lost_at = 11;
   // What its newest version's data can be trusted for; unspecified when it
   // has none.
   VolumeConsistency latest_version_consistency = 12;
@@ -204,10 +204,10 @@ message Volume {
   // Why its newest failed save or snapshot saved no version: a pre_save
   // hook that failed, or a copy its host could not take or upload. Empty
   // when none failed. A later version does not clear it: compare
-  // last_save_failure_time with latest_version_time.
+  // last_save_failed_at with latest_version_at.
   string last_save_failure = 14;
   // When that save or snapshot failed; unset when none failed.
-  google.protobuf.Timestamp last_save_failure_time = 15;
+  google.protobuf.Timestamp last_save_failed_at = 15;
   // How hosts keep a state volume, fixed by the first run that mounts it:
   // a disk on the VM tiers, a directory on the container tier. Later runs
   // go only to hosts that keep it the same way. Unspecified until a run
@@ -263,8 +263,8 @@ enum VolumeFormat {
 message VolumeVersion {
   // One higher than the volume's previous version; the first is 1.
   int64 number = 1;
-  // create_time is when the version was saved.
-  google.protobuf.Timestamp create_time = 2;
+  // When the version was saved.
+  google.protobuf.Timestamp created_at = 2;
   // The length of the saved copy, in bytes: the disk image, or for a
   // volume kept as a directory the compressed tar of it.
   int64 size_bytes = 3;

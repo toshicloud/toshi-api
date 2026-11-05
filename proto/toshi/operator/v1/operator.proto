@@ -555,7 +555,7 @@ enum JobState {
   // The job is being stopped: its host destroys the VM after a grace period.
   JOB_STATE_STOPPING = 8;
   // GitHub concluded the job failed and its host keeps the VM for a debug
-  // session until debug_until. It counts as running.
+  // session until debug_expires_at. It counts as running.
   JOB_STATE_DEBUGGING = 9;
 }
 
@@ -663,7 +663,7 @@ message Job {
   string hold_reason = 21;
   // When the job's hold_reason is start_rate: the earliest time every start
   // window of the workspace has room again. Unset otherwise.
-  google.protobuf.Timestamp next_start_at = 57;
+  google.protobuf.Timestamp next_at = 57;
   // Whether the job was placed on a host its workspace owns. Such a job sends no
   // meter event.
   bool own_host = 22;
@@ -679,7 +679,7 @@ message Job {
   // that never had one.
   google.protobuf.Timestamp debug_started_at = 26;
   // When the debug session ends; unset for a job that never had one.
-  google.protobuf.Timestamp debug_until = 27;
+  google.protobuf.Timestamp debug_expires_at = 27;
   // What the job's resource samples add up to; unset when it has none.
   JobTelemetrySummary telemetry = 28;
   // Why the latest runner started for the job exited without running it,
@@ -865,9 +865,9 @@ message JobTelemetrySummary {
   // How long the VM's threads waited for a host CPU, as a percentage of the
   // CPU time they used plus that wait. 0 when they never waited.
   double cpu_throttled_pct = 2;
-  // The most memory in use inside the guest, in MiB; the host's resident
+  // The most memory in use inside the guest, in bytes; the host's resident
   // memory of the VM when the guest does not report it.
-  int64 peak_memory_mib = 3;
+  int64 peak_memory_bytes = 3;
   // CPU time used as a percentage of the VM's vCPUs over the sampled time.
   double cpu_utilisation_pct = 4;
   // How many samples the job has.
@@ -929,11 +929,11 @@ message JobTelemetrySizeRow {
   int32 jobs = 5;
   // The jobs without samples.
   int32 jobs_unsampled = 6;
-  // Each job's peak memory: guest memory, or host memory when the guest
-  // gave none.
-  TelemetryPercentiles peak_memory_mib = 7;
-  // Each job's peak host memory: what its VM held on the host.
-  TelemetryPercentiles peak_host_memory_mib = 8;
+  // Each job's peak memory in bytes: guest memory, or host memory when the
+  // guest gave none.
+  TelemetryPercentiles peak_memory_bytes = 7;
+  // Each job's peak host memory in bytes: what its VM held on the host.
+  TelemetryPercentiles peak_host_memory_bytes = 8;
   // Each job's peak memory as a percentage of its memory limit (its host's
   // limit on a container tier host, else the size's memory), over the jobs
   // whose limit is known.
@@ -1966,8 +1966,11 @@ message Check {
   CheckState state = 2;
   // What was found, in words.
   string detail = 3;
-  // How long it took.
-  google.protobuf.Duration duration = 4;
+  // How long the check took, in milliseconds.
+  int64 duration_ms = 5;
+
+  reserved 4;
+  reserved "duration";
 }
 
 // RunChecksRequest names the group to run.
@@ -2093,8 +2096,8 @@ message GetQueueTimesResponse {
   // Nearest-rank percentiles and maximum of started_at - queued_at, in whole
   // milliseconds. All 0 when jobs is 0.
   int64 p50_ms = 2;
-  // The 90th percentile wait, in whole milliseconds.
-  int64 p90_ms = 3;
+  // The 95th percentile wait, in whole milliseconds.
+  int64 p95_ms = 3;
   // The longest wait, in whole milliseconds.
   int64 max_ms = 4;
   // Share of those jobs assigned to a warm instance, from 0 to 1.
@@ -2118,8 +2121,8 @@ message HoldTimes {
   int64 jobs = 2;
   // The median held time, in milliseconds.
   int64 p50_ms = 3;
-  // The 90th percentile held time, in milliseconds.
-  int64 p90_ms = 4;
+  // The 95th percentile held time, in milliseconds.
+  int64 p95_ms = 4;
   // The longest held time, in milliseconds.
   int64 max_ms = 5;
   // The jobs held for this reason now, whenever they were queued. 0 when
@@ -2586,7 +2589,7 @@ message WorkspaceBilling {
     google.protobuf.Timestamp since = 3;
     // For reason start_rate: the earliest time every start window of the
     // workspace has room again. Unset otherwise.
-    google.protobuf.Timestamp next_start_at = 4;
+    google.protobuf.Timestamp next_at = 4;
   }
 }
 

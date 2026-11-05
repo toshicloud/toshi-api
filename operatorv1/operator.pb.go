@@ -51,7 +51,7 @@ const (
 	// The job is being stopped: its host destroys the VM after a grace period.
 	JobState_JOB_STATE_STOPPING JobState = 8
 	// GitHub concluded the job failed and its host keeps the VM for a debug
-	// session until debug_until. It counts as running.
+	// session until debug_expires_at. It counts as running.
 	JobState_JOB_STATE_DEBUGGING JobState = 9
 )
 
@@ -904,7 +904,7 @@ type Job struct {
 	HoldReason string `protobuf:"bytes,21,opt,name=hold_reason,json=holdReason,proto3" json:"hold_reason,omitempty"`
 	// When the job's hold_reason is start_rate: the earliest time every start
 	// window of the workspace has room again. Unset otherwise.
-	NextStartAt *timestamppb.Timestamp `protobuf:"bytes,57,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
+	NextAt *timestamppb.Timestamp `protobuf:"bytes,57,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
 	// Whether the job was placed on a host its workspace owns. Such a job sends no
 	// meter event.
 	OwnHost bool `protobuf:"varint,22,opt,name=own_host,json=ownHost,proto3" json:"own_host,omitempty"`
@@ -920,7 +920,7 @@ type Job struct {
 	// that never had one.
 	DebugStartedAt *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=debug_started_at,json=debugStartedAt,proto3" json:"debug_started_at,omitempty"`
 	// When the debug session ends; unset for a job that never had one.
-	DebugUntil *timestamppb.Timestamp `protobuf:"bytes,27,opt,name=debug_until,json=debugUntil,proto3" json:"debug_until,omitempty"`
+	DebugExpiresAt *timestamppb.Timestamp `protobuf:"bytes,27,opt,name=debug_expires_at,json=debugExpiresAt,proto3" json:"debug_expires_at,omitempty"`
 	// What the job's resource samples add up to; unset when it has none.
 	Telemetry *JobTelemetrySummary `protobuf:"bytes,28,opt,name=telemetry,proto3" json:"telemetry,omitempty"`
 	// Why the latest runner started for the job exited without running it,
@@ -1250,9 +1250,9 @@ func (x *Job) GetHoldReason() string {
 	return ""
 }
 
-func (x *Job) GetNextStartAt() *timestamppb.Timestamp {
+func (x *Job) GetNextAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextStartAt
+		return x.NextAt
 	}
 	return nil
 }
@@ -1292,9 +1292,9 @@ func (x *Job) GetDebugStartedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Job) GetDebugUntil() *timestamppb.Timestamp {
+func (x *Job) GetDebugExpiresAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.DebugUntil
+		return x.DebugExpiresAt
 	}
 	return nil
 }
@@ -1641,9 +1641,9 @@ type JobTelemetrySummary struct {
 	// How long the VM's threads waited for a host CPU, as a percentage of the
 	// CPU time they used plus that wait. 0 when they never waited.
 	CpuThrottledPct float64 `protobuf:"fixed64,2,opt,name=cpu_throttled_pct,json=cpuThrottledPct,proto3" json:"cpu_throttled_pct,omitempty"`
-	// The most memory in use inside the guest, in MiB; the host's resident
+	// The most memory in use inside the guest, in bytes; the host's resident
 	// memory of the VM when the guest does not report it.
-	PeakMemoryMib int64 `protobuf:"varint,3,opt,name=peak_memory_mib,json=peakMemoryMib,proto3" json:"peak_memory_mib,omitempty"`
+	PeakMemoryBytes int64 `protobuf:"varint,3,opt,name=peak_memory_bytes,json=peakMemoryBytes,proto3" json:"peak_memory_bytes,omitempty"`
 	// CPU time used as a percentage of the VM's vCPUs over the sampled time.
 	CpuUtilisationPct float64 `protobuf:"fixed64,4,opt,name=cpu_utilisation_pct,json=cpuUtilisationPct,proto3" json:"cpu_utilisation_pct,omitempty"`
 	// How many samples the job has.
@@ -1716,9 +1716,9 @@ func (x *JobTelemetrySummary) GetCpuThrottledPct() float64 {
 	return 0
 }
 
-func (x *JobTelemetrySummary) GetPeakMemoryMib() int64 {
+func (x *JobTelemetrySummary) GetPeakMemoryBytes() int64 {
 	if x != nil {
-		return x.PeakMemoryMib
+		return x.PeakMemoryBytes
 	}
 	return 0
 }
@@ -1909,11 +1909,11 @@ type JobTelemetrySizeRow struct {
 	Jobs int32 `protobuf:"varint,5,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// The jobs without samples.
 	JobsUnsampled int32 `protobuf:"varint,6,opt,name=jobs_unsampled,json=jobsUnsampled,proto3" json:"jobs_unsampled,omitempty"`
-	// Each job's peak memory: guest memory, or host memory when the guest
-	// gave none.
-	PeakMemoryMib *TelemetryPercentiles `protobuf:"bytes,7,opt,name=peak_memory_mib,json=peakMemoryMib,proto3" json:"peak_memory_mib,omitempty"`
-	// Each job's peak host memory: what its VM held on the host.
-	PeakHostMemoryMib *TelemetryPercentiles `protobuf:"bytes,8,opt,name=peak_host_memory_mib,json=peakHostMemoryMib,proto3" json:"peak_host_memory_mib,omitempty"`
+	// Each job's peak memory in bytes: guest memory, or host memory when the
+	// guest gave none.
+	PeakMemoryBytes *TelemetryPercentiles `protobuf:"bytes,7,opt,name=peak_memory_bytes,json=peakMemoryBytes,proto3" json:"peak_memory_bytes,omitempty"`
+	// Each job's peak host memory in bytes: what its VM held on the host.
+	PeakHostMemoryBytes *TelemetryPercentiles `protobuf:"bytes,8,opt,name=peak_host_memory_bytes,json=peakHostMemoryBytes,proto3" json:"peak_host_memory_bytes,omitempty"`
 	// Each job's peak memory as a percentage of its memory limit (its host's
 	// limit on a container tier host, else the size's memory), over the jobs
 	// whose limit is known.
@@ -2004,16 +2004,16 @@ func (x *JobTelemetrySizeRow) GetJobsUnsampled() int32 {
 	return 0
 }
 
-func (x *JobTelemetrySizeRow) GetPeakMemoryMib() *TelemetryPercentiles {
+func (x *JobTelemetrySizeRow) GetPeakMemoryBytes() *TelemetryPercentiles {
 	if x != nil {
-		return x.PeakMemoryMib
+		return x.PeakMemoryBytes
 	}
 	return nil
 }
 
-func (x *JobTelemetrySizeRow) GetPeakHostMemoryMib() *TelemetryPercentiles {
+func (x *JobTelemetrySizeRow) GetPeakHostMemoryBytes() *TelemetryPercentiles {
 	if x != nil {
-		return x.PeakHostMemoryMib
+		return x.PeakHostMemoryBytes
 	}
 	return nil
 }
@@ -6840,8 +6840,8 @@ type Check struct {
 	State CheckState `protobuf:"varint,2,opt,name=state,proto3,enum=toshi.operator.v1.CheckState" json:"state,omitempty"`
 	// What was found, in words.
 	Detail string `protobuf:"bytes,3,opt,name=detail,proto3" json:"detail,omitempty"`
-	// How long it took.
-	Duration      *durationpb.Duration `protobuf:"bytes,4,opt,name=duration,proto3" json:"duration,omitempty"`
+	// How long the check took, in milliseconds.
+	DurationMs    int64 `protobuf:"varint,5,opt,name=duration_ms,json=durationMs,proto3" json:"duration_ms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6897,11 +6897,11 @@ func (x *Check) GetDetail() string {
 	return ""
 }
 
-func (x *Check) GetDuration() *durationpb.Duration {
+func (x *Check) GetDurationMs() int64 {
 	if x != nil {
-		return x.Duration
+		return x.DurationMs
 	}
-	return nil
+	return 0
 }
 
 // RunChecksRequest names the group to run.
@@ -7490,8 +7490,8 @@ type GetQueueTimesResponse struct {
 	// Nearest-rank percentiles and maximum of started_at - queued_at, in whole
 	// milliseconds. All 0 when jobs is 0.
 	P50Ms int64 `protobuf:"varint,2,opt,name=p50_ms,json=p50Ms,proto3" json:"p50_ms,omitempty"`
-	// The 90th percentile wait, in whole milliseconds.
-	P90Ms int64 `protobuf:"varint,3,opt,name=p90_ms,json=p90Ms,proto3" json:"p90_ms,omitempty"`
+	// The 95th percentile wait, in whole milliseconds.
+	P95Ms int64 `protobuf:"varint,3,opt,name=p95_ms,json=p95Ms,proto3" json:"p95_ms,omitempty"`
 	// The longest wait, in whole milliseconds.
 	MaxMs int64 `protobuf:"varint,4,opt,name=max_ms,json=maxMs,proto3" json:"max_ms,omitempty"`
 	// Share of those jobs assigned to a warm instance, from 0 to 1.
@@ -7552,9 +7552,9 @@ func (x *GetQueueTimesResponse) GetP50Ms() int64 {
 	return 0
 }
 
-func (x *GetQueueTimesResponse) GetP90Ms() int64 {
+func (x *GetQueueTimesResponse) GetP95Ms() int64 {
 	if x != nil {
-		return x.P90Ms
+		return x.P95Ms
 	}
 	return 0
 }
@@ -7604,8 +7604,8 @@ type HoldTimes struct {
 	Jobs int64 `protobuf:"varint,2,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	// The median held time, in milliseconds.
 	P50Ms int64 `protobuf:"varint,3,opt,name=p50_ms,json=p50Ms,proto3" json:"p50_ms,omitempty"`
-	// The 90th percentile held time, in milliseconds.
-	P90Ms int64 `protobuf:"varint,4,opt,name=p90_ms,json=p90Ms,proto3" json:"p90_ms,omitempty"`
+	// The 95th percentile held time, in milliseconds.
+	P95Ms int64 `protobuf:"varint,4,opt,name=p95_ms,json=p95Ms,proto3" json:"p95_ms,omitempty"`
 	// The longest held time, in milliseconds.
 	MaxMs int64 `protobuf:"varint,5,opt,name=max_ms,json=maxMs,proto3" json:"max_ms,omitempty"`
 	// The jobs held for this reason now, whenever they were queued. 0 when
@@ -7669,9 +7669,9 @@ func (x *HoldTimes) GetP50Ms() int64 {
 	return 0
 }
 
-func (x *HoldTimes) GetP90Ms() int64 {
+func (x *HoldTimes) GetP95Ms() int64 {
 	if x != nil {
-		return x.P90Ms
+		return x.P95Ms
 	}
 	return 0
 }
@@ -15203,7 +15203,7 @@ type WorkspaceBilling_HeldJobs struct {
 	Since *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since,proto3" json:"since,omitempty"`
 	// For reason start_rate: the earliest time every start window of the
 	// workspace has room again. Unset otherwise.
-	NextStartAt   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
+	NextAt        *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -15259,9 +15259,9 @@ func (x *WorkspaceBilling_HeldJobs) GetSince() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *WorkspaceBilling_HeldJobs) GetNextStartAt() *timestamppb.Timestamp {
+func (x *WorkspaceBilling_HeldJobs) GetNextAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextStartAt
+		return x.NextAt
 	}
 	return nil
 }
@@ -15270,7 +15270,7 @@ var File_toshi_operator_v1_operator_proto protoreflect.FileDescriptor
 
 const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
-	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xec\x12\n" +
+	" toshi/operator/v1/operator.proto\x12\x11toshi.operator.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xea\x12\n" +
 	"\x03Job\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
 	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x1e\n" +
@@ -15303,16 +15303,15 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"stopReason\x12F\n" +
 	"\x11stop_requested_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x0fstopRequestedAt\x12\x1f\n" +
 	"\vhold_reason\x18\x15 \x01(\tR\n" +
-	"holdReason\x12>\n" +
-	"\rnext_start_at\x189 \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAt\x12\x19\n" +
+	"holdReason\x123\n" +
+	"\anext_at\x189 \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAt\x12\x19\n" +
 	"\bown_host\x18\x16 \x01(\bR\aownHost\x126\n" +
 	"\x17debug_requested_minutes\x18\x17 \x01(\x05R\x15debugRequestedMinutes\x12#\n" +
 	"\rdebug_minutes\x18\x18 \x01(\x05R\fdebugMinutes\x12\x1d\n" +
 	"\n" +
 	"debug_note\x18\x19 \x01(\tR\tdebugNote\x12D\n" +
-	"\x10debug_started_at\x18\x1a \x01(\v2\x1a.google.protobuf.TimestampR\x0edebugStartedAt\x12;\n" +
-	"\vdebug_until\x18\x1b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"debugUntil\x12D\n" +
+	"\x10debug_started_at\x18\x1a \x01(\v2\x1a.google.protobuf.TimestampR\x0edebugStartedAt\x12D\n" +
+	"\x10debug_expires_at\x18\x1b \x01(\v2\x1a.google.protobuf.TimestampR\x0edebugExpiresAt\x12D\n" +
 	"\ttelemetry\x18\x1c \x01(\v2&.toshi.operator.v1.JobTelemetrySummaryR\ttelemetry\x12,\n" +
 	"\x12runner_exit_reason\x18\x1d \x01(\tR\x10runnerExitReason\x12\x1a\n" +
 	"\boverflow\x18\x1e \x01(\bR\boverflow\x12L\n" +
@@ -15359,12 +15358,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"skipReason\x12)\n" +
 	"\x10generation_bytes\x18\x05 \x01(\x03R\x0fgenerationBytes\x12\"\n" +
 	"\rwrite_back_ms\x18\x06 \x01(\x03R\vwriteBackMs\x12\x12\n" +
-	"\x04line\x18\a \x01(\tR\x04line\"\xf3\x02\n" +
+	"\x04line\x18\a \x01(\tR\x04line\"\xf7\x02\n" +
 	"\x13JobTelemetrySummary\x12\x1d\n" +
 	"\n" +
 	"oom_killed\x18\x01 \x01(\bR\toomKilled\x12*\n" +
-	"\x11cpu_throttled_pct\x18\x02 \x01(\x01R\x0fcpuThrottledPct\x12&\n" +
-	"\x0fpeak_memory_mib\x18\x03 \x01(\x03R\rpeakMemoryMib\x12.\n" +
+	"\x11cpu_throttled_pct\x18\x02 \x01(\x01R\x0fcpuThrottledPct\x12*\n" +
+	"\x11peak_memory_bytes\x18\x03 \x01(\x03R\x0fpeakMemoryBytes\x12.\n" +
 	"\x13cpu_utilisation_pct\x18\x04 \x01(\x01R\x11cpuUtilisationPct\x12\x18\n" +
 	"\asamples\x18\x05 \x01(\x05R\asamples\x12(\n" +
 	"\x10memory_limit_mib\x18\x06 \x01(\x03R\x0ememoryLimitMib\x12\x15\n" +
@@ -15380,7 +15379,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1dSummariseJobTelemetryResponse\x12:\n" +
 	"\x04rows\x18\x01 \x03(\v2&.toshi.operator.v1.JobTelemetrySizeRowR\x04rows\x12.\n" +
 	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
-	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\"\xf5\x04\n" +
+	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\"\xfd\x04\n" +
 	"\x13JobTelemetrySizeRow\x12\x0e\n" +
 	"\x02os\x18\x01 \x01(\tR\x02os\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\tR\x04size\x12\x14\n" +
@@ -15388,9 +15387,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\n" +
 	"memory_mib\x18\x04 \x01(\x03R\tmemoryMib\x12\x12\n" +
 	"\x04jobs\x18\x05 \x01(\x05R\x04jobs\x12%\n" +
-	"\x0ejobs_unsampled\x18\x06 \x01(\x05R\rjobsUnsampled\x12O\n" +
-	"\x0fpeak_memory_mib\x18\a \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\rpeakMemoryMib\x12X\n" +
-	"\x14peak_host_memory_mib\x18\b \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x11peakHostMemoryMib\x12O\n" +
+	"\x0ejobs_unsampled\x18\x06 \x01(\x05R\rjobsUnsampled\x12S\n" +
+	"\x11peak_memory_bytes\x18\a \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x0fpeakMemoryBytes\x12\\\n" +
+	"\x16peak_host_memory_bytes\x18\b \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x13peakHostMemoryBytes\x12O\n" +
 	"\x0fpeak_memory_pct\x18\t \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\rpeakMemoryPct\x12W\n" +
 	"\x13cpu_utilisation_pct\x18\n" +
 	" \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x11cpuUtilisationPct\x12*\n" +
@@ -15802,12 +15801,13 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
 	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
-	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\x9f\x01\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\x99\x01\n" +
 	"\x05Check\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x123\n" +
 	"\x05state\x18\x02 \x01(\x0e2\x1d.toshi.operator.v1.CheckStateR\x05state\x12\x16\n" +
-	"\x06detail\x18\x03 \x01(\tR\x06detail\x125\n" +
-	"\bduration\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\bduration\"G\n" +
+	"\x06detail\x18\x03 \x01(\tR\x06detail\x12\x1f\n" +
+	"\vduration_ms\x18\x05 \x01(\x03R\n" +
+	"durationMsJ\x04\b\x04\x10\x05R\bduration\"G\n" +
 	"\x10RunChecksRequest\x123\n" +
 	"\x05group\x18\x01 \x01(\x0e2\x1d.toshi.operator.v1.CheckGroupR\x05group\"\xaf\x01\n" +
 	"\x11RunChecksResponse\x123\n" +
@@ -15854,7 +15854,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x15GetQueueTimesResponse\x12\x12\n" +
 	"\x04jobs\x18\x01 \x01(\x03R\x04jobs\x12\x15\n" +
 	"\x06p50_ms\x18\x02 \x01(\x03R\x05p50Ms\x12\x15\n" +
-	"\x06p90_ms\x18\x03 \x01(\x03R\x05p90Ms\x12\x15\n" +
+	"\x06p95_ms\x18\x03 \x01(\x03R\x05p95Ms\x12\x15\n" +
 	"\x06max_ms\x18\x04 \x01(\x03R\x05maxMs\x12\x1d\n" +
 	"\n" +
 	"warm_share\x18\x05 \x01(\x01R\twarmShare\x12.\n" +
@@ -15865,7 +15865,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\x12\x12\n" +
 	"\x04jobs\x18\x02 \x01(\x03R\x04jobs\x12\x15\n" +
 	"\x06p50_ms\x18\x03 \x01(\x03R\x05p50Ms\x12\x15\n" +
-	"\x06p90_ms\x18\x04 \x01(\x03R\x05p90Ms\x12\x15\n" +
+	"\x06p95_ms\x18\x04 \x01(\x03R\x05p95Ms\x12\x15\n" +
 	"\x06max_ms\x18\x05 \x01(\x03R\x05maxMs\x12\x1b\n" +
 	"\topen_jobs\x18\x06 \x01(\x03R\bopenJobs\x129\n" +
 	"\n" +
@@ -16026,7 +16026,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x18\n" +
 	"\aminutes\x18\x02 \x01(\x03R\aminutes\x12'\n" +
 	"\x0festimated_cents\x18\x03 \x01(\x03R\x0eestimatedCents\x12\x18\n" +
-	"\aseconds\x18\x04 \x01(\x03R\aseconds\"\xa5\v\n" +
+	"\aseconds\x18\x04 \x01(\x03R\aseconds\"\x9a\v\n" +
 	"\x10WorkspaceBilling\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12'\n" +
@@ -16055,12 +16055,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x0fbilling_enabled\x18\x15 \x01(\bR\x0ebillingEnabled\x12G\n" +
 	"\bheld_now\x18\x16 \x03(\v2,.toshi.operator.v1.WorkspaceBilling.HeldJobsR\aheldNow\x12)\n" +
 	"\x10concurrency_used\x18\x17 \x01(\x03R\x0fconcurrencyUsed\x12<\n" +
-	"\x18desktop_seat_price_cents\x18\x18 \x01(\x03H\x00R\x15desktopSeatPriceCents\x88\x01\x01\x1a\xa8\x01\n" +
+	"\x18desktop_seat_price_cents\x18\x18 \x01(\x03H\x00R\x15desktopSeatPriceCents\x88\x01\x01\x1a\x9d\x01\n" +
 	"\bHeldJobs\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\x12\x12\n" +
 	"\x04jobs\x18\x02 \x01(\x03R\x04jobs\x120\n" +
-	"\x05since\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12>\n" +
-	"\rnext_start_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAtB\x1b\n" +
+	"\x05since\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x123\n" +
+	"\anext_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAtB\x1b\n" +
 	"\x19_desktop_seat_price_centsJ\x04\b\x04\x10\x05R\vlast_export\"\x99\x02\n" +
 	"\rBillingTotals\x12\x14\n" +
 	"\x05month\x18\x01 \x01(\tR\x05month\x12\x12\n" +
@@ -16852,9 +16852,9 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	181, // 3: toshi.operator.v1.Job.started_at:type_name -> google.protobuf.Timestamp
 	181, // 4: toshi.operator.v1.Job.finished_at:type_name -> google.protobuf.Timestamp
 	181, // 5: toshi.operator.v1.Job.stop_requested_at:type_name -> google.protobuf.Timestamp
-	181, // 6: toshi.operator.v1.Job.next_start_at:type_name -> google.protobuf.Timestamp
+	181, // 6: toshi.operator.v1.Job.next_at:type_name -> google.protobuf.Timestamp
 	181, // 7: toshi.operator.v1.Job.debug_started_at:type_name -> google.protobuf.Timestamp
-	181, // 8: toshi.operator.v1.Job.debug_until:type_name -> google.protobuf.Timestamp
+	181, // 8: toshi.operator.v1.Job.debug_expires_at:type_name -> google.protobuf.Timestamp
 	15,  // 9: toshi.operator.v1.Job.telemetry:type_name -> toshi.operator.v1.JobTelemetrySummary
 	181, // 10: toshi.operator.v1.Job.runner_request_since:type_name -> google.protobuf.Timestamp
 	14,  // 11: toshi.operator.v1.Job.cache:type_name -> toshi.operator.v1.JobCache
@@ -16865,8 +16865,8 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	18,  // 16: toshi.operator.v1.SummariseJobTelemetryResponse.rows:type_name -> toshi.operator.v1.JobTelemetrySizeRow
 	181, // 17: toshi.operator.v1.SummariseJobTelemetryResponse.from:type_name -> google.protobuf.Timestamp
 	181, // 18: toshi.operator.v1.SummariseJobTelemetryResponse.to:type_name -> google.protobuf.Timestamp
-	19,  // 19: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_mib:type_name -> toshi.operator.v1.TelemetryPercentiles
-	19,  // 20: toshi.operator.v1.JobTelemetrySizeRow.peak_host_memory_mib:type_name -> toshi.operator.v1.TelemetryPercentiles
+	19,  // 19: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_bytes:type_name -> toshi.operator.v1.TelemetryPercentiles
+	19,  // 20: toshi.operator.v1.JobTelemetrySizeRow.peak_host_memory_bytes:type_name -> toshi.operator.v1.TelemetryPercentiles
 	19,  // 21: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_pct:type_name -> toshi.operator.v1.TelemetryPercentiles
 	19,  // 22: toshi.operator.v1.JobTelemetrySizeRow.cpu_utilisation_pct:type_name -> toshi.operator.v1.TelemetryPercentiles
 	177, // 23: toshi.operator.v1.Host.labels:type_name -> toshi.operator.v1.Host.LabelsEntry
@@ -16936,256 +16936,255 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	179, // 87: toshi.operator.v1.OperatorAlert.reasons:type_name -> toshi.operator.v1.OperatorAlert.ReasonsEntry
 	68,  // 88: toshi.operator.v1.ListPlansResponse.plans:type_name -> toshi.operator.v1.Plan
 	8,   // 89: toshi.operator.v1.Check.state:type_name -> toshi.operator.v1.CheckState
-	182, // 90: toshi.operator.v1.Check.duration:type_name -> google.protobuf.Duration
-	7,   // 91: toshi.operator.v1.RunChecksRequest.group:type_name -> toshi.operator.v1.CheckGroup
-	7,   // 92: toshi.operator.v1.RunChecksResponse.group:type_name -> toshi.operator.v1.CheckGroup
-	8,   // 93: toshi.operator.v1.RunChecksResponse.state:type_name -> toshi.operator.v1.CheckState
-	78,  // 94: toshi.operator.v1.RunChecksResponse.checks:type_name -> toshi.operator.v1.Check
-	181, // 95: toshi.operator.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
-	181, // 96: toshi.operator.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
-	84,  // 97: toshi.operator.v1.GetUsageResponse.rows:type_name -> toshi.operator.v1.UsageRow
-	181, // 98: toshi.operator.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
-	181, // 99: toshi.operator.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
-	83,  // 100: toshi.operator.v1.GetUsageResponse.filler:type_name -> toshi.operator.v1.FillerUsage
-	105, // 101: toshi.operator.v1.GetUsageResponse.storage:type_name -> toshi.operator.v1.StorageUsageRow
-	181, // 102: toshi.operator.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
-	181, // 103: toshi.operator.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
-	181, // 104: toshi.operator.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
-	181, // 105: toshi.operator.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
-	87,  // 106: toshi.operator.v1.GetQueueTimesResponse.held:type_name -> toshi.operator.v1.HoldTimes
-	181, // 107: toshi.operator.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
-	181, // 108: toshi.operator.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
-	181, // 109: toshi.operator.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
-	90,  // 110: toshi.operator.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.operator.v1.WorkflowUsageRow
-	181, // 111: toshi.operator.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
-	181, // 112: toshi.operator.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
-	93,  // 113: toshi.operator.v1.GetCapacityResponse.sizes:type_name -> toshi.operator.v1.CapacitySize
-	94,  // 114: toshi.operator.v1.GetCapacityResponse.reservations:type_name -> toshi.operator.v1.CapacityReservation
-	181, // 115: toshi.operator.v1.GetCapacityResponse.observed_at:type_name -> google.protobuf.Timestamp
-	97,  // 116: toshi.operator.v1.GetWorkspaceStatementResponse.statement:type_name -> toshi.operator.v1.WorkspaceStatement
-	181, // 117: toshi.operator.v1.WorkspaceStatement.from:type_name -> google.protobuf.Timestamp
-	181, // 118: toshi.operator.v1.WorkspaceStatement.to:type_name -> google.protobuf.Timestamp
-	106, // 119: toshi.operator.v1.WorkspaceStatement.usage:type_name -> toshi.operator.v1.StatementUsage
-	106, // 120: toshi.operator.v1.WorkspaceStatement.total:type_name -> toshi.operator.v1.StatementUsage
-	107, // 121: toshi.operator.v1.WorkspaceStatement.charges:type_name -> toshi.operator.v1.StatementCharge
-	181, // 122: toshi.operator.v1.WorkspaceStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	87,  // 123: toshi.operator.v1.WorkspaceStatement.held:type_name -> toshi.operator.v1.HoldTimes
-	83,  // 124: toshi.operator.v1.WorkspaceStatement.filler:type_name -> toshi.operator.v1.FillerUsage
-	181, // 125: toshi.operator.v1.WorkspaceStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
-	101, // 126: toshi.operator.v1.WorkspaceStatement.own_host_fee:type_name -> toshi.operator.v1.OwnHostFee
-	102, // 127: toshi.operator.v1.WorkspaceStatement.awake:type_name -> toshi.operator.v1.Awake
-	103, // 128: toshi.operator.v1.WorkspaceStatement.storage:type_name -> toshi.operator.v1.Storage
-	99,  // 129: toshi.operator.v1.WorkspaceStatement.desktop_seats:type_name -> toshi.operator.v1.DesktopSeats
-	98,  // 130: toshi.operator.v1.WorkspaceStatement.paid_starts:type_name -> toshi.operator.v1.PaidStarts
-	100, // 131: toshi.operator.v1.DesktopSeats.seats:type_name -> toshi.operator.v1.StatementSeat
-	181, // 132: toshi.operator.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
-	181, // 133: toshi.operator.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
-	104, // 134: toshi.operator.v1.Storage.kinds:type_name -> toshi.operator.v1.StoredKind
-	181, // 135: toshi.operator.v1.WorkspaceBilling.billing_started_at:type_name -> google.protobuf.Timestamp
-	181, // 136: toshi.operator.v1.WorkspaceBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
-	109, // 137: toshi.operator.v1.WorkspaceBilling.totals:type_name -> toshi.operator.v1.BillingTotals
-	110, // 138: toshi.operator.v1.WorkspaceBilling.failed_events:type_name -> toshi.operator.v1.BillingEventFailure
-	181, // 139: toshi.operator.v1.WorkspaceBilling.card_verified_at:type_name -> google.protobuf.Timestamp
-	181, // 140: toshi.operator.v1.WorkspaceBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	180, // 141: toshi.operator.v1.WorkspaceBilling.held_now:type_name -> toshi.operator.v1.WorkspaceBilling.HeldJobs
-	181, // 142: toshi.operator.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
-	181, // 143: toshi.operator.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
-	9,   // 144: toshi.operator.v1.Token.kind:type_name -> toshi.operator.v1.TokenKind
-	181, // 145: toshi.operator.v1.Token.created_at:type_name -> google.protobuf.Timestamp
-	181, // 146: toshi.operator.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
-	181, // 147: toshi.operator.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
-	181, // 148: toshi.operator.v1.Token.not_before:type_name -> google.protobuf.Timestamp
-	113, // 149: toshi.operator.v1.Token.client_ranges:type_name -> toshi.operator.v1.ClientRanges
-	112, // 150: toshi.operator.v1.Token.created_by:type_name -> toshi.operator.v1.Subject
-	181, // 151: toshi.operator.v1.Token.last_used:type_name -> google.protobuf.Timestamp
-	181, // 152: toshi.operator.v1.Token.creator_left_at:type_name -> google.protobuf.Timestamp
-	10,  // 153: toshi.operator.v1.Token.expiry_reason:type_name -> toshi.operator.v1.TokenExpiryReason
-	11,  // 154: toshi.operator.v1.Subject.kind:type_name -> toshi.operator.v1.SubjectKind
-	9,   // 155: toshi.operator.v1.ListTokensRequest.kind:type_name -> toshi.operator.v1.TokenKind
-	111, // 156: toshi.operator.v1.ListTokensResponse.tokens:type_name -> toshi.operator.v1.Token
-	9,   // 157: toshi.operator.v1.RotateTokenRequest.kind:type_name -> toshi.operator.v1.TokenKind
-	111, // 158: toshi.operator.v1.RotateTokenResponse.token:type_name -> toshi.operator.v1.Token
-	111, // 159: toshi.operator.v1.RevokeTokenResponse.token:type_name -> toshi.operator.v1.Token
-	111, // 160: toshi.operator.v1.RollTokenResponse.token:type_name -> toshi.operator.v1.Token
-	181, // 161: toshi.operator.v1.CreateProductTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
-	111, // 162: toshi.operator.v1.CreateProductTokenResponse.token:type_name -> toshi.operator.v1.Token
-	181, // 163: toshi.operator.v1.Client.created_at:type_name -> google.protobuf.Timestamp
-	124, // 164: toshi.operator.v1.RegisterClientResponse.client:type_name -> toshi.operator.v1.Client
-	124, // 165: toshi.operator.v1.ListClientsResponse.clients:type_name -> toshi.operator.v1.Client
-	133, // 166: toshi.operator.v1.CheckCloudHostResponse.checks:type_name -> toshi.operator.v1.CloudHostCheck
-	12,  // 167: toshi.operator.v1.CloudHostCheck.status:type_name -> toshi.operator.v1.CloudHostCheckStatus
-	182, // 168: toshi.operator.v1.Filler.every:type_name -> google.protobuf.Duration
-	182, // 169: toshi.operator.v1.Filler.max_duration:type_name -> google.protobuf.Duration
-	181, // 170: toshi.operator.v1.Filler.created_at:type_name -> google.protobuf.Timestamp
-	181, // 171: toshi.operator.v1.Filler.updated_at:type_name -> google.protobuf.Timestamp
-	135, // 172: toshi.operator.v1.Filler.last_run:type_name -> toshi.operator.v1.FillerRun
-	181, // 173: toshi.operator.v1.Filler.paused_since:type_name -> google.protobuf.Timestamp
-	181, // 174: toshi.operator.v1.Filler.pause_as_of:type_name -> google.protobuf.Timestamp
-	181, // 175: toshi.operator.v1.FillerRun.created_at:type_name -> google.protobuf.Timestamp
-	181, // 176: toshi.operator.v1.FillerRun.started_at:type_name -> google.protobuf.Timestamp
-	181, // 177: toshi.operator.v1.FillerRun.finished_at:type_name -> google.protobuf.Timestamp
-	134, // 178: toshi.operator.v1.ListFillersResponse.fillers:type_name -> toshi.operator.v1.Filler
-	136, // 179: toshi.operator.v1.ListFillersResponse.host_minutes:type_name -> toshi.operator.v1.FillerHostMinutes
-	134, // 180: toshi.operator.v1.PutFillerRequest.filler:type_name -> toshi.operator.v1.Filler
-	134, // 181: toshi.operator.v1.PutFillerResponse.filler:type_name -> toshi.operator.v1.Filler
-	134, // 182: toshi.operator.v1.UpdateFillerRequest.filler:type_name -> toshi.operator.v1.Filler
-	183, // 183: toshi.operator.v1.UpdateFillerRequest.update_mask:type_name -> google.protobuf.FieldMask
-	134, // 184: toshi.operator.v1.UpdateFillerResponse.filler:type_name -> toshi.operator.v1.Filler
-	135, // 185: toshi.operator.v1.ListFillerRunsResponse.runs:type_name -> toshi.operator.v1.FillerRun
-	147, // 186: toshi.operator.v1.ListFillerRunsResponse.pauses:type_name -> toshi.operator.v1.FillerPause
-	181, // 187: toshi.operator.v1.FillerPause.since:type_name -> google.protobuf.Timestamp
-	181, // 188: toshi.operator.v1.FillerPause.as_of:type_name -> google.protobuf.Timestamp
-	152, // 189: toshi.operator.v1.GetSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
-	152, // 190: toshi.operator.v1.UpdateSecretDeliveryRequest.secret_delivery:type_name -> toshi.operator.v1.SecretDelivery
-	183, // 191: toshi.operator.v1.UpdateSecretDeliveryRequest.update_mask:type_name -> google.protobuf.FieldMask
-	152, // 192: toshi.operator.v1.UpdateSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
-	181, // 193: toshi.operator.v1.SecretDelivery.changed_at:type_name -> google.protobuf.Timestamp
-	181, // 194: toshi.operator.v1.ListUtilisationRequest.from:type_name -> google.protobuf.Timestamp
-	181, // 195: toshi.operator.v1.ListUtilisationRequest.to:type_name -> google.protobuf.Timestamp
-	157, // 196: toshi.operator.v1.ListUtilisationResponse.rows:type_name -> toshi.operator.v1.UtilisationRow
-	158, // 197: toshi.operator.v1.ListUtilisationResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
-	181, // 198: toshi.operator.v1.ListUtilisationResponse.as_of:type_name -> google.protobuf.Timestamp
-	155, // 199: toshi.operator.v1.ListUtilisationResponse.warm_memory:type_name -> toshi.operator.v1.WarmMemoryRow
-	181, // 200: toshi.operator.v1.WarmMemoryRow.start:type_name -> google.protobuf.Timestamp
-	156, // 201: toshi.operator.v1.WarmMemoryRow.booted:type_name -> toshi.operator.v1.WarmPathSummary
-	156, // 202: toshi.operator.v1.WarmMemoryRow.restored:type_name -> toshi.operator.v1.WarmPathSummary
-	181, // 203: toshi.operator.v1.UtilisationRow.start:type_name -> google.protobuf.Timestamp
-	181, // 204: toshi.operator.v1.SuggestPoolsResponse.running_since:type_name -> google.protobuf.Timestamp
-	161, // 205: toshi.operator.v1.SuggestPoolsResponse.last:type_name -> toshi.operator.v1.PoolSuggestion
-	182, // 206: toshi.operator.v1.SuggestPoolsResponse.timeout:type_name -> google.protobuf.Duration
-	158, // 207: toshi.operator.v1.SuggestPoolsResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
-	161, // 208: toshi.operator.v1.SuggestPoolsResponse.kept:type_name -> toshi.operator.v1.PoolSuggestion
-	181, // 209: toshi.operator.v1.PoolSuggestion.started_at:type_name -> google.protobuf.Timestamp
-	181, // 210: toshi.operator.v1.PoolSuggestion.finished_at:type_name -> google.protobuf.Timestamp
-	181, // 211: toshi.operator.v1.PoolSuggestion.from:type_name -> google.protobuf.Timestamp
-	181, // 212: toshi.operator.v1.PoolSuggestion.to:type_name -> google.protobuf.Timestamp
-	182, // 213: toshi.operator.v1.PoolSuggestion.budget:type_name -> google.protobuf.Duration
-	165, // 214: toshi.operator.v1.PoolSuggestion.unmet:type_name -> toshi.operator.v1.PoolSuggestionUnmet
-	166, // 215: toshi.operator.v1.PoolSuggestion.boot_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
-	166, // 216: toshi.operator.v1.PoolSuggestion.restore_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
-	162, // 217: toshi.operator.v1.PoolSuggestion.sizes:type_name -> toshi.operator.v1.PoolSuggestionSize
-	164, // 218: toshi.operator.v1.PoolSuggestion.not_in_trace:type_name -> toshi.operator.v1.PoolSuggestionTarget
-	163, // 219: toshi.operator.v1.PoolSuggestionSize.today:type_name -> toshi.operator.v1.PoolSuggestionOutcome
-	163, // 220: toshi.operator.v1.PoolSuggestionSize.with_suggested:type_name -> toshi.operator.v1.PoolSuggestionOutcome
-	181, // 221: toshi.operator.v1.StorageProvider.last_check_at:type_name -> google.protobuf.Timestamp
-	181, // 222: toshi.operator.v1.StorageProvider.created_at:type_name -> google.protobuf.Timestamp
-	181, // 223: toshi.operator.v1.StorageProvider.updated_at:type_name -> google.protobuf.Timestamp
-	169, // 224: toshi.operator.v1.CreateStorageProviderRequest.credential:type_name -> toshi.operator.v1.StorageCredential
-	167, // 225: toshi.operator.v1.CreateStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
-	167, // 226: toshi.operator.v1.ListStorageProvidersResponse.providers:type_name -> toshi.operator.v1.StorageProvider
-	167, // 227: toshi.operator.v1.ListStorageProvidersResponse.default_provider:type_name -> toshi.operator.v1.StorageProvider
-	168, // 228: toshi.operator.v1.CheckStorageProviderRequest.provider:type_name -> toshi.operator.v1.CreateStorageProviderRequest
-	167, // 229: toshi.operator.v1.CheckStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
-	181, // 230: toshi.operator.v1.CheckStorageProviderResponse.checked_at:type_name -> google.protobuf.Timestamp
-	181, // 231: toshi.operator.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
-	181, // 232: toshi.operator.v1.WorkspaceBilling.HeldJobs.next_start_at:type_name -> google.protobuf.Timestamp
-	38,  // 233: toshi.operator.v1.OperatorService.DeleteUser:input_type -> toshi.operator.v1.DeleteUserRequest
-	24,  // 234: toshi.operator.v1.OperatorService.ListJobs:input_type -> toshi.operator.v1.ListJobsRequest
-	27,  // 235: toshi.operator.v1.OperatorService.ListAuditEvents:input_type -> toshi.operator.v1.ListAuditEventsRequest
-	16,  // 236: toshi.operator.v1.OperatorService.SummariseJobTelemetry:input_type -> toshi.operator.v1.SummariseJobTelemetryRequest
-	29,  // 237: toshi.operator.v1.OperatorService.ListHosts:input_type -> toshi.operator.v1.ListHostsRequest
-	31,  // 238: toshi.operator.v1.OperatorService.ListHostStorage:input_type -> toshi.operator.v1.ListHostStorageRequest
-	34,  // 239: toshi.operator.v1.OperatorService.SetHostState:input_type -> toshi.operator.v1.SetHostStateRequest
-	36,  // 240: toshi.operator.v1.OperatorService.UpdateHost:input_type -> toshi.operator.v1.UpdateHostRequest
-	40,  // 241: toshi.operator.v1.OperatorService.RetireHost:input_type -> toshi.operator.v1.RetireHostRequest
-	42,  // 242: toshi.operator.v1.OperatorService.RevokeHost:input_type -> toshi.operator.v1.RevokeHostRequest
-	44,  // 243: toshi.operator.v1.OperatorService.RetireHosts:input_type -> toshi.operator.v1.RetireHostsRequest
-	50,  // 244: toshi.operator.v1.OperatorService.CreateWorkspace:input_type -> toshi.operator.v1.CreateWorkspaceRequest
-	52,  // 245: toshi.operator.v1.OperatorService.ListWorkspaces:input_type -> toshi.operator.v1.ListWorkspacesRequest
-	54,  // 246: toshi.operator.v1.OperatorService.UpdateWorkspace:input_type -> toshi.operator.v1.UpdateWorkspaceRequest
-	57,  // 247: toshi.operator.v1.OperatorService.ReassignSeat:input_type -> toshi.operator.v1.ReassignSeatRequest
-	59,  // 248: toshi.operator.v1.OperatorService.ListSeats:input_type -> toshi.operator.v1.ListSeatsRequest
-	74,  // 249: toshi.operator.v1.OperatorService.ListPlans:input_type -> toshi.operator.v1.ListPlansRequest
-	76,  // 250: toshi.operator.v1.OperatorService.GetVersion:input_type -> toshi.operator.v1.GetVersionRequest
-	79,  // 251: toshi.operator.v1.OperatorService.RunChecks:input_type -> toshi.operator.v1.RunChecksRequest
-	62,  // 252: toshi.operator.v1.OperatorService.SuspendWorkspace:input_type -> toshi.operator.v1.SuspendWorkspaceRequest
-	64,  // 253: toshi.operator.v1.OperatorService.UnsuspendWorkspace:input_type -> toshi.operator.v1.UnsuspendWorkspaceRequest
-	66,  // 254: toshi.operator.v1.OperatorService.DeleteWorkspace:input_type -> toshi.operator.v1.DeleteWorkspaceRequest
-	91,  // 255: toshi.operator.v1.OperatorService.GetCapacity:input_type -> toshi.operator.v1.GetCapacityRequest
-	81,  // 256: toshi.operator.v1.OperatorService.GetUsage:input_type -> toshi.operator.v1.GetUsageRequest
-	85,  // 257: toshi.operator.v1.OperatorService.GetQueueTimes:input_type -> toshi.operator.v1.GetQueueTimesRequest
-	88,  // 258: toshi.operator.v1.OperatorService.GetWorkflowUsage:input_type -> toshi.operator.v1.GetWorkflowUsageRequest
-	95,  // 259: toshi.operator.v1.OperatorService.GetWorkspaceStatement:input_type -> toshi.operator.v1.GetWorkspaceStatementRequest
-	114, // 260: toshi.operator.v1.OperatorService.ListTokens:input_type -> toshi.operator.v1.ListTokensRequest
-	116, // 261: toshi.operator.v1.OperatorService.RotateToken:input_type -> toshi.operator.v1.RotateTokenRequest
-	118, // 262: toshi.operator.v1.OperatorService.RevokeToken:input_type -> toshi.operator.v1.RevokeTokenRequest
-	120, // 263: toshi.operator.v1.OperatorService.RollToken:input_type -> toshi.operator.v1.RollTokenRequest
-	122, // 264: toshi.operator.v1.OperatorService.CreateProductToken:input_type -> toshi.operator.v1.CreateProductTokenRequest
-	125, // 265: toshi.operator.v1.OperatorService.RegisterClient:input_type -> toshi.operator.v1.RegisterClientRequest
-	127, // 266: toshi.operator.v1.OperatorService.ListClients:input_type -> toshi.operator.v1.ListClientsRequest
-	129, // 267: toshi.operator.v1.OperatorService.DeleteClient:input_type -> toshi.operator.v1.DeleteClientRequest
-	69,  // 268: toshi.operator.v1.OperatorService.ListOperatorAlerts:input_type -> toshi.operator.v1.ListOperatorAlertsRequest
-	71,  // 269: toshi.operator.v1.OperatorService.ListHostAlerts:input_type -> toshi.operator.v1.ListHostAlertsRequest
-	131, // 270: toshi.operator.v1.OperatorService.CheckCloudHost:input_type -> toshi.operator.v1.CheckCloudHostRequest
-	137, // 271: toshi.operator.v1.OperatorService.ListFillers:input_type -> toshi.operator.v1.ListFillersRequest
-	139, // 272: toshi.operator.v1.OperatorService.PutFiller:input_type -> toshi.operator.v1.PutFillerRequest
-	141, // 273: toshi.operator.v1.OperatorService.DeleteFiller:input_type -> toshi.operator.v1.DeleteFillerRequest
-	143, // 274: toshi.operator.v1.OperatorService.UpdateFiller:input_type -> toshi.operator.v1.UpdateFillerRequest
-	145, // 275: toshi.operator.v1.OperatorService.ListFillerRuns:input_type -> toshi.operator.v1.ListFillerRunsRequest
-	148, // 276: toshi.operator.v1.OperatorService.GetSecretDelivery:input_type -> toshi.operator.v1.GetSecretDeliveryRequest
-	150, // 277: toshi.operator.v1.OperatorService.UpdateSecretDelivery:input_type -> toshi.operator.v1.UpdateSecretDeliveryRequest
-	153, // 278: toshi.operator.v1.OperatorService.ListUtilisation:input_type -> toshi.operator.v1.ListUtilisationRequest
-	159, // 279: toshi.operator.v1.OperatorService.SuggestPools:input_type -> toshi.operator.v1.SuggestPoolsRequest
-	168, // 280: toshi.operator.v1.OperatorService.CreateStorageProvider:input_type -> toshi.operator.v1.CreateStorageProviderRequest
-	171, // 281: toshi.operator.v1.OperatorService.ListStorageProviders:input_type -> toshi.operator.v1.ListStorageProvidersRequest
-	173, // 282: toshi.operator.v1.OperatorService.CheckStorageProvider:input_type -> toshi.operator.v1.CheckStorageProviderRequest
-	175, // 283: toshi.operator.v1.OperatorService.DeleteStorageProvider:input_type -> toshi.operator.v1.DeleteStorageProviderRequest
-	39,  // 284: toshi.operator.v1.OperatorService.DeleteUser:output_type -> toshi.operator.v1.DeleteUserResponse
-	25,  // 285: toshi.operator.v1.OperatorService.ListJobs:output_type -> toshi.operator.v1.ListJobsResponse
-	28,  // 286: toshi.operator.v1.OperatorService.ListAuditEvents:output_type -> toshi.operator.v1.ListAuditEventsResponse
-	17,  // 287: toshi.operator.v1.OperatorService.SummariseJobTelemetry:output_type -> toshi.operator.v1.SummariseJobTelemetryResponse
-	30,  // 288: toshi.operator.v1.OperatorService.ListHosts:output_type -> toshi.operator.v1.ListHostsResponse
-	32,  // 289: toshi.operator.v1.OperatorService.ListHostStorage:output_type -> toshi.operator.v1.ListHostStorageResponse
-	35,  // 290: toshi.operator.v1.OperatorService.SetHostState:output_type -> toshi.operator.v1.SetHostStateResponse
-	37,  // 291: toshi.operator.v1.OperatorService.UpdateHost:output_type -> toshi.operator.v1.UpdateHostResponse
-	41,  // 292: toshi.operator.v1.OperatorService.RetireHost:output_type -> toshi.operator.v1.RetireHostResponse
-	43,  // 293: toshi.operator.v1.OperatorService.RevokeHost:output_type -> toshi.operator.v1.RevokeHostResponse
-	45,  // 294: toshi.operator.v1.OperatorService.RetireHosts:output_type -> toshi.operator.v1.RetireHostsResponse
-	51,  // 295: toshi.operator.v1.OperatorService.CreateWorkspace:output_type -> toshi.operator.v1.CreateWorkspaceResponse
-	53,  // 296: toshi.operator.v1.OperatorService.ListWorkspaces:output_type -> toshi.operator.v1.ListWorkspacesResponse
-	55,  // 297: toshi.operator.v1.OperatorService.UpdateWorkspace:output_type -> toshi.operator.v1.UpdateWorkspaceResponse
-	58,  // 298: toshi.operator.v1.OperatorService.ReassignSeat:output_type -> toshi.operator.v1.ReassignSeatResponse
-	60,  // 299: toshi.operator.v1.OperatorService.ListSeats:output_type -> toshi.operator.v1.ListSeatsResponse
-	75,  // 300: toshi.operator.v1.OperatorService.ListPlans:output_type -> toshi.operator.v1.ListPlansResponse
-	77,  // 301: toshi.operator.v1.OperatorService.GetVersion:output_type -> toshi.operator.v1.GetVersionResponse
-	80,  // 302: toshi.operator.v1.OperatorService.RunChecks:output_type -> toshi.operator.v1.RunChecksResponse
-	63,  // 303: toshi.operator.v1.OperatorService.SuspendWorkspace:output_type -> toshi.operator.v1.SuspendWorkspaceResponse
-	65,  // 304: toshi.operator.v1.OperatorService.UnsuspendWorkspace:output_type -> toshi.operator.v1.UnsuspendWorkspaceResponse
-	67,  // 305: toshi.operator.v1.OperatorService.DeleteWorkspace:output_type -> toshi.operator.v1.DeleteWorkspaceResponse
-	92,  // 306: toshi.operator.v1.OperatorService.GetCapacity:output_type -> toshi.operator.v1.GetCapacityResponse
-	82,  // 307: toshi.operator.v1.OperatorService.GetUsage:output_type -> toshi.operator.v1.GetUsageResponse
-	86,  // 308: toshi.operator.v1.OperatorService.GetQueueTimes:output_type -> toshi.operator.v1.GetQueueTimesResponse
-	89,  // 309: toshi.operator.v1.OperatorService.GetWorkflowUsage:output_type -> toshi.operator.v1.GetWorkflowUsageResponse
-	96,  // 310: toshi.operator.v1.OperatorService.GetWorkspaceStatement:output_type -> toshi.operator.v1.GetWorkspaceStatementResponse
-	115, // 311: toshi.operator.v1.OperatorService.ListTokens:output_type -> toshi.operator.v1.ListTokensResponse
-	117, // 312: toshi.operator.v1.OperatorService.RotateToken:output_type -> toshi.operator.v1.RotateTokenResponse
-	119, // 313: toshi.operator.v1.OperatorService.RevokeToken:output_type -> toshi.operator.v1.RevokeTokenResponse
-	121, // 314: toshi.operator.v1.OperatorService.RollToken:output_type -> toshi.operator.v1.RollTokenResponse
-	123, // 315: toshi.operator.v1.OperatorService.CreateProductToken:output_type -> toshi.operator.v1.CreateProductTokenResponse
-	126, // 316: toshi.operator.v1.OperatorService.RegisterClient:output_type -> toshi.operator.v1.RegisterClientResponse
-	128, // 317: toshi.operator.v1.OperatorService.ListClients:output_type -> toshi.operator.v1.ListClientsResponse
-	130, // 318: toshi.operator.v1.OperatorService.DeleteClient:output_type -> toshi.operator.v1.DeleteClientResponse
-	70,  // 319: toshi.operator.v1.OperatorService.ListOperatorAlerts:output_type -> toshi.operator.v1.ListOperatorAlertsResponse
-	72,  // 320: toshi.operator.v1.OperatorService.ListHostAlerts:output_type -> toshi.operator.v1.ListHostAlertsResponse
-	132, // 321: toshi.operator.v1.OperatorService.CheckCloudHost:output_type -> toshi.operator.v1.CheckCloudHostResponse
-	138, // 322: toshi.operator.v1.OperatorService.ListFillers:output_type -> toshi.operator.v1.ListFillersResponse
-	140, // 323: toshi.operator.v1.OperatorService.PutFiller:output_type -> toshi.operator.v1.PutFillerResponse
-	142, // 324: toshi.operator.v1.OperatorService.DeleteFiller:output_type -> toshi.operator.v1.DeleteFillerResponse
-	144, // 325: toshi.operator.v1.OperatorService.UpdateFiller:output_type -> toshi.operator.v1.UpdateFillerResponse
-	146, // 326: toshi.operator.v1.OperatorService.ListFillerRuns:output_type -> toshi.operator.v1.ListFillerRunsResponse
-	149, // 327: toshi.operator.v1.OperatorService.GetSecretDelivery:output_type -> toshi.operator.v1.GetSecretDeliveryResponse
-	151, // 328: toshi.operator.v1.OperatorService.UpdateSecretDelivery:output_type -> toshi.operator.v1.UpdateSecretDeliveryResponse
-	154, // 329: toshi.operator.v1.OperatorService.ListUtilisation:output_type -> toshi.operator.v1.ListUtilisationResponse
-	160, // 330: toshi.operator.v1.OperatorService.SuggestPools:output_type -> toshi.operator.v1.SuggestPoolsResponse
-	170, // 331: toshi.operator.v1.OperatorService.CreateStorageProvider:output_type -> toshi.operator.v1.CreateStorageProviderResponse
-	172, // 332: toshi.operator.v1.OperatorService.ListStorageProviders:output_type -> toshi.operator.v1.ListStorageProvidersResponse
-	174, // 333: toshi.operator.v1.OperatorService.CheckStorageProvider:output_type -> toshi.operator.v1.CheckStorageProviderResponse
-	176, // 334: toshi.operator.v1.OperatorService.DeleteStorageProvider:output_type -> toshi.operator.v1.DeleteStorageProviderResponse
-	284, // [284:335] is the sub-list for method output_type
-	233, // [233:284] is the sub-list for method input_type
-	233, // [233:233] is the sub-list for extension type_name
-	233, // [233:233] is the sub-list for extension extendee
-	0,   // [0:233] is the sub-list for field type_name
+	7,   // 90: toshi.operator.v1.RunChecksRequest.group:type_name -> toshi.operator.v1.CheckGroup
+	7,   // 91: toshi.operator.v1.RunChecksResponse.group:type_name -> toshi.operator.v1.CheckGroup
+	8,   // 92: toshi.operator.v1.RunChecksResponse.state:type_name -> toshi.operator.v1.CheckState
+	78,  // 93: toshi.operator.v1.RunChecksResponse.checks:type_name -> toshi.operator.v1.Check
+	181, // 94: toshi.operator.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
+	181, // 95: toshi.operator.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
+	84,  // 96: toshi.operator.v1.GetUsageResponse.rows:type_name -> toshi.operator.v1.UsageRow
+	181, // 97: toshi.operator.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
+	181, // 98: toshi.operator.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
+	83,  // 99: toshi.operator.v1.GetUsageResponse.filler:type_name -> toshi.operator.v1.FillerUsage
+	105, // 100: toshi.operator.v1.GetUsageResponse.storage:type_name -> toshi.operator.v1.StorageUsageRow
+	181, // 101: toshi.operator.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
+	181, // 102: toshi.operator.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
+	181, // 103: toshi.operator.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
+	181, // 104: toshi.operator.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
+	87,  // 105: toshi.operator.v1.GetQueueTimesResponse.held:type_name -> toshi.operator.v1.HoldTimes
+	181, // 106: toshi.operator.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
+	181, // 107: toshi.operator.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
+	181, // 108: toshi.operator.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
+	90,  // 109: toshi.operator.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.operator.v1.WorkflowUsageRow
+	181, // 110: toshi.operator.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
+	181, // 111: toshi.operator.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
+	93,  // 112: toshi.operator.v1.GetCapacityResponse.sizes:type_name -> toshi.operator.v1.CapacitySize
+	94,  // 113: toshi.operator.v1.GetCapacityResponse.reservations:type_name -> toshi.operator.v1.CapacityReservation
+	181, // 114: toshi.operator.v1.GetCapacityResponse.observed_at:type_name -> google.protobuf.Timestamp
+	97,  // 115: toshi.operator.v1.GetWorkspaceStatementResponse.statement:type_name -> toshi.operator.v1.WorkspaceStatement
+	181, // 116: toshi.operator.v1.WorkspaceStatement.from:type_name -> google.protobuf.Timestamp
+	181, // 117: toshi.operator.v1.WorkspaceStatement.to:type_name -> google.protobuf.Timestamp
+	106, // 118: toshi.operator.v1.WorkspaceStatement.usage:type_name -> toshi.operator.v1.StatementUsage
+	106, // 119: toshi.operator.v1.WorkspaceStatement.total:type_name -> toshi.operator.v1.StatementUsage
+	107, // 120: toshi.operator.v1.WorkspaceStatement.charges:type_name -> toshi.operator.v1.StatementCharge
+	181, // 121: toshi.operator.v1.WorkspaceStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	87,  // 122: toshi.operator.v1.WorkspaceStatement.held:type_name -> toshi.operator.v1.HoldTimes
+	83,  // 123: toshi.operator.v1.WorkspaceStatement.filler:type_name -> toshi.operator.v1.FillerUsage
+	181, // 124: toshi.operator.v1.WorkspaceStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
+	101, // 125: toshi.operator.v1.WorkspaceStatement.own_host_fee:type_name -> toshi.operator.v1.OwnHostFee
+	102, // 126: toshi.operator.v1.WorkspaceStatement.awake:type_name -> toshi.operator.v1.Awake
+	103, // 127: toshi.operator.v1.WorkspaceStatement.storage:type_name -> toshi.operator.v1.Storage
+	99,  // 128: toshi.operator.v1.WorkspaceStatement.desktop_seats:type_name -> toshi.operator.v1.DesktopSeats
+	98,  // 129: toshi.operator.v1.WorkspaceStatement.paid_starts:type_name -> toshi.operator.v1.PaidStarts
+	100, // 130: toshi.operator.v1.DesktopSeats.seats:type_name -> toshi.operator.v1.StatementSeat
+	181, // 131: toshi.operator.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
+	181, // 132: toshi.operator.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
+	104, // 133: toshi.operator.v1.Storage.kinds:type_name -> toshi.operator.v1.StoredKind
+	181, // 134: toshi.operator.v1.WorkspaceBilling.billing_started_at:type_name -> google.protobuf.Timestamp
+	181, // 135: toshi.operator.v1.WorkspaceBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
+	109, // 136: toshi.operator.v1.WorkspaceBilling.totals:type_name -> toshi.operator.v1.BillingTotals
+	110, // 137: toshi.operator.v1.WorkspaceBilling.failed_events:type_name -> toshi.operator.v1.BillingEventFailure
+	181, // 138: toshi.operator.v1.WorkspaceBilling.card_verified_at:type_name -> google.protobuf.Timestamp
+	181, // 139: toshi.operator.v1.WorkspaceBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	180, // 140: toshi.operator.v1.WorkspaceBilling.held_now:type_name -> toshi.operator.v1.WorkspaceBilling.HeldJobs
+	181, // 141: toshi.operator.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
+	181, // 142: toshi.operator.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
+	9,   // 143: toshi.operator.v1.Token.kind:type_name -> toshi.operator.v1.TokenKind
+	181, // 144: toshi.operator.v1.Token.created_at:type_name -> google.protobuf.Timestamp
+	181, // 145: toshi.operator.v1.Token.expires_at:type_name -> google.protobuf.Timestamp
+	181, // 146: toshi.operator.v1.Token.revoked_at:type_name -> google.protobuf.Timestamp
+	181, // 147: toshi.operator.v1.Token.not_before:type_name -> google.protobuf.Timestamp
+	113, // 148: toshi.operator.v1.Token.client_ranges:type_name -> toshi.operator.v1.ClientRanges
+	112, // 149: toshi.operator.v1.Token.created_by:type_name -> toshi.operator.v1.Subject
+	181, // 150: toshi.operator.v1.Token.last_used:type_name -> google.protobuf.Timestamp
+	181, // 151: toshi.operator.v1.Token.creator_left_at:type_name -> google.protobuf.Timestamp
+	10,  // 152: toshi.operator.v1.Token.expiry_reason:type_name -> toshi.operator.v1.TokenExpiryReason
+	11,  // 153: toshi.operator.v1.Subject.kind:type_name -> toshi.operator.v1.SubjectKind
+	9,   // 154: toshi.operator.v1.ListTokensRequest.kind:type_name -> toshi.operator.v1.TokenKind
+	111, // 155: toshi.operator.v1.ListTokensResponse.tokens:type_name -> toshi.operator.v1.Token
+	9,   // 156: toshi.operator.v1.RotateTokenRequest.kind:type_name -> toshi.operator.v1.TokenKind
+	111, // 157: toshi.operator.v1.RotateTokenResponse.token:type_name -> toshi.operator.v1.Token
+	111, // 158: toshi.operator.v1.RevokeTokenResponse.token:type_name -> toshi.operator.v1.Token
+	111, // 159: toshi.operator.v1.RollTokenResponse.token:type_name -> toshi.operator.v1.Token
+	181, // 160: toshi.operator.v1.CreateProductTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	111, // 161: toshi.operator.v1.CreateProductTokenResponse.token:type_name -> toshi.operator.v1.Token
+	181, // 162: toshi.operator.v1.Client.created_at:type_name -> google.protobuf.Timestamp
+	124, // 163: toshi.operator.v1.RegisterClientResponse.client:type_name -> toshi.operator.v1.Client
+	124, // 164: toshi.operator.v1.ListClientsResponse.clients:type_name -> toshi.operator.v1.Client
+	133, // 165: toshi.operator.v1.CheckCloudHostResponse.checks:type_name -> toshi.operator.v1.CloudHostCheck
+	12,  // 166: toshi.operator.v1.CloudHostCheck.status:type_name -> toshi.operator.v1.CloudHostCheckStatus
+	182, // 167: toshi.operator.v1.Filler.every:type_name -> google.protobuf.Duration
+	182, // 168: toshi.operator.v1.Filler.max_duration:type_name -> google.protobuf.Duration
+	181, // 169: toshi.operator.v1.Filler.created_at:type_name -> google.protobuf.Timestamp
+	181, // 170: toshi.operator.v1.Filler.updated_at:type_name -> google.protobuf.Timestamp
+	135, // 171: toshi.operator.v1.Filler.last_run:type_name -> toshi.operator.v1.FillerRun
+	181, // 172: toshi.operator.v1.Filler.paused_since:type_name -> google.protobuf.Timestamp
+	181, // 173: toshi.operator.v1.Filler.pause_as_of:type_name -> google.protobuf.Timestamp
+	181, // 174: toshi.operator.v1.FillerRun.created_at:type_name -> google.protobuf.Timestamp
+	181, // 175: toshi.operator.v1.FillerRun.started_at:type_name -> google.protobuf.Timestamp
+	181, // 176: toshi.operator.v1.FillerRun.finished_at:type_name -> google.protobuf.Timestamp
+	134, // 177: toshi.operator.v1.ListFillersResponse.fillers:type_name -> toshi.operator.v1.Filler
+	136, // 178: toshi.operator.v1.ListFillersResponse.host_minutes:type_name -> toshi.operator.v1.FillerHostMinutes
+	134, // 179: toshi.operator.v1.PutFillerRequest.filler:type_name -> toshi.operator.v1.Filler
+	134, // 180: toshi.operator.v1.PutFillerResponse.filler:type_name -> toshi.operator.v1.Filler
+	134, // 181: toshi.operator.v1.UpdateFillerRequest.filler:type_name -> toshi.operator.v1.Filler
+	183, // 182: toshi.operator.v1.UpdateFillerRequest.update_mask:type_name -> google.protobuf.FieldMask
+	134, // 183: toshi.operator.v1.UpdateFillerResponse.filler:type_name -> toshi.operator.v1.Filler
+	135, // 184: toshi.operator.v1.ListFillerRunsResponse.runs:type_name -> toshi.operator.v1.FillerRun
+	147, // 185: toshi.operator.v1.ListFillerRunsResponse.pauses:type_name -> toshi.operator.v1.FillerPause
+	181, // 186: toshi.operator.v1.FillerPause.since:type_name -> google.protobuf.Timestamp
+	181, // 187: toshi.operator.v1.FillerPause.as_of:type_name -> google.protobuf.Timestamp
+	152, // 188: toshi.operator.v1.GetSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
+	152, // 189: toshi.operator.v1.UpdateSecretDeliveryRequest.secret_delivery:type_name -> toshi.operator.v1.SecretDelivery
+	183, // 190: toshi.operator.v1.UpdateSecretDeliveryRequest.update_mask:type_name -> google.protobuf.FieldMask
+	152, // 191: toshi.operator.v1.UpdateSecretDeliveryResponse.delivery:type_name -> toshi.operator.v1.SecretDelivery
+	181, // 192: toshi.operator.v1.SecretDelivery.changed_at:type_name -> google.protobuf.Timestamp
+	181, // 193: toshi.operator.v1.ListUtilisationRequest.from:type_name -> google.protobuf.Timestamp
+	181, // 194: toshi.operator.v1.ListUtilisationRequest.to:type_name -> google.protobuf.Timestamp
+	157, // 195: toshi.operator.v1.ListUtilisationResponse.rows:type_name -> toshi.operator.v1.UtilisationRow
+	158, // 196: toshi.operator.v1.ListUtilisationResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
+	181, // 197: toshi.operator.v1.ListUtilisationResponse.as_of:type_name -> google.protobuf.Timestamp
+	155, // 198: toshi.operator.v1.ListUtilisationResponse.warm_memory:type_name -> toshi.operator.v1.WarmMemoryRow
+	181, // 199: toshi.operator.v1.WarmMemoryRow.start:type_name -> google.protobuf.Timestamp
+	156, // 200: toshi.operator.v1.WarmMemoryRow.booted:type_name -> toshi.operator.v1.WarmPathSummary
+	156, // 201: toshi.operator.v1.WarmMemoryRow.restored:type_name -> toshi.operator.v1.WarmPathSummary
+	181, // 202: toshi.operator.v1.UtilisationRow.start:type_name -> google.protobuf.Timestamp
+	181, // 203: toshi.operator.v1.SuggestPoolsResponse.running_since:type_name -> google.protobuf.Timestamp
+	161, // 204: toshi.operator.v1.SuggestPoolsResponse.last:type_name -> toshi.operator.v1.PoolSuggestion
+	182, // 205: toshi.operator.v1.SuggestPoolsResponse.timeout:type_name -> google.protobuf.Duration
+	158, // 206: toshi.operator.v1.SuggestPoolsResponse.target:type_name -> toshi.operator.v1.UtilisationTarget
+	161, // 207: toshi.operator.v1.SuggestPoolsResponse.kept:type_name -> toshi.operator.v1.PoolSuggestion
+	181, // 208: toshi.operator.v1.PoolSuggestion.started_at:type_name -> google.protobuf.Timestamp
+	181, // 209: toshi.operator.v1.PoolSuggestion.finished_at:type_name -> google.protobuf.Timestamp
+	181, // 210: toshi.operator.v1.PoolSuggestion.from:type_name -> google.protobuf.Timestamp
+	181, // 211: toshi.operator.v1.PoolSuggestion.to:type_name -> google.protobuf.Timestamp
+	182, // 212: toshi.operator.v1.PoolSuggestion.budget:type_name -> google.protobuf.Duration
+	165, // 213: toshi.operator.v1.PoolSuggestion.unmet:type_name -> toshi.operator.v1.PoolSuggestionUnmet
+	166, // 214: toshi.operator.v1.PoolSuggestion.boot_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
+	166, // 215: toshi.operator.v1.PoolSuggestion.restore_delays:type_name -> toshi.operator.v1.PoolSuggestionDelay
+	162, // 216: toshi.operator.v1.PoolSuggestion.sizes:type_name -> toshi.operator.v1.PoolSuggestionSize
+	164, // 217: toshi.operator.v1.PoolSuggestion.not_in_trace:type_name -> toshi.operator.v1.PoolSuggestionTarget
+	163, // 218: toshi.operator.v1.PoolSuggestionSize.today:type_name -> toshi.operator.v1.PoolSuggestionOutcome
+	163, // 219: toshi.operator.v1.PoolSuggestionSize.with_suggested:type_name -> toshi.operator.v1.PoolSuggestionOutcome
+	181, // 220: toshi.operator.v1.StorageProvider.last_check_at:type_name -> google.protobuf.Timestamp
+	181, // 221: toshi.operator.v1.StorageProvider.created_at:type_name -> google.protobuf.Timestamp
+	181, // 222: toshi.operator.v1.StorageProvider.updated_at:type_name -> google.protobuf.Timestamp
+	169, // 223: toshi.operator.v1.CreateStorageProviderRequest.credential:type_name -> toshi.operator.v1.StorageCredential
+	167, // 224: toshi.operator.v1.CreateStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
+	167, // 225: toshi.operator.v1.ListStorageProvidersResponse.providers:type_name -> toshi.operator.v1.StorageProvider
+	167, // 226: toshi.operator.v1.ListStorageProvidersResponse.default_provider:type_name -> toshi.operator.v1.StorageProvider
+	168, // 227: toshi.operator.v1.CheckStorageProviderRequest.provider:type_name -> toshi.operator.v1.CreateStorageProviderRequest
+	167, // 228: toshi.operator.v1.CheckStorageProviderResponse.provider:type_name -> toshi.operator.v1.StorageProvider
+	181, // 229: toshi.operator.v1.CheckStorageProviderResponse.checked_at:type_name -> google.protobuf.Timestamp
+	181, // 230: toshi.operator.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
+	181, // 231: toshi.operator.v1.WorkspaceBilling.HeldJobs.next_at:type_name -> google.protobuf.Timestamp
+	38,  // 232: toshi.operator.v1.OperatorService.DeleteUser:input_type -> toshi.operator.v1.DeleteUserRequest
+	24,  // 233: toshi.operator.v1.OperatorService.ListJobs:input_type -> toshi.operator.v1.ListJobsRequest
+	27,  // 234: toshi.operator.v1.OperatorService.ListAuditEvents:input_type -> toshi.operator.v1.ListAuditEventsRequest
+	16,  // 235: toshi.operator.v1.OperatorService.SummariseJobTelemetry:input_type -> toshi.operator.v1.SummariseJobTelemetryRequest
+	29,  // 236: toshi.operator.v1.OperatorService.ListHosts:input_type -> toshi.operator.v1.ListHostsRequest
+	31,  // 237: toshi.operator.v1.OperatorService.ListHostStorage:input_type -> toshi.operator.v1.ListHostStorageRequest
+	34,  // 238: toshi.operator.v1.OperatorService.SetHostState:input_type -> toshi.operator.v1.SetHostStateRequest
+	36,  // 239: toshi.operator.v1.OperatorService.UpdateHost:input_type -> toshi.operator.v1.UpdateHostRequest
+	40,  // 240: toshi.operator.v1.OperatorService.RetireHost:input_type -> toshi.operator.v1.RetireHostRequest
+	42,  // 241: toshi.operator.v1.OperatorService.RevokeHost:input_type -> toshi.operator.v1.RevokeHostRequest
+	44,  // 242: toshi.operator.v1.OperatorService.RetireHosts:input_type -> toshi.operator.v1.RetireHostsRequest
+	50,  // 243: toshi.operator.v1.OperatorService.CreateWorkspace:input_type -> toshi.operator.v1.CreateWorkspaceRequest
+	52,  // 244: toshi.operator.v1.OperatorService.ListWorkspaces:input_type -> toshi.operator.v1.ListWorkspacesRequest
+	54,  // 245: toshi.operator.v1.OperatorService.UpdateWorkspace:input_type -> toshi.operator.v1.UpdateWorkspaceRequest
+	57,  // 246: toshi.operator.v1.OperatorService.ReassignSeat:input_type -> toshi.operator.v1.ReassignSeatRequest
+	59,  // 247: toshi.operator.v1.OperatorService.ListSeats:input_type -> toshi.operator.v1.ListSeatsRequest
+	74,  // 248: toshi.operator.v1.OperatorService.ListPlans:input_type -> toshi.operator.v1.ListPlansRequest
+	76,  // 249: toshi.operator.v1.OperatorService.GetVersion:input_type -> toshi.operator.v1.GetVersionRequest
+	79,  // 250: toshi.operator.v1.OperatorService.RunChecks:input_type -> toshi.operator.v1.RunChecksRequest
+	62,  // 251: toshi.operator.v1.OperatorService.SuspendWorkspace:input_type -> toshi.operator.v1.SuspendWorkspaceRequest
+	64,  // 252: toshi.operator.v1.OperatorService.UnsuspendWorkspace:input_type -> toshi.operator.v1.UnsuspendWorkspaceRequest
+	66,  // 253: toshi.operator.v1.OperatorService.DeleteWorkspace:input_type -> toshi.operator.v1.DeleteWorkspaceRequest
+	91,  // 254: toshi.operator.v1.OperatorService.GetCapacity:input_type -> toshi.operator.v1.GetCapacityRequest
+	81,  // 255: toshi.operator.v1.OperatorService.GetUsage:input_type -> toshi.operator.v1.GetUsageRequest
+	85,  // 256: toshi.operator.v1.OperatorService.GetQueueTimes:input_type -> toshi.operator.v1.GetQueueTimesRequest
+	88,  // 257: toshi.operator.v1.OperatorService.GetWorkflowUsage:input_type -> toshi.operator.v1.GetWorkflowUsageRequest
+	95,  // 258: toshi.operator.v1.OperatorService.GetWorkspaceStatement:input_type -> toshi.operator.v1.GetWorkspaceStatementRequest
+	114, // 259: toshi.operator.v1.OperatorService.ListTokens:input_type -> toshi.operator.v1.ListTokensRequest
+	116, // 260: toshi.operator.v1.OperatorService.RotateToken:input_type -> toshi.operator.v1.RotateTokenRequest
+	118, // 261: toshi.operator.v1.OperatorService.RevokeToken:input_type -> toshi.operator.v1.RevokeTokenRequest
+	120, // 262: toshi.operator.v1.OperatorService.RollToken:input_type -> toshi.operator.v1.RollTokenRequest
+	122, // 263: toshi.operator.v1.OperatorService.CreateProductToken:input_type -> toshi.operator.v1.CreateProductTokenRequest
+	125, // 264: toshi.operator.v1.OperatorService.RegisterClient:input_type -> toshi.operator.v1.RegisterClientRequest
+	127, // 265: toshi.operator.v1.OperatorService.ListClients:input_type -> toshi.operator.v1.ListClientsRequest
+	129, // 266: toshi.operator.v1.OperatorService.DeleteClient:input_type -> toshi.operator.v1.DeleteClientRequest
+	69,  // 267: toshi.operator.v1.OperatorService.ListOperatorAlerts:input_type -> toshi.operator.v1.ListOperatorAlertsRequest
+	71,  // 268: toshi.operator.v1.OperatorService.ListHostAlerts:input_type -> toshi.operator.v1.ListHostAlertsRequest
+	131, // 269: toshi.operator.v1.OperatorService.CheckCloudHost:input_type -> toshi.operator.v1.CheckCloudHostRequest
+	137, // 270: toshi.operator.v1.OperatorService.ListFillers:input_type -> toshi.operator.v1.ListFillersRequest
+	139, // 271: toshi.operator.v1.OperatorService.PutFiller:input_type -> toshi.operator.v1.PutFillerRequest
+	141, // 272: toshi.operator.v1.OperatorService.DeleteFiller:input_type -> toshi.operator.v1.DeleteFillerRequest
+	143, // 273: toshi.operator.v1.OperatorService.UpdateFiller:input_type -> toshi.operator.v1.UpdateFillerRequest
+	145, // 274: toshi.operator.v1.OperatorService.ListFillerRuns:input_type -> toshi.operator.v1.ListFillerRunsRequest
+	148, // 275: toshi.operator.v1.OperatorService.GetSecretDelivery:input_type -> toshi.operator.v1.GetSecretDeliveryRequest
+	150, // 276: toshi.operator.v1.OperatorService.UpdateSecretDelivery:input_type -> toshi.operator.v1.UpdateSecretDeliveryRequest
+	153, // 277: toshi.operator.v1.OperatorService.ListUtilisation:input_type -> toshi.operator.v1.ListUtilisationRequest
+	159, // 278: toshi.operator.v1.OperatorService.SuggestPools:input_type -> toshi.operator.v1.SuggestPoolsRequest
+	168, // 279: toshi.operator.v1.OperatorService.CreateStorageProvider:input_type -> toshi.operator.v1.CreateStorageProviderRequest
+	171, // 280: toshi.operator.v1.OperatorService.ListStorageProviders:input_type -> toshi.operator.v1.ListStorageProvidersRequest
+	173, // 281: toshi.operator.v1.OperatorService.CheckStorageProvider:input_type -> toshi.operator.v1.CheckStorageProviderRequest
+	175, // 282: toshi.operator.v1.OperatorService.DeleteStorageProvider:input_type -> toshi.operator.v1.DeleteStorageProviderRequest
+	39,  // 283: toshi.operator.v1.OperatorService.DeleteUser:output_type -> toshi.operator.v1.DeleteUserResponse
+	25,  // 284: toshi.operator.v1.OperatorService.ListJobs:output_type -> toshi.operator.v1.ListJobsResponse
+	28,  // 285: toshi.operator.v1.OperatorService.ListAuditEvents:output_type -> toshi.operator.v1.ListAuditEventsResponse
+	17,  // 286: toshi.operator.v1.OperatorService.SummariseJobTelemetry:output_type -> toshi.operator.v1.SummariseJobTelemetryResponse
+	30,  // 287: toshi.operator.v1.OperatorService.ListHosts:output_type -> toshi.operator.v1.ListHostsResponse
+	32,  // 288: toshi.operator.v1.OperatorService.ListHostStorage:output_type -> toshi.operator.v1.ListHostStorageResponse
+	35,  // 289: toshi.operator.v1.OperatorService.SetHostState:output_type -> toshi.operator.v1.SetHostStateResponse
+	37,  // 290: toshi.operator.v1.OperatorService.UpdateHost:output_type -> toshi.operator.v1.UpdateHostResponse
+	41,  // 291: toshi.operator.v1.OperatorService.RetireHost:output_type -> toshi.operator.v1.RetireHostResponse
+	43,  // 292: toshi.operator.v1.OperatorService.RevokeHost:output_type -> toshi.operator.v1.RevokeHostResponse
+	45,  // 293: toshi.operator.v1.OperatorService.RetireHosts:output_type -> toshi.operator.v1.RetireHostsResponse
+	51,  // 294: toshi.operator.v1.OperatorService.CreateWorkspace:output_type -> toshi.operator.v1.CreateWorkspaceResponse
+	53,  // 295: toshi.operator.v1.OperatorService.ListWorkspaces:output_type -> toshi.operator.v1.ListWorkspacesResponse
+	55,  // 296: toshi.operator.v1.OperatorService.UpdateWorkspace:output_type -> toshi.operator.v1.UpdateWorkspaceResponse
+	58,  // 297: toshi.operator.v1.OperatorService.ReassignSeat:output_type -> toshi.operator.v1.ReassignSeatResponse
+	60,  // 298: toshi.operator.v1.OperatorService.ListSeats:output_type -> toshi.operator.v1.ListSeatsResponse
+	75,  // 299: toshi.operator.v1.OperatorService.ListPlans:output_type -> toshi.operator.v1.ListPlansResponse
+	77,  // 300: toshi.operator.v1.OperatorService.GetVersion:output_type -> toshi.operator.v1.GetVersionResponse
+	80,  // 301: toshi.operator.v1.OperatorService.RunChecks:output_type -> toshi.operator.v1.RunChecksResponse
+	63,  // 302: toshi.operator.v1.OperatorService.SuspendWorkspace:output_type -> toshi.operator.v1.SuspendWorkspaceResponse
+	65,  // 303: toshi.operator.v1.OperatorService.UnsuspendWorkspace:output_type -> toshi.operator.v1.UnsuspendWorkspaceResponse
+	67,  // 304: toshi.operator.v1.OperatorService.DeleteWorkspace:output_type -> toshi.operator.v1.DeleteWorkspaceResponse
+	92,  // 305: toshi.operator.v1.OperatorService.GetCapacity:output_type -> toshi.operator.v1.GetCapacityResponse
+	82,  // 306: toshi.operator.v1.OperatorService.GetUsage:output_type -> toshi.operator.v1.GetUsageResponse
+	86,  // 307: toshi.operator.v1.OperatorService.GetQueueTimes:output_type -> toshi.operator.v1.GetQueueTimesResponse
+	89,  // 308: toshi.operator.v1.OperatorService.GetWorkflowUsage:output_type -> toshi.operator.v1.GetWorkflowUsageResponse
+	96,  // 309: toshi.operator.v1.OperatorService.GetWorkspaceStatement:output_type -> toshi.operator.v1.GetWorkspaceStatementResponse
+	115, // 310: toshi.operator.v1.OperatorService.ListTokens:output_type -> toshi.operator.v1.ListTokensResponse
+	117, // 311: toshi.operator.v1.OperatorService.RotateToken:output_type -> toshi.operator.v1.RotateTokenResponse
+	119, // 312: toshi.operator.v1.OperatorService.RevokeToken:output_type -> toshi.operator.v1.RevokeTokenResponse
+	121, // 313: toshi.operator.v1.OperatorService.RollToken:output_type -> toshi.operator.v1.RollTokenResponse
+	123, // 314: toshi.operator.v1.OperatorService.CreateProductToken:output_type -> toshi.operator.v1.CreateProductTokenResponse
+	126, // 315: toshi.operator.v1.OperatorService.RegisterClient:output_type -> toshi.operator.v1.RegisterClientResponse
+	128, // 316: toshi.operator.v1.OperatorService.ListClients:output_type -> toshi.operator.v1.ListClientsResponse
+	130, // 317: toshi.operator.v1.OperatorService.DeleteClient:output_type -> toshi.operator.v1.DeleteClientResponse
+	70,  // 318: toshi.operator.v1.OperatorService.ListOperatorAlerts:output_type -> toshi.operator.v1.ListOperatorAlertsResponse
+	72,  // 319: toshi.operator.v1.OperatorService.ListHostAlerts:output_type -> toshi.operator.v1.ListHostAlertsResponse
+	132, // 320: toshi.operator.v1.OperatorService.CheckCloudHost:output_type -> toshi.operator.v1.CheckCloudHostResponse
+	138, // 321: toshi.operator.v1.OperatorService.ListFillers:output_type -> toshi.operator.v1.ListFillersResponse
+	140, // 322: toshi.operator.v1.OperatorService.PutFiller:output_type -> toshi.operator.v1.PutFillerResponse
+	142, // 323: toshi.operator.v1.OperatorService.DeleteFiller:output_type -> toshi.operator.v1.DeleteFillerResponse
+	144, // 324: toshi.operator.v1.OperatorService.UpdateFiller:output_type -> toshi.operator.v1.UpdateFillerResponse
+	146, // 325: toshi.operator.v1.OperatorService.ListFillerRuns:output_type -> toshi.operator.v1.ListFillerRunsResponse
+	149, // 326: toshi.operator.v1.OperatorService.GetSecretDelivery:output_type -> toshi.operator.v1.GetSecretDeliveryResponse
+	151, // 327: toshi.operator.v1.OperatorService.UpdateSecretDelivery:output_type -> toshi.operator.v1.UpdateSecretDeliveryResponse
+	154, // 328: toshi.operator.v1.OperatorService.ListUtilisation:output_type -> toshi.operator.v1.ListUtilisationResponse
+	160, // 329: toshi.operator.v1.OperatorService.SuggestPools:output_type -> toshi.operator.v1.SuggestPoolsResponse
+	170, // 330: toshi.operator.v1.OperatorService.CreateStorageProvider:output_type -> toshi.operator.v1.CreateStorageProviderResponse
+	172, // 331: toshi.operator.v1.OperatorService.ListStorageProviders:output_type -> toshi.operator.v1.ListStorageProvidersResponse
+	174, // 332: toshi.operator.v1.OperatorService.CheckStorageProvider:output_type -> toshi.operator.v1.CheckStorageProviderResponse
+	176, // 333: toshi.operator.v1.OperatorService.DeleteStorageProvider:output_type -> toshi.operator.v1.DeleteStorageProviderResponse
+	283, // [283:334] is the sub-list for method output_type
+	232, // [232:283] is the sub-list for method input_type
+	232, // [232:232] is the sub-list for extension type_name
+	232, // [232:232] is the sub-list for extension extendee
+	0,   // [0:232] is the sub-list for field type_name
 }
 
 func init() { file_toshi_operator_v1_operator_proto_init() }

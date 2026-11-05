@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/volumes.proto.
  */
 export const file_toshi_workspace_v1_volumes: GenFile = /*@__PURE__*/
-  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvdm9sdW1lcy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIs0GCgZWb2x1bWUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdwcm9qZWN0GAMgASgJEhIKCnByb2plY3RfaWQYBCABKAkSLAoEbW9kZRgFIAEoDjIeLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVNb2RlEhYKDnNpemVfY2FwX2J5dGVzGAYgASgDEi8KC2NyZWF0ZV90aW1lGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIcChRhdHRhY2hlZF93b3JrbG9hZF9pZBgIIAEoCRIWCg5sYXRlc3RfdmVyc2lvbhgJIAEoAxI3ChNsYXRlc3RfdmVyc2lvbl90aW1lGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBItCglsb3N0X3RpbWUYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEkkKGmxhdGVzdF92ZXJzaW9uX2NvbnNpc3RlbmN5GAwgASgOMiUudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZUNvbnNpc3RlbmN5EjQKEXNuYXBzaG90X2ludGVydmFsGA0gASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uEhkKEWxhc3Rfc2F2ZV9mYWlsdXJlGA4gASgJEjoKFmxhc3Rfc2F2ZV9mYWlsdXJlX3RpbWUYDyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjAKBmZvcm1hdBgQIAEoDjIgLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVGb3JtYXQSDwoHcHJvZmlsZRgRIAEoCBIeChZhdHRhY2hlZF93b3JrbG9hZF9raW5kGBIgASgJEhwKFGF0dGFjaGVkX2Vudmlyb25tZW50GBMgASgJEhIKCm1hbmFnZWRfYnkYFCABKAkSFwoPbWFuaWZlc3RfZGlnZXN0GBUgASgJEhYKDm1hbmFnZWRfZmllbGRzGBYgAygJEhcKD21hbmlmZXN0X29yaWdpbhgXIAEoCRIfChdsYXRlc3RfdmVyc2lvbl9vdmVyX2NhcBgYIAEoCBIXCg9zaXplX2NhcF9zb3VyY2UYGSABKAki/AEKDVZvbHVtZVZlcnNpb24SDgoGbnVtYmVyGAEgASgDEi8KC2NyZWF0ZV90aW1lGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpzaXplX2J5dGVzGAMgASgDEg4KBnNoYTI1NhgEIAEoCRIVCg1yZXN0b3JlZF9mcm9tGAUgASgDEjMKBGtpbmQYBiABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbktpbmQSOgoLY29uc2lzdGVuY3kYByABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lQ29uc2lzdGVuY3kiXQoSTGlzdFZvbHVtZXNSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkSDwoHcHJvZmlsZRgEIAEoCCJbChNMaXN0Vm9sdW1lc1Jlc3BvbnNlEisKB3ZvbHVtZXMYASADKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSI2ChBHZXRWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJIj8KEUdldFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUi7QEKE0NyZWF0ZVZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIMCgRuYW1lGAIgASgJEiwKBG1vZGUYAyABKA4yHi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lTW9kZRIWCg5zaXplX2NhcF9ieXRlcxgEIAEoAxITCgtyZXF1ZXN0X2tleRgFIAEoCRISCgptYW5hZ2VkX2J5GAYgASgJEhcKD21hbmlmZXN0X2RpZ2VzdBgHIAEoCRIWCg5tYW5hZ2VkX2ZpZWxkcxgIIAMoCRIXCg9tYW5pZmVzdF9vcmlnaW4YCSABKAkiQgoUQ3JlYXRlVm9sdW1lUmVzcG9uc2USKgoGdm9sdW1lGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZSKDAQoTVXBkYXRlVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEioKBnZvbHVtZRgCIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUSLwoLdXBkYXRlX21hc2sYAyABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrIkIKFFVwZGF0ZVZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGVsZXRlVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSIWChREZWxldGVWb2x1bWVSZXNwb25zZSJOChNBdHRhY2hWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJEhMKC3dvcmtsb2FkX2lkGAMgASgJIkIKFEF0dGFjaFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGV0YWNoVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSJCChREZXRhY2hWb2x1bWVSZXNwb25zZRIqCgZ2b2x1bWUYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lImYKGUxpc3RWb2x1bWVWZXJzaW9uc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkiagoaTGlzdFZvbHVtZVZlcnNpb25zUmVzcG9uc2USMwoIdmVyc2lvbnMYASADKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiSwoUUmVzdG9yZVZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSDwoHdmVyc2lvbhgDIAEoAyJ3ChVSZXN0b3JlVm9sdW1lUmVzcG9uc2USMgoHdmVyc2lvbhgBIAEoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uEioKBnZvbHVtZRgCIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUqhwEKClZvbHVtZU1vZGUSGwoXVk9MVU1FX01PREVfVU5TUEVDSUZJRUQQABIVChFWT0xVTUVfTU9ERV9DQUNIRRABEhQKEFZPTFVNRV9NT0RFX1NFRUQQAhIVChFWT0xVTUVfTU9ERV9TVEFURRADEhgKFFZPTFVNRV9NT0RFX0FSVElGQUNUEAQqYgoMVm9sdW1lRm9ybWF0Eh0KGVZPTFVNRV9GT1JNQVRfVU5TUEVDSUZJRUQQABIWChJWT0xVTUVfRk9STUFUX0RJU0sQARIbChdWT0xVTUVfRk9STUFUX0RJUkVDVE9SWRACKngKEVZvbHVtZVZlcnNpb25LaW5kEiMKH1ZPTFVNRV9WRVJTSU9OX0tJTkRfVU5TUEVDSUZJRUQQABIcChhWT0xVTUVfVkVSU0lPTl9LSU5EX1NBVkUQARIgChxWT0xVTUVfVkVSU0lPTl9LSU5EX1NOQVBTSE9UEAIqeQoRVm9sdW1lQ29uc2lzdGVuY3kSIgoeVk9MVU1FX0NPTlNJU1RFTkNZX1VOU1BFQ0lGSUVEEAASHAoYVk9MVU1FX0NPTlNJU1RFTkNZX0NSQVNIEAESIgoeVk9MVU1FX0NPTlNJU1RFTkNZX0FQUExJQ0FUSU9OEAIyvwoKDVZvbHVtZVNlcnZpY2USewoLTGlzdFZvbHVtZXMSJi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZXNSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVzUmVzcG9uc2UiG8LzGAx2b2x1bWVzLnJlYWTK8xgHcHJvamVjdBJ1CglHZXRWb2x1bWUSJC50b3NoaS53b3Jrc3BhY2UudjEuR2V0Vm9sdW1lUmVxdWVzdBolLnRvc2hpLndvcmtzcGFjZS52MS5HZXRWb2x1bWVSZXNwb25zZSIbwvMYDHZvbHVtZXMucmVhZMrzGAdwcm9qZWN0EoQBCgxDcmVhdGVWb2x1bWUSJy50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlVm9sdW1lUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVWb2x1bWVSZXNwb25zZSIhwvMYDnByb2plY3RzLndyaXRlyvMYB3Byb2plY3SQ9BgBEqMBCgxVcGRhdGVWb2x1bWUSJy50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlVm9sdW1lUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVWb2x1bWVSZXNwb25zZSJAwvMYDnByb2plY3RzLndyaXRlyvMYB3Byb2plY3TS8xgbEhl2b2x1bWU6cmVzcG9uc2Uudm9sdW1lLmlkkPQYAhKDAQoMQXR0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkF0dGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuQXR0YWNoVm9sdW1lUmVzcG9uc2UiIMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3SQ9BgCEoMBCgxEZXRhY2hWb2x1bWUSJy50b3NoaS53b3Jrc3BhY2UudjEuRGV0YWNoVm9sdW1lUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5EZXRhY2hWb2x1bWVSZXNwb25zZSIgwvMYDXZvbHVtZXMud3JpdGXK8xgHcHJvamVjdJD0GAISzwEKDERlbGV0ZVZvbHVtZRInLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVWb2x1bWVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZVZvbHVtZVJlc3BvbnNlImzC8xgOcHJvamVjdHMud3JpdGXK8xgHcHJvamVjdPrzGEcIARJDRGVsZXRlIHRoaXMgdm9sdW1lPyBJdHMgZGF0YSBpcyBkZWxldGVkIGFuZCBjYW5ub3QgYmUgYnJvdWdodCBiYWNrLpD0GAISkAEKEkxpc3RWb2x1bWVWZXJzaW9ucxItLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Vm9sdW1lVmVyc2lvbnNSZXF1ZXN0Gi4udG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVWZXJzaW9uc1Jlc3BvbnNlIhvC8xgMdm9sdW1lcy5yZWFkyvMYB3Byb2plY3QSmwEKDVJlc3RvcmVWb2x1bWUSKC50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlc3BvbnNlIjXC8xgNdm9sdW1lcy53cml0ZcrzGAdwcm9qZWN00vMYEQoPdm9sdW1lLnJlc3RvcmVkkPQYAkIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiB0b3NoaS93b3Jrc3BhY2UvdjEvdm9sdW1lcy5wcm90bxISdG9zaGkud29ya3NwYWNlLnYxIsUGCgZWb2x1bWUSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIPCgdwcm9qZWN0GAMgASgJEhIKCnByb2plY3RfaWQYBCABKAkSLAoEbW9kZRgFIAEoDjIeLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVNb2RlEhYKDnNpemVfY2FwX2J5dGVzGAYgASgDEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhwKFGF0dGFjaGVkX3dvcmtsb2FkX2lkGAggASgJEhYKDmxhdGVzdF92ZXJzaW9uGAkgASgDEjUKEWxhdGVzdF92ZXJzaW9uX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIrCgdsb3N0X2F0GAsgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBJJChpsYXRlc3RfdmVyc2lvbl9jb25zaXN0ZW5jeRgMIAEoDjIlLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVDb25zaXN0ZW5jeRI0ChFzbmFwc2hvdF9pbnRlcnZhbBgNIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbhIZChFsYXN0X3NhdmVfZmFpbHVyZRgOIAEoCRI3ChNsYXN0X3NhdmVfZmFpbGVkX2F0GA8gASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIwCgZmb3JtYXQYECABKA4yIC50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lRm9ybWF0Eg8KB3Byb2ZpbGUYESABKAgSHgoWYXR0YWNoZWRfd29ya2xvYWRfa2luZBgSIAEoCRIcChRhdHRhY2hlZF9lbnZpcm9ubWVudBgTIAEoCRISCgptYW5hZ2VkX2J5GBQgASgJEhcKD21hbmlmZXN0X2RpZ2VzdBgVIAEoCRIWCg5tYW5hZ2VkX2ZpZWxkcxgWIAMoCRIXCg9tYW5pZmVzdF9vcmlnaW4YFyABKAkSHwoXbGF0ZXN0X3ZlcnNpb25fb3Zlcl9jYXAYGCABKAgSFwoPc2l6ZV9jYXBfc291cmNlGBkgASgJIvsBCg1Wb2x1bWVWZXJzaW9uEg4KBm51bWJlchgBIAEoAxIuCgpjcmVhdGVkX2F0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpzaXplX2J5dGVzGAMgASgDEg4KBnNoYTI1NhgEIAEoCRIVCg1yZXN0b3JlZF9mcm9tGAUgASgDEjMKBGtpbmQYBiABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbktpbmQSOgoLY29uc2lzdGVuY3kYByABKA4yJS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lQ29uc2lzdGVuY3kiXQoSTGlzdFZvbHVtZXNSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJcGFnZV9zaXplGAIgASgFEhIKCnBhZ2VfdG9rZW4YAyABKAkSDwoHcHJvZmlsZRgEIAEoCCJbChNMaXN0Vm9sdW1lc1Jlc3BvbnNlEisKB3ZvbHVtZXMYASADKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lEhcKD25leHRfcGFnZV90b2tlbhgCIAEoCSI2ChBHZXRWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJIj8KEUdldFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUi7QEKE0NyZWF0ZVZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIMCgRuYW1lGAIgASgJEiwKBG1vZGUYAyABKA4yHi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lTW9kZRIWCg5zaXplX2NhcF9ieXRlcxgEIAEoAxITCgtyZXF1ZXN0X2tleRgFIAEoCRISCgptYW5hZ2VkX2J5GAYgASgJEhcKD21hbmlmZXN0X2RpZ2VzdBgHIAEoCRIWCg5tYW5hZ2VkX2ZpZWxkcxgIIAMoCRIXCg9tYW5pZmVzdF9vcmlnaW4YCSABKAkiQgoUQ3JlYXRlVm9sdW1lUmVzcG9uc2USKgoGdm9sdW1lGAEgASgLMhoudG9zaGkud29ya3NwYWNlLnYxLlZvbHVtZSKDAQoTVXBkYXRlVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEioKBnZvbHVtZRgCIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUSLwoLdXBkYXRlX21hc2sYAyABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrIkIKFFVwZGF0ZVZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGVsZXRlVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSIWChREZWxldGVWb2x1bWVSZXNwb25zZSJOChNBdHRhY2hWb2x1bWVSZXF1ZXN0Eg8KB3Byb2plY3QYASABKAkSEQoJdm9sdW1lX2lkGAIgASgJEhMKC3dvcmtsb2FkX2lkGAMgASgJIkIKFEF0dGFjaFZvbHVtZVJlc3BvbnNlEioKBnZvbHVtZRgBIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUiOQoTRGV0YWNoVm9sdW1lUmVxdWVzdBIPCgdwcm9qZWN0GAEgASgJEhEKCXZvbHVtZV9pZBgCIAEoCSJCChREZXRhY2hWb2x1bWVSZXNwb25zZRIqCgZ2b2x1bWUYASABKAsyGi50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lImYKGUxpc3RWb2x1bWVWZXJzaW9uc1JlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSEQoJcGFnZV9zaXplGAMgASgFEhIKCnBhZ2VfdG9rZW4YBCABKAkiagoaTGlzdFZvbHVtZVZlcnNpb25zUmVzcG9uc2USMwoIdmVyc2lvbnMYASADKAsyIS50b3NoaS53b3Jrc3BhY2UudjEuVm9sdW1lVmVyc2lvbhIXCg9uZXh0X3BhZ2VfdG9rZW4YAiABKAkiSwoUUmVzdG9yZVZvbHVtZVJlcXVlc3QSDwoHcHJvamVjdBgBIAEoCRIRCgl2b2x1bWVfaWQYAiABKAkSDwoHdmVyc2lvbhgDIAEoAyJ3ChVSZXN0b3JlVm9sdW1lUmVzcG9uc2USMgoHdmVyc2lvbhgBIAEoCzIhLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWVWZXJzaW9uEioKBnZvbHVtZRgCIAEoCzIaLnRvc2hpLndvcmtzcGFjZS52MS5Wb2x1bWUqhwEKClZvbHVtZU1vZGUSGwoXVk9MVU1FX01PREVfVU5TUEVDSUZJRUQQABIVChFWT0xVTUVfTU9ERV9DQUNIRRABEhQKEFZPTFVNRV9NT0RFX1NFRUQQAhIVChFWT0xVTUVfTU9ERV9TVEFURRADEhgKFFZPTFVNRV9NT0RFX0FSVElGQUNUEAQqYgoMVm9sdW1lRm9ybWF0Eh0KGVZPTFVNRV9GT1JNQVRfVU5TUEVDSUZJRUQQABIWChJWT0xVTUVfRk9STUFUX0RJU0sQARIbChdWT0xVTUVfRk9STUFUX0RJUkVDVE9SWRACKngKEVZvbHVtZVZlcnNpb25LaW5kEiMKH1ZPTFVNRV9WRVJTSU9OX0tJTkRfVU5TUEVDSUZJRUQQABIcChhWT0xVTUVfVkVSU0lPTl9LSU5EX1NBVkUQARIgChxWT0xVTUVfVkVSU0lPTl9LSU5EX1NOQVBTSE9UEAIqeQoRVm9sdW1lQ29uc2lzdGVuY3kSIgoeVk9MVU1FX0NPTlNJU1RFTkNZX1VOU1BFQ0lGSUVEEAASHAoYVk9MVU1FX0NPTlNJU1RFTkNZX0NSQVNIEAESIgoeVk9MVU1FX0NPTlNJU1RFTkNZX0FQUExJQ0FUSU9OEAIyvwoKDVZvbHVtZVNlcnZpY2USewoLTGlzdFZvbHVtZXMSJi50b3NoaS53b3Jrc3BhY2UudjEuTGlzdFZvbHVtZXNSZXF1ZXN0GicudG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVzUmVzcG9uc2UiG8LzGAx2b2x1bWVzLnJlYWTK8xgHcHJvamVjdBJ1CglHZXRWb2x1bWUSJC50b3NoaS53b3Jrc3BhY2UudjEuR2V0Vm9sdW1lUmVxdWVzdBolLnRvc2hpLndvcmtzcGFjZS52MS5HZXRWb2x1bWVSZXNwb25zZSIbwvMYDHZvbHVtZXMucmVhZMrzGAdwcm9qZWN0EoQBCgxDcmVhdGVWb2x1bWUSJy50b3NoaS53b3Jrc3BhY2UudjEuQ3JlYXRlVm9sdW1lUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5DcmVhdGVWb2x1bWVSZXNwb25zZSIhwvMYDnByb2plY3RzLndyaXRlyvMYB3Byb2plY3SQ9BgBEqMBCgxVcGRhdGVWb2x1bWUSJy50b3NoaS53b3Jrc3BhY2UudjEuVXBkYXRlVm9sdW1lUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5VcGRhdGVWb2x1bWVSZXNwb25zZSJAwvMYDnByb2plY3RzLndyaXRlyvMYB3Byb2plY3TS8xgbEhl2b2x1bWU6cmVzcG9uc2Uudm9sdW1lLmlkkPQYAhKDAQoMQXR0YWNoVm9sdW1lEicudG9zaGkud29ya3NwYWNlLnYxLkF0dGFjaFZvbHVtZVJlcXVlc3QaKC50b3NoaS53b3Jrc3BhY2UudjEuQXR0YWNoVm9sdW1lUmVzcG9uc2UiIMLzGA12b2x1bWVzLndyaXRlyvMYB3Byb2plY3SQ9BgCEoMBCgxEZXRhY2hWb2x1bWUSJy50b3NoaS53b3Jrc3BhY2UudjEuRGV0YWNoVm9sdW1lUmVxdWVzdBooLnRvc2hpLndvcmtzcGFjZS52MS5EZXRhY2hWb2x1bWVSZXNwb25zZSIgwvMYDXZvbHVtZXMud3JpdGXK8xgHcHJvamVjdJD0GAISzwEKDERlbGV0ZVZvbHVtZRInLnRvc2hpLndvcmtzcGFjZS52MS5EZWxldGVWb2x1bWVSZXF1ZXN0GigudG9zaGkud29ya3NwYWNlLnYxLkRlbGV0ZVZvbHVtZVJlc3BvbnNlImzC8xgOcHJvamVjdHMud3JpdGXK8xgHcHJvamVjdPrzGEcIARJDRGVsZXRlIHRoaXMgdm9sdW1lPyBJdHMgZGF0YSBpcyBkZWxldGVkIGFuZCBjYW5ub3QgYmUgYnJvdWdodCBiYWNrLpD0GAISkAEKEkxpc3RWb2x1bWVWZXJzaW9ucxItLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0Vm9sdW1lVmVyc2lvbnNSZXF1ZXN0Gi4udG9zaGkud29ya3NwYWNlLnYxLkxpc3RWb2x1bWVWZXJzaW9uc1Jlc3BvbnNlIhvC8xgMdm9sdW1lcy5yZWFkyvMYB3Byb2plY3QSmwEKDVJlc3RvcmVWb2x1bWUSKC50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlcXVlc3QaKS50b3NoaS53b3Jrc3BhY2UudjEuUmVzdG9yZVZvbHVtZVJlc3BvbnNlIjXC8xgNdm9sdW1lcy53cml0ZcrzGAdwcm9qZWN00vMYEQoPdm9sdW1lLnJlc3RvcmVkkPQYAkIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_duration, file_google_protobuf_field_mask, file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * Volume is a disk of a project.
@@ -64,11 +64,11 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   sizeCapBytes: bigint;
 
   /**
-   * create_time is when the volume was created.
+   * When the volume was created.
    *
-   * @generated from field: google.protobuf.Timestamp create_time = 7;
+   * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
-  createTime?: Timestamp | undefined;
+  createdAt?: Timestamp | undefined;
 
   /**
    * The service or sandbox it is attached to; empty when it is attached to
@@ -88,18 +88,18 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   /**
    * When its newest version was saved; unset when it has none.
    *
-   * @generated from field: google.protobuf.Timestamp latest_version_time = 10;
+   * @generated from field: google.protobuf.Timestamp latest_version_at = 10;
    */
-  latestVersionTime?: Timestamp | undefined;
+  latestVersionAt?: Timestamp | undefined;
 
   /**
    * When it was lost: it had no saved version when the host that held its
    * only copy was removed, and no run mounts it again. Unset while it is
    * not lost.
    *
-   * @generated from field: google.protobuf.Timestamp lost_time = 11;
+   * @generated from field: google.protobuf.Timestamp lost_at = 11;
    */
-  lostTime?: Timestamp | undefined;
+  lostAt?: Timestamp | undefined;
 
   /**
    * What its newest version's data can be trusted for; unspecified when it
@@ -123,7 +123,7 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
    * Why its newest failed save or snapshot saved no version: a pre_save
    * hook that failed, or a copy its host could not take or upload. Empty
    * when none failed. A later version does not clear it: compare
-   * last_save_failure_time with latest_version_time.
+   * last_save_failed_at with latest_version_at.
    *
    * @generated from field: string last_save_failure = 14;
    */
@@ -132,9 +132,9 @@ export type Volume = Message<"toshi.workspace.v1.Volume"> & {
   /**
    * When that save or snapshot failed; unset when none failed.
    *
-   * @generated from field: google.protobuf.Timestamp last_save_failure_time = 15;
+   * @generated from field: google.protobuf.Timestamp last_save_failed_at = 15;
    */
-  lastSaveFailureTime?: Timestamp | undefined;
+  lastSaveFailedAt?: Timestamp | undefined;
 
   /**
    * How hosts keep a state volume, fixed by the first run that mounts it:
@@ -273,11 +273,11 @@ export type VolumeJson = {
   sizeCapBytes?: string;
 
   /**
-   * create_time is when the volume was created.
+   * When the volume was created.
    *
-   * @generated from field: google.protobuf.Timestamp create_time = 7;
+   * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
-  createTime?: TimestampJson;
+  createdAt?: TimestampJson;
 
   /**
    * The service or sandbox it is attached to; empty when it is attached to
@@ -297,18 +297,18 @@ export type VolumeJson = {
   /**
    * When its newest version was saved; unset when it has none.
    *
-   * @generated from field: google.protobuf.Timestamp latest_version_time = 10;
+   * @generated from field: google.protobuf.Timestamp latest_version_at = 10;
    */
-  latestVersionTime?: TimestampJson;
+  latestVersionAt?: TimestampJson;
 
   /**
    * When it was lost: it had no saved version when the host that held its
    * only copy was removed, and no run mounts it again. Unset while it is
    * not lost.
    *
-   * @generated from field: google.protobuf.Timestamp lost_time = 11;
+   * @generated from field: google.protobuf.Timestamp lost_at = 11;
    */
-  lostTime?: TimestampJson;
+  lostAt?: TimestampJson;
 
   /**
    * What its newest version's data can be trusted for; unspecified when it
@@ -332,7 +332,7 @@ export type VolumeJson = {
    * Why its newest failed save or snapshot saved no version: a pre_save
    * hook that failed, or a copy its host could not take or upload. Empty
    * when none failed. A later version does not clear it: compare
-   * last_save_failure_time with latest_version_time.
+   * last_save_failed_at with latest_version_at.
    *
    * @generated from field: string last_save_failure = 14;
    */
@@ -341,9 +341,9 @@ export type VolumeJson = {
   /**
    * When that save or snapshot failed; unset when none failed.
    *
-   * @generated from field: google.protobuf.Timestamp last_save_failure_time = 15;
+   * @generated from field: google.protobuf.Timestamp last_save_failed_at = 15;
    */
-  lastSaveFailureTime?: TimestampJson;
+  lastSaveFailedAt?: TimestampJson;
 
   /**
    * How hosts keep a state volume, fixed by the first run that mounts it:
@@ -454,11 +454,11 @@ export type VolumeVersion = Message<"toshi.workspace.v1.VolumeVersion"> & {
   number: bigint;
 
   /**
-   * create_time is when the version was saved.
+   * When the version was saved.
    *
-   * @generated from field: google.protobuf.Timestamp create_time = 2;
+   * @generated from field: google.protobuf.Timestamp created_at = 2;
    */
-  createTime?: Timestamp | undefined;
+  createdAt?: Timestamp | undefined;
 
   /**
    * The length of the saved copy, in bytes: the disk image, or for a
@@ -512,11 +512,11 @@ export type VolumeVersionJson = {
   number?: string;
 
   /**
-   * create_time is when the version was saved.
+   * When the version was saved.
    *
-   * @generated from field: google.protobuf.Timestamp create_time = 2;
+   * @generated from field: google.protobuf.Timestamp created_at = 2;
    */
-  createTime?: TimestampJson;
+  createdAt?: TimestampJson;
 
   /**
    * The length of the saved copy, in bytes: the disk image, or for a

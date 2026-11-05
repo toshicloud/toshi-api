@@ -310,7 +310,7 @@ const (
 	ReasonPlanLimit = "PLAN_LIMIT"
 	// ReasonProjectLimit: Creating a volume or raising its cap would pass the project's volume ceiling; metadata carries `key`, `cause`, `limit`, `requested`, `raisable`, `in_use_bytes` and `unit`.
 	ReasonProjectLimit = "PROJECT_LIMIT"
-	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_at` (RFC 3339, UTC) is the earliest time every window has room again, and `next_start_at` carries the same time for older clients, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
+	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_at` (RFC 3339, UTC) is the earliest time every window has room again, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
 	ReasonStartRate = "START_RATE"
 	// ReasonCodeExpired: A short-lived code, such as an OAuth authorization code, is presented after its life ends; the refusal's credential.refused audit row carries this reason.
 	ReasonCodeExpired = "CODE_EXPIRED"

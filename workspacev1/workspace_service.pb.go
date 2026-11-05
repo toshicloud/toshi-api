@@ -1891,9 +1891,9 @@ type GetQueueTimesResponse struct {
 	// Nearest-rank percentiles and maximum of started_at - queued_at, in whole
 	// milliseconds. All 0 when jobs is 0.
 	P50Ms int64 `protobuf:"varint,2,opt,name=p50_ms,json=p50Ms,proto3" json:"p50_ms,omitempty"`
-	// The nearest-rank 90th percentile of the start delays, in whole
+	// The nearest-rank 95th percentile of the start delays, in whole
 	// milliseconds; 0 when jobs is 0.
-	P90Ms int64 `protobuf:"varint,3,opt,name=p90_ms,json=p90Ms,proto3" json:"p90_ms,omitempty"`
+	P95Ms int64 `protobuf:"varint,3,opt,name=p95_ms,json=p95Ms,proto3" json:"p95_ms,omitempty"`
 	// The longest start delay, in whole milliseconds; 0 when jobs is 0.
 	MaxMs int64 `protobuf:"varint,4,opt,name=max_ms,json=maxMs,proto3" json:"max_ms,omitempty"`
 	// Share of those jobs assigned to a warm instance, from 0 to 1.
@@ -1954,9 +1954,9 @@ func (x *GetQueueTimesResponse) GetP50Ms() int64 {
 	return 0
 }
 
-func (x *GetQueueTimesResponse) GetP90Ms() int64 {
+func (x *GetQueueTimesResponse) GetP95Ms() int64 {
 	if x != nil {
-		return x.P90Ms
+		return x.P95Ms
 	}
 	return 0
 }
@@ -2044,9 +2044,9 @@ type GetStartWindowsResponse struct {
 	// The minute, hour and day windows, in that order, always all three.
 	Windows []*StartWindow `protobuf:"bytes,2,rep,name=windows,proto3" json:"windows,omitempty"`
 	// The earliest time every window at its ceiling has room again, which is
-	// the next_start_at a refused CreateSandbox names; unset when no window is
+	// the next_at a refused CreateSandbox names; unset when no window is
 	// at its ceiling.
-	NextStartAt   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
+	NextAt        *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2095,9 +2095,9 @@ func (x *GetStartWindowsResponse) GetWindows() []*StartWindow {
 	return nil
 }
 
-func (x *GetStartWindowsResponse) GetNextStartAt() *timestamppb.Timestamp {
+func (x *GetStartWindowsResponse) GetNextAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextStartAt
+		return x.NextAt
 	}
 	return nil
 }
@@ -2147,7 +2147,7 @@ type GetWorkspaceLimitsResponse struct {
 	// The same minute, hour and day windows, in order, as GetStartWindows.
 	Windows []*StartWindow `protobuf:"bytes,2,rep,name=windows,proto3" json:"windows,omitempty"`
 	// When every full start window has room; unset when none is full.
-	NextStartAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
+	NextAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
 	// The shared-host concurrent job limit.
 	RunningAtOnce *WorkspaceLimitRow `protobuf:"bytes,4,opt,name=running_at_once,json=runningAtOnce,proto3" json:"running_at_once,omitempty"`
 	// The shared-host vCPU limit.
@@ -2209,9 +2209,9 @@ func (x *GetWorkspaceLimitsResponse) GetWindows() []*StartWindow {
 	return nil
 }
 
-func (x *GetWorkspaceLimitsResponse) GetNextStartAt() *timestamppb.Timestamp {
+func (x *GetWorkspaceLimitsResponse) GetNextAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextStartAt
+		return x.NextAt
 	}
 	return nil
 }
@@ -2939,7 +2939,7 @@ type StartWindow struct {
 	ResetsAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=resets_at,json=resetsAt,proto3" json:"resets_at,omitempty"`
 	// When the window has room for one more start; unset while used is below
 	// ceiling.
-	NextStartAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
+	NextAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3030,9 +3030,9 @@ func (x *StartWindow) GetResetsAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *StartWindow) GetNextStartAt() *timestamppb.Timestamp {
+func (x *StartWindow) GetNextAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextStartAt
+		return x.NextAt
 	}
 	return nil
 }
@@ -3710,9 +3710,9 @@ type Workspace struct {
 	// When a closed workspace's read-only period ends: closed_at plus 30 days.
 	// Set while that period lasts, for a caller the closed workspace stays
 	// open to; unset otherwise.
-	ReadOnlyUntil *timestamppb.Timestamp `protobuf:"bytes,44,opt,name=read_only_until,json=readOnlyUntil,proto3" json:"read_only_until,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ReadOnlyExpiresAt *timestamppb.Timestamp `protobuf:"bytes,44,opt,name=read_only_expires_at,json=readOnlyExpiresAt,proto3" json:"read_only_expires_at,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Workspace) Reset() {
@@ -3990,9 +3990,9 @@ func (x *Workspace) GetClosedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Workspace) GetReadOnlyUntil() *timestamppb.Timestamp {
+func (x *Workspace) GetReadOnlyExpiresAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.ReadOnlyUntil
+		return x.ReadOnlyExpiresAt
 	}
 	return nil
 }
@@ -6198,9 +6198,9 @@ type HoldTimes struct {
 	// The nearest-rank 50th percentile of the held times, in whole
 	// milliseconds; 0 when jobs is 0.
 	P50Ms int64 `protobuf:"varint,3,opt,name=p50_ms,json=p50Ms,proto3" json:"p50_ms,omitempty"`
-	// The nearest-rank 90th percentile of the held times, in whole
+	// The nearest-rank 95th percentile of the held times, in whole
 	// milliseconds; 0 when jobs is 0.
-	P90Ms int64 `protobuf:"varint,4,opt,name=p90_ms,json=p90Ms,proto3" json:"p90_ms,omitempty"`
+	P95Ms int64 `protobuf:"varint,4,opt,name=p95_ms,json=p95Ms,proto3" json:"p95_ms,omitempty"`
 	// The longest held time, in whole milliseconds; 0 when jobs is 0.
 	MaxMs int64 `protobuf:"varint,5,opt,name=max_ms,json=maxMs,proto3" json:"max_ms,omitempty"`
 	// The jobs held for this reason now, whenever they were queued. 0 when
@@ -6264,9 +6264,9 @@ func (x *HoldTimes) GetP50Ms() int64 {
 	return 0
 }
 
-func (x *HoldTimes) GetP90Ms() int64 {
+func (x *HoldTimes) GetP95Ms() int64 {
 	if x != nil {
-		return x.P90Ms
+		return x.P95Ms
 	}
 	return 0
 }
@@ -7029,7 +7029,7 @@ type WorkspaceBilling_HeldJobs struct {
 	Since *timestamppb.Timestamp `protobuf:"bytes,25,opt,name=since,proto3" json:"since,omitempty"`
 	// For reason start_rate: the earliest time every start window of the
 	// workspace has room again. Unset otherwise.
-	NextStartAt   *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=next_start_at,json=nextStartAt,proto3" json:"next_start_at,omitempty"`
+	NextAt        *timestamppb.Timestamp `protobuf:"bytes,26,opt,name=next_at,json=nextAt,proto3" json:"next_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7085,9 +7085,9 @@ func (x *WorkspaceBilling_HeldJobs) GetSince() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *WorkspaceBilling_HeldJobs) GetNextStartAt() *timestamppb.Timestamp {
+func (x *WorkspaceBilling_HeldJobs) GetNextAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextStartAt
+		return x.NextAt
 	}
 	return nil
 }
@@ -7207,23 +7207,23 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x15GetQueueTimesResponse\x12\x12\n" +
 	"\x04jobs\x18\x01 \x01(\x03R\x04jobs\x12\x15\n" +
 	"\x06p50_ms\x18\x02 \x01(\x03R\x05p50Ms\x12\x15\n" +
-	"\x06p90_ms\x18\x03 \x01(\x03R\x05p90Ms\x12\x15\n" +
+	"\x06p95_ms\x18\x03 \x01(\x03R\x05p95Ms\x12\x15\n" +
 	"\x06max_ms\x18\x04 \x01(\x03R\x05maxMs\x12\x1d\n" +
 	"\n" +
 	"warm_share\x18\x05 \x01(\x01R\twarmShare\x12.\n" +
 	"\x04from\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
 	"\x02to\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x121\n" +
 	"\x04held\x18\b \x03(\v2\x1d.toshi.workspace.v1.HoldTimesR\x04held\"\x18\n" +
-	"\x16GetStartWindowsRequest\"\xae\x01\n" +
+	"\x16GetStartWindowsRequest\"\xa3\x01\n" +
 	"\x17GetStartWindowsResponse\x12\x18\n" +
 	"\aapplies\x18\x01 \x01(\bR\aapplies\x129\n" +
-	"\awindows\x18\x02 \x03(\v2\x1f.toshi.workspace.v1.StartWindowR\awindows\x12>\n" +
-	"\rnext_start_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAt\"\x1b\n" +
-	"\x19GetWorkspaceLimitsRequest\"\xdd\x04\n" +
+	"\awindows\x18\x02 \x03(\v2\x1f.toshi.workspace.v1.StartWindowR\awindows\x123\n" +
+	"\anext_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAt\"\x1b\n" +
+	"\x19GetWorkspaceLimitsRequest\"\xd2\x04\n" +
 	"\x1aGetWorkspaceLimitsResponse\x12\x18\n" +
 	"\aapplies\x18\x01 \x01(\bR\aapplies\x129\n" +
-	"\awindows\x18\x02 \x03(\v2\x1f.toshi.workspace.v1.StartWindowR\awindows\x12>\n" +
-	"\rnext_start_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAt\x12M\n" +
+	"\awindows\x18\x02 \x03(\v2\x1f.toshi.workspace.v1.StartWindowR\awindows\x123\n" +
+	"\anext_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAt\x12M\n" +
 	"\x0frunning_at_once\x18\x04 \x01(\v2%.toshi.workspace.v1.WorkspaceLimitRowR\rrunningAtOnce\x129\n" +
 	"\x04vcpu\x18\x05 \x01(\v2%.toshi.workspace.v1.WorkspaceLimitRowR\x04vcpu\x12=\n" +
 	"\x05spend\x18\x06 \x01(\v2'.toshi.workspace.v1.WorkspaceSpendLimitR\x05spend\x12H\n" +
@@ -7285,7 +7285,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\fin_use_bytes\x18\x03 \x01(\x03R\n" +
 	"inUseBytes\x12#\n" +
-	"\rceiling_bytes\x18\x04 \x01(\x03R\fceilingBytes\"\xa8\x02\n" +
+	"\rceiling_bytes\x18\x04 \x01(\x03R\fceilingBytes\"\x9d\x02\n" +
 	"\vStartWindow\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x18\n" +
 	"\acounted\x18\x02 \x01(\bR\acounted\x12\x1a\n" +
@@ -7294,8 +7294,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x04used\x18\x05 \x01(\x03R\x04used\x12\x16\n" +
 	"\x06queued\x18\x06 \x01(\x03R\x06queued\x12\x12\n" +
 	"\x04paid\x18\a \x01(\x03R\x04paid\x127\n" +
-	"\tresets_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\bresetsAt\x12>\n" +
-	"\rnext_start_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAt\"u\n" +
+	"\tresets_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\bresetsAt\x123\n" +
+	"\anext_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAt\"u\n" +
 	"\x17GetWorkflowUsageRequest\x12.\n" +
 	"\x04from\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
 	"\x02to\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\"\xb0\x01\n" +
@@ -7330,7 +7330,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
 	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
-	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xd2\x11\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xdb\x11\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -7371,8 +7371,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x1akeep_vm_stopped_long_after\x10\x010\x80\x9a\x9e\x01R\x16keepVmStoppedLongCount\x12W\n" +
 	"\x11recording_changed\x18( \x01(\v2*.toshi.workspace.v1.WorkspaceSettingChangeR\x10recordingChanged\x12m\n" +
 	"\x1drecording_human_spans_changed\x18* \x01(\v2*.toshi.workspace.v1.WorkspaceSettingChangeR\x1arecordingHumanSpansChanged\x127\n" +
-	"\tclosed_at\x18+ \x01(\v2\x1a.google.protobuf.TimestampR\bclosedAt\x12B\n" +
-	"\x0fread_only_until\x18, \x01(\v2\x1a.google.protobuf.TimestampR\rreadOnlyUntilB\x12\n" +
+	"\tclosed_at\x18+ \x01(\v2\x1a.google.protobuf.TimestampR\bclosedAt\x12K\n" +
+	"\x14read_only_expires_at\x18, \x01(\v2\x1a.google.protobuf.TimestampR\x11readOnlyExpiresAtB\x12\n" +
 	"\x10_concurrency_capB\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
 	"\x10_secret_max_keysB\x11\n" +
@@ -7430,7 +7430,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x14\n" +
 	"\x05slots\x18\x02 \x01(\x05R\x05slots\x12\x12\n" +
 	"\x04warm\x18\x03 \x01(\x05R\x04warm\x12\x16\n" +
-	"\x06source\x18\x04 \x01(\tR\x06source\"\x95\v\n" +
+	"\x06source\x18\x04 \x01(\tR\x06source\"\x8a\v\n" +
 	"\x10WorkspaceBilling\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12'\n" +
@@ -7459,12 +7459,12 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x0fbilling_enabled\x18\x14 \x01(\bR\x0ebillingEnabled\x12H\n" +
 	"\bheld_now\x18\x15 \x03(\v2-.toshi.workspace.v1.WorkspaceBilling.HeldJobsR\aheldNow\x12)\n" +
 	"\x10concurrency_used\x18\x16 \x01(\x03R\x0fconcurrencyUsed\x12<\n" +
-	"\x18desktop_seat_price_cents\x18\x1a \x01(\x03H\x00R\x15desktopSeatPriceCents\x88\x01\x01\x1a\xa8\x01\n" +
+	"\x18desktop_seat_price_cents\x18\x1a \x01(\x03H\x00R\x15desktopSeatPriceCents\x88\x01\x01\x1a\x9d\x01\n" +
 	"\bHeldJobs\x12\x16\n" +
 	"\x06reason\x18\x17 \x01(\tR\x06reason\x12\x12\n" +
 	"\x04jobs\x18\x18 \x01(\x03R\x04jobs\x120\n" +
-	"\x05since\x18\x19 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12>\n" +
-	"\rnext_start_at\x18\x1a \x01(\v2\x1a.google.protobuf.TimestampR\vnextStartAtB\x1b\n" +
+	"\x05since\x18\x19 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x123\n" +
+	"\anext_at\x18\x1a \x01(\v2\x1a.google.protobuf.TimestampR\x06nextAtB\x1b\n" +
 	"\x19_desktop_seat_price_cents\"\x99\x02\n" +
 	"\rBillingTotals\x12\x14\n" +
 	"\x05month\x18\x01 \x01(\tR\x05month\x12\x12\n" +
@@ -7589,7 +7589,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\x12\x12\n" +
 	"\x04jobs\x18\x02 \x01(\x03R\x04jobs\x12\x15\n" +
 	"\x06p50_ms\x18\x03 \x01(\x03R\x05p50Ms\x12\x15\n" +
-	"\x06p90_ms\x18\x04 \x01(\x03R\x05p90Ms\x12\x15\n" +
+	"\x06p95_ms\x18\x04 \x01(\x03R\x05p95Ms\x12\x15\n" +
 	"\x06max_ms\x18\x05 \x01(\x03R\x05maxMs\x12\x1b\n" +
 	"\topen_jobs\x18\x06 \x01(\x03R\bopenJobs\x129\n" +
 	"\n" +
@@ -7857,9 +7857,9 @@ var file_toshi_workspace_v1_workspace_service_proto_depIdxs = []int32{
 	84,  // 32: toshi.workspace.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
 	76,  // 33: toshi.workspace.v1.GetQueueTimesResponse.held:type_name -> toshi.workspace.v1.HoldTimes
 	45,  // 34: toshi.workspace.v1.GetStartWindowsResponse.windows:type_name -> toshi.workspace.v1.StartWindow
-	84,  // 35: toshi.workspace.v1.GetStartWindowsResponse.next_start_at:type_name -> google.protobuf.Timestamp
+	84,  // 35: toshi.workspace.v1.GetStartWindowsResponse.next_at:type_name -> google.protobuf.Timestamp
 	45,  // 36: toshi.workspace.v1.GetWorkspaceLimitsResponse.windows:type_name -> toshi.workspace.v1.StartWindow
-	84,  // 37: toshi.workspace.v1.GetWorkspaceLimitsResponse.next_start_at:type_name -> google.protobuf.Timestamp
+	84,  // 37: toshi.workspace.v1.GetWorkspaceLimitsResponse.next_at:type_name -> google.protobuf.Timestamp
 	37,  // 38: toshi.workspace.v1.GetWorkspaceLimitsResponse.running_at_once:type_name -> toshi.workspace.v1.WorkspaceLimitRow
 	37,  // 39: toshi.workspace.v1.GetWorkspaceLimitsResponse.vcpu:type_name -> toshi.workspace.v1.WorkspaceLimitRow
 	38,  // 40: toshi.workspace.v1.GetWorkspaceLimitsResponse.spend:type_name -> toshi.workspace.v1.WorkspaceSpendLimit
@@ -7871,7 +7871,7 @@ var file_toshi_workspace_v1_workspace_service_proto_depIdxs = []int32{
 	73,  // 46: toshi.workspace.v1.WorkspaceStorageLimits.usage:type_name -> toshi.workspace.v1.StorageUsageRow
 	44,  // 47: toshi.workspace.v1.GetVolumeCapsResponse.projects:type_name -> toshi.workspace.v1.VolumeCapsProject
 	84,  // 48: toshi.workspace.v1.StartWindow.resets_at:type_name -> google.protobuf.Timestamp
-	84,  // 49: toshi.workspace.v1.StartWindow.next_start_at:type_name -> google.protobuf.Timestamp
+	84,  // 49: toshi.workspace.v1.StartWindow.next_at:type_name -> google.protobuf.Timestamp
 	84,  // 50: toshi.workspace.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
 	84,  // 51: toshi.workspace.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
 	79,  // 52: toshi.workspace.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.workspace.v1.WorkflowUsageRow
@@ -7889,7 +7889,7 @@ var file_toshi_workspace_v1_workspace_service_proto_depIdxs = []int32{
 	59,  // 64: toshi.workspace.v1.Workspace.recording_changed:type_name -> toshi.workspace.v1.WorkspaceSettingChange
 	59,  // 65: toshi.workspace.v1.Workspace.recording_human_spans_changed:type_name -> toshi.workspace.v1.WorkspaceSettingChange
 	84,  // 66: toshi.workspace.v1.Workspace.closed_at:type_name -> google.protobuf.Timestamp
-	84,  // 67: toshi.workspace.v1.Workspace.read_only_until:type_name -> google.protobuf.Timestamp
+	84,  // 67: toshi.workspace.v1.Workspace.read_only_expires_at:type_name -> google.protobuf.Timestamp
 	0,   // 68: toshi.workspace.v1.HostingCertificate.state:type_name -> toshi.workspace.v1.HostingCertificateState
 	84,  // 69: toshi.workspace.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
 	84,  // 70: toshi.workspace.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
@@ -7931,7 +7931,7 @@ var file_toshi_workspace_v1_workspace_service_proto_depIdxs = []int32{
 	84,  // 106: toshi.workspace.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
 	89,  // 107: toshi.workspace.v1.EgressHost.egress:type_name -> toshi.workspace.v1.HostEgress
 	84,  // 108: toshi.workspace.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
-	84,  // 109: toshi.workspace.v1.WorkspaceBilling.HeldJobs.next_start_at:type_name -> google.protobuf.Timestamp
+	84,  // 109: toshi.workspace.v1.WorkspaceBilling.HeldJobs.next_at:type_name -> google.protobuf.Timestamp
 	2,   // 110: toshi.workspace.v1.WorkspaceService.GetWorkspace:input_type -> toshi.workspace.v1.GetWorkspaceRequest
 	8,   // 111: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:input_type -> toshi.workspace.v1.UpdateWorkspaceRequest
 	10,  // 112: toshi.workspace.v1.WorkspaceService.ListWorkspaces:input_type -> toshi.workspace.v1.ListWorkspacesRequest

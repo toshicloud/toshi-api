@@ -558,15 +558,16 @@ type ProjectRecordingDefaults struct {
 	UpdatedBy string `protobuf:"bytes,4,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
 	// When the defaults were last set; unset when the project set none.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	// recording_segment_minutes limits a sandbox strip's duration. Zero
-	// follows the plan; positive values are capped by the plan and frame limit.
-	// Negative values are INVALID_ARGUMENT.
-	RecordingSegmentMinutes int32 `protobuf:"varint,6,opt,name=recording_segment_minutes,json=recordingSegmentMinutes,proto3" json:"recording_segment_minutes,omitempty"`
 	// recording_max_mib limits one recording's size. Zero follows the plan;
 	// positive values are capped by the plan. Negative values are INVALID_ARGUMENT.
 	RecordingMaxMib int32 `protobuf:"varint,7,opt,name=recording_max_mib,json=recordingMaxMib,proto3" json:"recording_max_mib,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// recording_segment_seconds limits a sandbox strip's duration, in seconds;
+	// it must be a whole number of minutes. Zero follows the plan; positive
+	// values are capped by the plan and frame limit. Negative values are
+	// INVALID_ARGUMENT.
+	RecordingSegmentSeconds int64 `protobuf:"varint,8,opt,name=recording_segment_seconds,json=recordingSegmentSeconds,proto3" json:"recording_segment_seconds,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *ProjectRecordingDefaults) Reset() {
@@ -634,16 +635,16 @@ func (x *ProjectRecordingDefaults) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *ProjectRecordingDefaults) GetRecordingSegmentMinutes() int32 {
+func (x *ProjectRecordingDefaults) GetRecordingMaxMib() int32 {
 	if x != nil {
-		return x.RecordingSegmentMinutes
+		return x.RecordingMaxMib
 	}
 	return 0
 }
 
-func (x *ProjectRecordingDefaults) GetRecordingMaxMib() int32 {
+func (x *ProjectRecordingDefaults) GetRecordingSegmentSeconds() int64 {
 	if x != nil {
-		return x.RecordingMaxMib
+		return x.RecordingSegmentSeconds
 	}
 	return 0
 }
@@ -3821,7 +3822,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
 	"updated_by\x18\x03 \x01(\tR\tupdatedBy\x129\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xe8\x03\n" +
+	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x89\x04\n" +
 	"\x18ProjectRecordingDefaults\x12d\n" +
 	"\x18sandbox_recording_policy\x18\x01 \x01(\x0e2*.toshi.workspace.v1.ProjectRecordingPolicyR\x16sandboxRecordingPolicy\x12\\\n" +
 	"\x14job_recording_policy\x18\x02 \x01(\x0e2*.toshi.workspace.v1.ProjectRecordingPolicyR\x12jobRecordingPolicy\x12F\n" +
@@ -3830,9 +3831,9 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\n" +
 	"updated_by\x18\x04 \x01(\tR\tupdatedBy\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12:\n" +
-	"\x19recording_segment_minutes\x18\x06 \x01(\x05R\x17recordingSegmentMinutes\x12*\n" +
-	"\x11recording_max_mib\x18\a \x01(\x05R\x0frecordingMaxMib\"\xcc\x04\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12*\n" +
+	"\x11recording_max_mib\x18\a \x01(\x05R\x0frecordingMaxMib\x12:\n" +
+	"\x19recording_segment_seconds\x18\b \x01(\x03R\x17recordingSegmentSecondsJ\x04\b\x06\x10\aR\x19recording_segment_minutes\"\xcc\x04\n" +
 	"\x12ProjectEnvironment\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x18\n" +

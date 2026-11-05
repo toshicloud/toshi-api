@@ -290,7 +290,7 @@ message HostJob {
   string hold_reason = 20;
   // When the job's hold_reason is start_rate: the earliest time every start
   // window of the workspace has room again. Unset otherwise.
-  google.protobuf.Timestamp next_start_at = 56;
+  google.protobuf.Timestamp next_at = 56;
   // Whether the job was placed on a host its workspace owns. Such a job sends no
   // meter event.
   bool own_host = 21;
@@ -306,7 +306,7 @@ message HostJob {
   // that never had one.
   google.protobuf.Timestamp debug_started_at = 25;
   // When the debug session ends.
-  google.protobuf.Timestamp debug_until = 26;
+  google.protobuf.Timestamp debug_expires_at = 26;
   // What the job's resource samples add up to; unset when it has none.
   HostJobTelemetrySummary telemetry = 27;
   // Why the latest runner started for the job exited without running it,
@@ -512,7 +512,7 @@ enum HostJobState {
   // The job is being stopped: its host destroys the VM after a grace period.
   HOST_JOB_STATE_STOPPING = 8;
   // GitHub concluded the job failed and its host keeps the VM for a debug
-  // session until debug_until. It counts as running.
+  // session until debug_expires_at. It counts as running.
   HOST_JOB_STATE_DEBUGGING = 9;
 }
 
@@ -538,9 +538,9 @@ message HostJobTelemetrySummary {
   // How long the VM's threads waited for a host CPU, as a percentage of the
   // CPU time they used plus that wait. 0 when they never waited.
   double cpu_throttled_pct = 2;
-  // The most memory in use inside the guest, in MiB; the host's resident
+  // The most memory in use inside the guest, in bytes; the host's resident
   // memory of the VM when the guest does not report it.
-  int64 peak_memory_mib = 3;
+  int64 peak_memory_bytes = 3;
   // CPU time used as a percentage of the VM's vCPUs over the sampled time.
   double cpu_utilisation_pct = 4;
   // How many samples the job has.
@@ -606,11 +606,11 @@ message HostJobTelemetrySample {
   // The time the VM's threads waited for a host CPU in the window, in
   // milliseconds.
   int64 cpu_wait_ms = 4;
-  // The most memory in use inside the guest in the window, in MiB. Unset
+  // The most memory in use inside the guest in the window, in bytes. Unset
   // when the guest does not report it.
-  optional int64 guest_memory_mib = 5;
-  // The host resident memory of the VM at its highest in the window, in MiB.
-  int64 host_memory_mib = 6;
+  optional int64 guest_memory_bytes = 5;
+  // The host resident memory of the VM at its highest in the window, in bytes.
+  int64 host_memory_bytes = 6;
   // The bytes the VM read from its disks in the window.
   int64 disk_read_bytes = 7;
   // The bytes the VM wrote to its disks in the window.

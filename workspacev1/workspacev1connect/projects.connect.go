@@ -140,7 +140,7 @@ type ProjectServiceClient interface {
 	// defaults, either whole or by its sub-paths
 	// recording_defaults.sandbox_recording_policy,
 	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
-	// recording_defaults.recording_segment_minutes and
+	// recording_defaults.recording_segment_seconds and
 	// recording_defaults.recording_max_mib; volume_rules, the project's
 	// volume rules, replaced whole by the value the call carries, an empty
 	// one clearing them; compatibility_flags, the project's compatibility
@@ -599,7 +599,7 @@ type ProjectServiceHandler interface {
 	// defaults, either whole or by its sub-paths
 	// recording_defaults.sandbox_recording_policy,
 	// recording_defaults.job_recording_policy, recording_defaults.human_spans,
-	// recording_defaults.recording_segment_minutes and
+	// recording_defaults.recording_segment_seconds and
 	// recording_defaults.recording_max_mib; volume_rules, the project's
 	// volume rules, replaced whole by the value the call carries, an empty
 	// one clearing them; compatibility_flags, the project's compatibility

@@ -144,7 +144,7 @@ export const reasons = {
   SIGNIN_REQUIRED: { code: "PERMISSION_DENIED", metadata: ["workspace", "provider", "sign_in_url"], text: "Sign in through the provider this workspace requires to continue." },
   PLAN_LIMIT: { code: "RESOURCE_EXHAUSTED", metadata: ["key", "limit", "plan", "cause", "requested", "raisable", "lowest_plan", "in_use_bytes", "unit"], text: "This would go over a limit of your plan; free some room or ask for less.", values: { cause: ["default", "plan", "override", "workspace"], unit: ["bytes"] } },
   PROJECT_LIMIT: { code: "RESOURCE_EXHAUSTED", metadata: ["key", "cause", "limit", "requested", "raisable", "in_use_bytes", "unit"], text: "This would go over the project's storage ceiling; free some room or raise the ceiling.", values: { cause: ["project"], unit: ["bytes"] } },
-  START_RATE: { code: "RESOURCE_EXHAUSTED", metadata: ["next_at", "next_start_at"], text: "You have started too many sandboxes just now; retry at the time given." },
+  START_RATE: { code: "RESOURCE_EXHAUSTED", metadata: ["next_at"], text: "You have started too many sandboxes just now; retry at the time given." },
   CODE_EXPIRED: { code: "UNAUTHENTICATED", metadata: [], text: "This code has expired; start again to get a new one." },
   CODE_USED: { code: "UNAUTHENTICATED", metadata: [], text: "This code was already used; start again to get a new one." },
   CREDENTIAL_EXPIRED: { code: "UNAUTHENTICATED", metadata: [], text: "This credential has expired; get a new one." },

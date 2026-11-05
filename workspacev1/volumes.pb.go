@@ -272,19 +272,19 @@ type Volume struct {
 	Mode VolumeMode `protobuf:"varint,5,opt,name=mode,proto3,enum=toshi.workspace.v1.VolumeMode" json:"mode,omitempty"`
 	// The most it holds, in bytes.
 	SizeCapBytes int64 `protobuf:"varint,6,opt,name=size_cap_bytes,json=sizeCapBytes,proto3" json:"size_cap_bytes,omitempty"`
-	// create_time is when the volume was created.
-	CreateTime *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	// When the volume was created.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// The service or sandbox it is attached to; empty when it is attached to
 	// none.
 	AttachedWorkloadId string `protobuf:"bytes,8,opt,name=attached_workload_id,json=attachedWorkloadId,proto3" json:"attached_workload_id,omitempty"`
 	// The number of its newest saved version; zero when it has none.
 	LatestVersion int64 `protobuf:"varint,9,opt,name=latest_version,json=latestVersion,proto3" json:"latest_version,omitempty"`
 	// When its newest version was saved; unset when it has none.
-	LatestVersionTime *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=latest_version_time,json=latestVersionTime,proto3" json:"latest_version_time,omitempty"`
+	LatestVersionAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=latest_version_at,json=latestVersionAt,proto3" json:"latest_version_at,omitempty"`
 	// When it was lost: it had no saved version when the host that held its
 	// only copy was removed, and no run mounts it again. Unset while it is
 	// not lost.
-	LostTime *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=lost_time,json=lostTime,proto3" json:"lost_time,omitempty"`
+	LostAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=lost_at,json=lostAt,proto3" json:"lost_at,omitempty"`
 	// What its newest version's data can be trusted for; unspecified when it
 	// has none.
 	LatestVersionConsistency VolumeConsistency `protobuf:"varint,12,opt,name=latest_version_consistency,json=latestVersionConsistency,proto3,enum=toshi.workspace.v1.VolumeConsistency" json:"latest_version_consistency,omitempty"`
@@ -296,10 +296,10 @@ type Volume struct {
 	// Why its newest failed save or snapshot saved no version: a pre_save
 	// hook that failed, or a copy its host could not take or upload. Empty
 	// when none failed. A later version does not clear it: compare
-	// last_save_failure_time with latest_version_time.
+	// last_save_failed_at with latest_version_at.
 	LastSaveFailure string `protobuf:"bytes,14,opt,name=last_save_failure,json=lastSaveFailure,proto3" json:"last_save_failure,omitempty"`
 	// When that save or snapshot failed; unset when none failed.
-	LastSaveFailureTime *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=last_save_failure_time,json=lastSaveFailureTime,proto3" json:"last_save_failure_time,omitempty"`
+	LastSaveFailedAt *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=last_save_failed_at,json=lastSaveFailedAt,proto3" json:"last_save_failed_at,omitempty"`
 	// How hosts keep a state volume, fixed by the first run that mounts it:
 	// a disk on the VM tiers, a directory on the container tier. Later runs
 	// go only to hosts that keep it the same way. Unspecified until a run
@@ -413,9 +413,9 @@ func (x *Volume) GetSizeCapBytes() int64 {
 	return 0
 }
 
-func (x *Volume) GetCreateTime() *timestamppb.Timestamp {
+func (x *Volume) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.CreateTime
+		return x.CreatedAt
 	}
 	return nil
 }
@@ -434,16 +434,16 @@ func (x *Volume) GetLatestVersion() int64 {
 	return 0
 }
 
-func (x *Volume) GetLatestVersionTime() *timestamppb.Timestamp {
+func (x *Volume) GetLatestVersionAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LatestVersionTime
+		return x.LatestVersionAt
 	}
 	return nil
 }
 
-func (x *Volume) GetLostTime() *timestamppb.Timestamp {
+func (x *Volume) GetLostAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LostTime
+		return x.LostAt
 	}
 	return nil
 }
@@ -469,9 +469,9 @@ func (x *Volume) GetLastSaveFailure() string {
 	return ""
 }
 
-func (x *Volume) GetLastSaveFailureTime() *timestamppb.Timestamp {
+func (x *Volume) GetLastSaveFailedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.LastSaveFailureTime
+		return x.LastSaveFailedAt
 	}
 	return nil
 }
@@ -551,8 +551,8 @@ type VolumeVersion struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// One higher than the volume's previous version; the first is 1.
 	Number int64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
-	// create_time is when the version was saved.
-	CreateTime *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	// When the version was saved.
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// The length of the saved copy, in bytes: the disk image, or for a
 	// volume kept as a directory the compressed tar of it.
 	SizeBytes int64 `protobuf:"varint,3,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
@@ -606,9 +606,9 @@ func (x *VolumeVersion) GetNumber() int64 {
 	return 0
 }
 
-func (x *VolumeVersion) GetCreateTime() *timestamppb.Timestamp {
+func (x *VolumeVersion) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.CreateTime
+		return x.CreatedAt
 	}
 	return nil
 }
@@ -1737,7 +1737,7 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xb8\t\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa8\t\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1745,18 +1745,18 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x04 \x01(\tR\tprojectId\x122\n" +
 	"\x04mode\x18\x05 \x01(\x0e2\x1e.toshi.workspace.v1.VolumeModeR\x04mode\x12$\n" +
-	"\x0esize_cap_bytes\x18\x06 \x01(\x03R\fsizeCapBytes\x12;\n" +
-	"\vcreate_time\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"createTime\x120\n" +
+	"\x0esize_cap_bytes\x18\x06 \x01(\x03R\fsizeCapBytes\x129\n" +
+	"\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x120\n" +
 	"\x14attached_workload_id\x18\b \x01(\tR\x12attachedWorkloadId\x12%\n" +
-	"\x0elatest_version\x18\t \x01(\x03R\rlatestVersion\x12J\n" +
-	"\x13latest_version_time\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x11latestVersionTime\x127\n" +
-	"\tlost_time\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\blostTime\x12c\n" +
+	"\x0elatest_version\x18\t \x01(\x03R\rlatestVersion\x12F\n" +
+	"\x11latest_version_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x0flatestVersionAt\x123\n" +
+	"\alost_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\x06lostAt\x12c\n" +
 	"\x1alatest_version_consistency\x18\f \x01(\x0e2%.toshi.workspace.v1.VolumeConsistencyR\x18latestVersionConsistency\x12F\n" +
 	"\x11snapshot_interval\x18\r \x01(\v2\x19.google.protobuf.DurationR\x10snapshotInterval\x12*\n" +
-	"\x11last_save_failure\x18\x0e \x01(\tR\x0flastSaveFailure\x12O\n" +
-	"\x16last_save_failure_time\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\x13lastSaveFailureTime\x128\n" +
+	"\x11last_save_failure\x18\x0e \x01(\tR\x0flastSaveFailure\x12I\n" +
+	"\x13last_save_failed_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\x10lastSaveFailedAt\x128\n" +
 	"\x06format\x18\x10 \x01(\x0e2 .toshi.workspace.v1.VolumeFormatR\x06format\x12\x18\n" +
 	"\aprofile\x18\x11 \x01(\bR\aprofile\x124\n" +
 	"\x16attached_workload_kind\x18\x12 \x01(\tR\x14attachedWorkloadKind\x121\n" +
@@ -1767,11 +1767,11 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x0emanaged_fields\x18\x16 \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\x17 \x01(\tR\x0emanifestOrigin\x125\n" +
 	"\x17latest_version_over_cap\x18\x18 \x01(\bR\x14latestVersionOverCap\x12&\n" +
-	"\x0fsize_cap_source\x18\x19 \x01(\tR\rsizeCapSource\"\xc4\x02\n" +
+	"\x0fsize_cap_source\x18\x19 \x01(\tR\rsizeCapSource\"\xc2\x02\n" +
 	"\rVolumeVersion\x12\x16\n" +
-	"\x06number\x18\x01 \x01(\x03R\x06number\x12;\n" +
-	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"createTime\x12\x1d\n" +
+	"\x06number\x18\x01 \x01(\x03R\x06number\x129\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"size_bytes\x18\x03 \x01(\x03R\tsizeBytes\x12\x16\n" +
 	"\x06sha256\x18\x04 \x01(\tR\x06sha256\x12#\n" +
@@ -1922,14 +1922,14 @@ var file_toshi_workspace_v1_volumes_proto_goTypes = []any{
 }
 var file_toshi_workspace_v1_volumes_proto_depIdxs = []int32{
 	0,  // 0: toshi.workspace.v1.Volume.mode:type_name -> toshi.workspace.v1.VolumeMode
-	24, // 1: toshi.workspace.v1.Volume.create_time:type_name -> google.protobuf.Timestamp
-	24, // 2: toshi.workspace.v1.Volume.latest_version_time:type_name -> google.protobuf.Timestamp
-	24, // 3: toshi.workspace.v1.Volume.lost_time:type_name -> google.protobuf.Timestamp
+	24, // 1: toshi.workspace.v1.Volume.created_at:type_name -> google.protobuf.Timestamp
+	24, // 2: toshi.workspace.v1.Volume.latest_version_at:type_name -> google.protobuf.Timestamp
+	24, // 3: toshi.workspace.v1.Volume.lost_at:type_name -> google.protobuf.Timestamp
 	3,  // 4: toshi.workspace.v1.Volume.latest_version_consistency:type_name -> toshi.workspace.v1.VolumeConsistency
 	25, // 5: toshi.workspace.v1.Volume.snapshot_interval:type_name -> google.protobuf.Duration
-	24, // 6: toshi.workspace.v1.Volume.last_save_failure_time:type_name -> google.protobuf.Timestamp
+	24, // 6: toshi.workspace.v1.Volume.last_save_failed_at:type_name -> google.protobuf.Timestamp
 	1,  // 7: toshi.workspace.v1.Volume.format:type_name -> toshi.workspace.v1.VolumeFormat
-	24, // 8: toshi.workspace.v1.VolumeVersion.create_time:type_name -> google.protobuf.Timestamp
+	24, // 8: toshi.workspace.v1.VolumeVersion.created_at:type_name -> google.protobuf.Timestamp
 	2,  // 9: toshi.workspace.v1.VolumeVersion.kind:type_name -> toshi.workspace.v1.VolumeVersionKind
 	3,  // 10: toshi.workspace.v1.VolumeVersion.consistency:type_name -> toshi.workspace.v1.VolumeConsistency
 	4,  // 11: toshi.workspace.v1.ListVolumesResponse.volumes:type_name -> toshi.workspace.v1.Volume
