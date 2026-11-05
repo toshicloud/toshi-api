@@ -11575,10 +11575,11 @@ export type RotateTokenRequest = Message<"toshi.operator.v1.RotateTokenRequest">
   graceSeconds?: bigint | undefined;
 
   /**
-   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+   * a repeated rotation, but its answer cannot be replayed. An authenticated
+   * retry is refused; a different request with the same key is also refused.
+   * Keys are kept for 30 days by default. The key belongs to the calling
+   * operator token; local-admin sessions share one scope.
    *
    * @generated from field: string request_key = 3;
    */
@@ -11608,10 +11609,11 @@ export type RotateTokenRequestJson = {
   graceSeconds?: string;
 
   /**
-   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+   * a repeated rotation, but its answer cannot be replayed. An authenticated
+   * retry is refused; a different request with the same key is also refused.
+   * Keys are kept for 30 days by default. The key belongs to the calling
+   * operator token; local-admin sessions share one scope.
    *
    * @generated from field: string request_key = 3;
    */
@@ -11772,10 +11774,11 @@ export type RollTokenRequest = Message<"toshi.operator.v1.RollTokenRequest"> & {
   id: string;
 
   /**
-   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+   * a repeated roll, but its answer cannot be replayed. An authenticated
+   * retry is refused; a different request with the same key is also refused.
+   * Keys are kept for 30 days by default. The key belongs to the calling
+   * operator token; local-admin sessions share one scope.
    *
    * @generated from field: string request_key = 2;
    */
@@ -11796,10 +11799,11 @@ export type RollTokenRequestJson = {
   id?: string;
 
   /**
-   * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+   * a repeated roll, but its answer cannot be replayed. An authenticated
+   * retry is refused; a different request with the same key is also refused.
+   * Keys are kept for 30 days by default. The key belongs to the calling
+   * operator token; local-admin sessions share one scope.
    *
    * @generated from field: string request_key = 2;
    */
@@ -11885,9 +11889,10 @@ export type CreateProductTokenRequest = Message<"toshi.operator.v1.CreateProduct
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * key and request return the first answer while it is available; a different
+   * request with the same key is refused. Keys are kept for 30 days by default.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 3;
    */
@@ -11917,9 +11922,10 @@ export type CreateProductTokenRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * key and request return the first answer while it is available; a different
+   * request with the same key is refused. Keys are kept for 30 days by default.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 3;
    */
@@ -12135,9 +12141,10 @@ export type RegisterClientRequest = Message<"toshi.operator.v1.RegisterClientReq
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * key and request return the first answer while it is available; a different
+   * request with the same key is refused. Keys are kept for 30 days by default.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 5;
    */
@@ -12182,9 +12189,10 @@ export type RegisterClientRequestJson = {
 
   /**
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-   * key and request return the first answer; a different request with the
-   * same key is refused. Keys are kept for 30 days by default.
-   * The key belongs to the calling operator token.
+   * key and request return the first answer while it is available; a different
+   * request with the same key is refused. Keys are kept for 30 days by default.
+   * The key belongs to the calling operator token; local-admin sessions share
+   * one scope.
    *
    * @generated from field: string request_key = 5;
    */

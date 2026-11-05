@@ -10514,10 +10514,11 @@ type RotateTokenRequest struct {
 	// Seconds the kind's other active tokens keep working, at most 30 days.
 	// Unset means 24 hours; 0 ends them at once.
 	GraceSeconds *int64 `protobuf:"varint,2,opt,name=grace_seconds,json=graceSeconds,proto3,oneof" json:"grace_seconds,omitempty"`
-	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
-	// The key belongs to the calling operator token.
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+	// a repeated rotation, but its answer cannot be replayed. An authenticated
+	// retry is refused; a different request with the same key is also refused.
+	// Keys are kept for 30 days by default. The key belongs to the calling
+	// operator token; local-admin sessions share one scope.
 	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -10735,10 +10736,11 @@ type RollTokenRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The token's id.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
-	// The key belongs to the calling operator token.
+	// A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+	// a repeated roll, but its answer cannot be replayed. An authenticated
+	// retry is refused; a different request with the same key is also refused.
+	// Keys are kept for 30 days by default. The key belongs to the calling
+	// operator token; local-admin sessions share one scope.
 	RequestKey    string `protobuf:"bytes,2,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -10852,9 +10854,10 @@ type CreateProductTokenRequest struct {
 	// Unset means 90 days from now.
 	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
-	// The key belongs to the calling operator token.
+	// key and request return the first answer while it is available; a different
+	// request with the same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token; local-admin sessions share
+	// one scope.
 	RequestKey    string `protobuf:"bytes,3,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -11074,9 +11077,10 @@ type RegisterClientRequest struct {
 	// Whether it authenticates with a secret at the token endpoint.
 	Confidential bool `protobuf:"varint,4,opt,name=confidential,proto3" json:"confidential,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-	// key and request return the first answer; a different request with the
-	// same key is refused. Keys are kept for 30 days by default.
-	// The key belongs to the calling operator token.
+	// key and request return the first answer while it is available; a different
+	// request with the same key is refused. Keys are kept for 30 days by default.
+	// The key belongs to the calling operator token; local-admin sessions share
+	// one scope.
 	RequestKey    string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

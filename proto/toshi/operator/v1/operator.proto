@@ -2782,10 +2782,11 @@ message RotateTokenRequest {
   // Seconds the kind's other active tokens keep working, at most 30 days.
   // Unset means 24 hours; 0 ends them at once.
   optional int64 grace_seconds = 2;
-  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
-  // The key belongs to the calling operator token.
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+  // a repeated rotation, but its answer cannot be replayed. An authenticated
+  // retry is refused; a different request with the same key is also refused.
+  // Keys are kept for 30 days by default. The key belongs to the calling
+  // operator token; local-admin sessions share one scope.
   string request_key = 3;
 }
 
@@ -2815,10 +2816,11 @@ message RevokeTokenResponse {
 message RollTokenRequest {
   // The token's id.
   string id = 1;
-  // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
-  // The key belongs to the calling operator token.
+  // A key of the caller's choice, 1 to 200 printable ASCII bytes. It prevents
+  // a repeated roll, but its answer cannot be replayed. An authenticated
+  // retry is refused; a different request with the same key is also refused.
+  // Keys are kept for 30 days by default. The key belongs to the calling
+  // operator token; local-admin sessions share one scope.
   string request_key = 2;
 }
 
@@ -2838,9 +2840,10 @@ message CreateProductTokenRequest {
   // Unset means 90 days from now.
   google.protobuf.Timestamp expires_at = 2;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
-  // The key belongs to the calling operator token.
+  // key and request return the first answer while it is available; a different
+  // request with the same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token; local-admin sessions share
+  // one scope.
   string request_key = 3;
 }
 
@@ -2884,9 +2887,10 @@ message RegisterClientRequest {
   // Whether it authenticates with a secret at the token endpoint.
   bool confidential = 4;
   // A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
-  // key and request return the first answer; a different request with the
-  // same key is refused. Keys are kept for 30 days by default.
-  // The key belongs to the calling operator token.
+  // key and request return the first answer while it is available; a different
+  // request with the same key is refused. Keys are kept for 30 days by default.
+  // The key belongs to the calling operator token; local-admin sessions share
+  // one scope.
   string request_key = 5;
 }
 
