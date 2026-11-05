@@ -1948,6 +1948,7 @@ func Labels() map[string]map[string]string {
 			"max_vcpu":                      "vCPUs",
 			"volumes.size_cap_total_gb":     "Volume size caps default (GB)",
 			"volumes.size_cap_total_max_gb": "Volume size caps maximum (GB)",
+			"volumes.ceiling":               "Volume storage",
 		},
 		"WorkspaceLimitCause": {
 			"plan":      "Plan",
