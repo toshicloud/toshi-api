@@ -979,6 +979,8 @@ const (
 	AuditActionVolumeMountRefused = "volume.mount_refused"
 	// AuditActionVolumeOrphansDeleted is the "volume.orphans_deleted" audit action.
 	AuditActionVolumeOrphansDeleted = "volume.orphans_deleted"
+	// AuditActionSandboxOrphansDeleted is the "sandbox.orphans_deleted" audit action.
+	AuditActionSandboxOrphansDeleted = "sandbox.orphans_deleted"
 	// AuditActionVolumeAttached is the "volume.attached" audit action.
 	AuditActionVolumeAttached = "volume.attached"
 	// AuditActionVolumeCreated is the "volume.created" audit action.
@@ -1471,6 +1473,7 @@ func AuditActionNames() []string {
 		"volume.unmounted",
 		"volume.mount_refused",
 		"volume.orphans_deleted",
+		"sandbox.orphans_deleted",
 		"volume.attached",
 		"volume.created",
 		"volume.deleted",

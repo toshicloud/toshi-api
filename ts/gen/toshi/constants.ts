@@ -485,6 +485,7 @@ export const auditActions = {
   volumeUnmounted: "volume.unmounted",
   volumeMountRefused: "volume.mount_refused",
   volumeOrphansDeleted: "volume.orphans_deleted",
+  sandboxOrphansDeleted: "sandbox.orphans_deleted",
   volumeAttached: "volume.attached",
   volumeCreated: "volume.created",
   volumeDeleted: "volume.deleted",
