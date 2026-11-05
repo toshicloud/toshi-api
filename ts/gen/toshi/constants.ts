@@ -575,6 +575,10 @@ export const eventNames = [
   { name: "mail.received", type: "", source: "connection", prefix: "mail", serviceDefined: false },
 ] as const;
 
+export const eventNameTemplates = [
+  { name: "github.<event>[.<action>]", prefix: "github", minSegments: 2, maxSegments: 3 },
+] as const;
+
 export const reservedEventPrefixes = [
   "job",
   "sandbox",
@@ -592,6 +596,24 @@ export const reservedEventPrefixes = [
   "mail",
   "endpoint",
 ] as const;
+
+// The row of eventNames a name written at run time belongs to: the row that
+// equals it, the template row it fills, or, for a name outside the reserved
+// first segments, the row of names a service defines. undefined for any other
+// name.
+export function resolveEventName(name: string): (typeof eventNames)[number] | undefined {
+  const literal = eventNames.find((row) => row.name === name);
+  if (literal !== undefined) return literal;
+  const segments = name.split(".");
+  if (segments.includes("")) return undefined;
+  const first = segments[0] ?? "";
+  const template = eventNameTemplates.find(
+    (t) => t.prefix === first && segments.length >= t.minSegments && segments.length <= t.maxSegments,
+  );
+  if (template !== undefined) return eventNames.find((row) => row.name === template.name);
+  if ((reservedEventPrefixes as readonly string[]).includes(first)) return undefined;
+  return eventNames.find((row) => row.serviceDefined);
+}
 
 export const deprecatedCalls = [] as const;
 

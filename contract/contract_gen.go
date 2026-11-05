@@ -3,7 +3,10 @@
 
 package contract
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 const (
 	// AdmissionWebhookTimeoutThreshold is the threshold of admission_webhook_timeout.
@@ -1077,6 +1080,401 @@ func EventNames() []EventName {
 // new slice.
 func ReservedEventPrefixes() []string {
 	return []string{"job", "sandbox", "run", "service", "recording", "agent", "takeover", "spend", "egress", "host", "github", "webhook", "trigger", "mail", "endpoint"}
+}
+
+// EventNameTemplate is the shape of the names one row of EventNames stands
+// for: its first segment is Prefix, and a name has MinSegments to MaxSegments
+// dot-separated segments.
+type EventNameTemplate struct {
+	Name        string
+	Prefix      string
+	MinSegments int
+	MaxSegments int
+}
+
+// EventNameTemplates returns the rows of EventNames that stand for many names,
+// in a fixed order. Each call returns a new table.
+func EventNameTemplates() []EventNameTemplate {
+	return []EventNameTemplate{
+		{Name: "github.<event>[.<action>]", Prefix: "github", MinSegments: 2, MaxSegments: 3},
+	}
+}
+
+// ResolveEventName returns the row of EventNames a name written at run time
+// belongs to: the row that equals it, the template row it fills, or, for a name
+// outside the reserved first segments, the row of names a service defines. It
+// reports false for any other name.
+func ResolveEventName(name string) (EventName, bool) {
+	rows := EventNames()
+	for _, row := range rows {
+		if row.Name == name {
+			return row, true
+		}
+	}
+	segments := strings.Split(name, ".")
+	for _, segment := range segments {
+		if segment == "" {
+			return EventName{}, false
+		}
+	}
+	for _, template := range EventNameTemplates() {
+		if template.Prefix != segments[0] || len(segments) < template.MinSegments || len(segments) > template.MaxSegments {
+			continue
+		}
+		for _, row := range rows {
+			if row.Name == template.Name {
+				return row, true
+			}
+		}
+	}
+	for _, prefix := range ReservedEventPrefixes() {
+		if prefix == segments[0] {
+			return EventName{}, false
+		}
+	}
+	for _, row := range rows {
+		if row.ServiceDefined {
+			return row, true
+		}
+	}
+	return EventName{}, false
+}
+
+// AuditActionNames returns every audit action's name, in a fixed order. Each
+// call returns a new slice.
+func AuditActionNames() []string {
+	return []string{
+		"workspace.plan_changed",
+		"workspace.updated",
+		"workspace.reservation_set",
+		"workspace.reservation_released",
+		"workspace.reservation_restored",
+		"workspace.spend_alert",
+		"workspace.volume_cap_alert",
+		"workspace.jobs_per_hour",
+		"workspace.start_rate",
+		"workspace.burst_guard",
+		"workspace.host_cap",
+		"workspace.host_refused",
+		"workspace.starter_credit_granted",
+		"workspace.starter_credit_withheld",
+		"workspace.starter_credit_expired",
+		"workspace.billing_customer_set",
+		"workspace.card_changed",
+		"workspace.created",
+		"workspace.reopened",
+		"workspace.closed",
+		"workspace.suspended",
+		"workspace.resumed",
+		"workspace.deletion_scheduled",
+		"workspace.purge_started",
+		"workspace.purged",
+		"workspace.host_purged",
+		"workspace.entitlement_set",
+		"workspace.entitlement_cleared",
+		"seat.assigned",
+		"seat.reassigned",
+		"seat.removed",
+		"installation.added",
+		"installation.removed",
+		"installation.suspended",
+		"installation.unsuspended",
+		"installation.mapped",
+		"billing.checkout_opened",
+		"billing.portal_opened",
+		"billing.starter_credit_applied",
+		"billing.customer_closed",
+		"secret_set.created",
+		"secret_set.deleted",
+		"secret_set.updated",
+		"secret.set",
+		"secret.deleted",
+		"secret.relay_refused",
+		"secret_set.granted",
+		"secret_set.revoked",
+		"secret_set.read",
+		"model_credential.created",
+		"model_credential.updated",
+		"model_credential.deleted",
+		"model_credential.sign_in_started",
+		"model_credential.sign_in_completed",
+		"model_credential.sign_in_cancelled",
+		"model_credential.signed_in",
+		"model_credential.needs_sign_in",
+		"model_credential.signed_out",
+		"key_provider.wrapped",
+		"key_provider.unwrapped",
+		"project.created",
+		"project.deleted",
+		"project.restored",
+		"project.purged",
+		"project.updated",
+		"project.compatibility_raised",
+		"billing.event_conflicted",
+		"webhook.disabled_after_gone",
+		"environment.created",
+		"environment.deleted",
+		"role.created",
+		"role.updated",
+		"role.deleted",
+		"role.granted",
+		"role.revoked",
+		"member.removed",
+		"member.joined",
+		"member.join_requested",
+		"member.approved",
+		"member.declined",
+		"invitation.created",
+		"invitation.revoked",
+		"invitation.accepted",
+		"invitation.accept_refused",
+		"environment.updated",
+		"repository.claimed",
+		"product.updated",
+		"<kind>.bindings_fixed",
+		"<kind>.binding_attached",
+		"<kind>.run_taken_over",
+		"service.started",
+		"service.stopped",
+		"service.share_link_issued",
+		"service.share_link_opened",
+		"service.share_link_revoked",
+		"service.share_link_ended",
+		"service.endpoint_policy_set",
+		"endpoint.message_sent",
+		"service.mode_set",
+		"service.sign_in_started",
+		"service.sign_in_answered",
+		"service.sign_in_cancelled",
+		"service.sign_in_ended",
+		"service.sign_in_endpoint_opened",
+		"service.sign_in_endpoint_ended",
+		"service.sign_out",
+		"service.updated",
+		"service.activation_requested",
+		"service.activation_finished",
+		"service.upgrade_rolled_back",
+		"service.run_restarted",
+		"service.woken",
+		"service.wake_refused",
+		"domain.verified",
+		"domain.unverified",
+		"domain.created",
+		"domain.checked",
+		"domain.issue_requested",
+		"domain.deleted",
+		"service.held",
+		"service.released",
+		"workload.held",
+		"workload.released",
+		"service.hold_expired",
+		"service.slept",
+		"service.sleep_aborted",
+		"service.endpoint_message_replayed",
+		"service.created",
+		"service.deleted",
+		"service_alarm.set",
+		"service_alarm.deleted",
+		"service_alarm.paused",
+		"service_alarm.resumed",
+		"service_alarm.ran",
+		"token.created",
+		"token.rotated",
+		"token.revoked",
+		"client.registered",
+		"client.deleted",
+		"token.updated",
+		"token.expired",
+		"signin.refused",
+		"credential.refused",
+		"identity.linked",
+		"identity.unlinked",
+		"session.ended",
+		"local_admin.set_up",
+		"local_admin.reset",
+		"token.refused",
+		"host.enrolled",
+		"host.enrollment_refused",
+		"host.state_set",
+		"host.overflow_set",
+		"host.retired",
+		"host.revoked",
+		"host.egress_changed",
+		"host.provider_changed",
+		"host.runner_stopped_after_restore",
+		"host.offline_retired",
+		"cloud_host.added",
+		"cloud_host.budget_reached",
+		"cloud_host.checked",
+		"cloud_pool.added",
+		"cloud_pool.changed",
+		"cloud_pool.removed",
+		"cloud_pool.image_changed",
+		"cloud_pool.runner_changed",
+		"cloud_pool.old_instance_used",
+		"cloud_pool.host_drained",
+		"cloud_pool.host_terminated",
+		"cloud_pool.boot_overdue",
+		"cloud_pool.host_launched",
+		"display.session_opened",
+		"display.session_closed",
+		"display.keys_sent",
+		"display.pointer_sent",
+		"display.clipboard_set",
+		"display.screenshot_taken",
+		"host_job.cancelled",
+		"host_job.stopped",
+		"sandbox.extended",
+		"sandbox.created",
+		"sandbox.updated",
+		"sandbox.started",
+		"sandbox.stopped",
+		"sandbox.ended",
+		"sandbox.executed",
+		"sandbox.deleted",
+		"execution.cancelled",
+		"job.created",
+		"job.updated",
+		"job.cancelled",
+		"job.deleted",
+		"trigger.created",
+		"trigger.updated",
+		"trigger.deleted",
+		"prompt.answered",
+		"prompt_decision.created",
+		"prompt_decision.revoked",
+		"agent_registration.created",
+		"agent_registration.claim_started",
+		"agent_registration.claimed",
+		"agent_registration.claim_refused",
+		"workload.event_emitted",
+		"workload_events.exported",
+		"host_job.spot_interrupted",
+		"host_job.spot_rerun",
+		"host_job.ran_elsewhere",
+		"host_job.previous_pool_image",
+		"host_job.run_cancelled",
+		"host_job.concluded_after_host_loss",
+		"host_job.recovered",
+		"host_job.adopted_after_restore",
+		"host_job.rebuilt_after_restore",
+		"host_job.overflowed",
+		"host_job.debug_started",
+		"host_job.debug_stopped",
+		"host_job.debug_access_issued",
+		"host_job.debug_relay_opened",
+		"host_job.debug_relay_closed",
+		"host_job.forward_opened",
+		"host_job.forward_closed",
+		"host_job.endpoint_exposed",
+		"host_job.endpoint_deleted",
+		"host_job.endpoint_policy_set",
+		"endpoint_log.exported",
+		"host_job.endpoint_connected",
+		"host_job.endpoint_disconnected",
+		"host_job.endpoint_connect_token_issued",
+		"host_job.endpoint_connect_token_revoked",
+		"host_job.preview_connect_token_issued",
+		"host_job.preview_signed_in",
+		"host_job.hosting_sign_in_token_issued",
+		"host_job.hosting_signed_in",
+		"host_job.preview_share_link_issued",
+		"host_job.preview_share_link_opened",
+		"host_job.preview_share_link_revoked",
+		"host_job.preview_share_link_ended",
+		"runner.exits_without_job",
+		"open_source.approved",
+		"open_source.revoked",
+		"secret_delivery.enabled",
+		"secret_delivery.disabled",
+		"secret_delivery.check_published",
+		"secret_delivery.set",
+		"product.forward_refused",
+		"product.call_refused",
+		"filler.put",
+		"filler.removed",
+		"filler.enabled_set",
+		"filler.preempted",
+		"filler.lost",
+		"runner.exits_without_job_cleared",
+		"store.backed_up",
+		"store.backup_failed",
+		"store.backup_copied",
+		"store.backup_copy_failed",
+		"store.restored",
+		"store.restore_drilled",
+		"admission.allowed",
+		"admission.denied",
+		"delivery.failed",
+		"delivery.target_disabled",
+		"image.created",
+		"image.build_started",
+		"image.deleted",
+		"image.version.pending",
+		"image.version.deleted",
+		"image.updated",
+		"connection.created",
+		"connection.deleted",
+		"connection.updated",
+		"connection.delivery_conflicted",
+		"connection.secret_rotated",
+		"connection.delivery_replay_requested",
+		"connection.delivery_replayed",
+		"connection.delivery_failed",
+		"connection.mail_domain_state_changed",
+		"grant.offered",
+		"grant.accepted",
+		"grant.declined",
+		"grant.expiry_changed",
+		"grant.revoked",
+		"grant.lapsed",
+		"grant.expired",
+		"grant.ended",
+		"webhook.created",
+		"webhook.updated",
+		"webhook.deleted",
+		"webhook.secret_rotated",
+		"webhook.events_replayed",
+		"storage_provider.created",
+		"storage_provider.deleted",
+		"storage_provider.checked",
+		"artifact_upload.reserved",
+		"artifact.uploaded",
+		"artifact.viewed",
+		"artifact.expired",
+		"volume.versions_expired",
+		"volume.save_refused",
+		"volume.claim_taken_over",
+		"volume.mounted",
+		"volume.unmounted",
+		"volume.mount_refused",
+		"volume.orphans_deleted",
+		"volume.attached",
+		"volume.created",
+		"volume.deleted",
+		"volume.purged",
+		"volume.detached",
+		"volume.restored",
+		"volume.updated",
+		"recording.started",
+		"recording.capped",
+		"recording.paused",
+		"recording.span",
+		"recording.fallback",
+		"recording.report_late",
+		"recording.share_link_issued",
+		"recording.share_link_revoked",
+		"recording.share_link_refused",
+		"embed_token.issued",
+		"embed_token.revoked",
+		"embed_token.refused",
+		"registry.token_issued",
+		"artifact.prefix_deleted",
+		"audit_events.exported",
+		"retention.swept",
+		"retention.finished",
+		"user.erased",
+	}
 }
 
 // AuditActionAliases returns each former audit action name's current name.
