@@ -351,8 +351,9 @@ type WorkloadServiceClient interface {
 	// that is not running, has a stop asked for, has no limit of its own or
 	// has a raise pending, or whose host's agent cannot take a new limit,
 	// fails with FAILED_PRECONDITION. "spec.keep_stopped" changes the keep
-	// switch and must also be the only path. Another path fails with
-	// INVALID_ARGUMENT.
+	// switch and must also be the only path. "spec.auto_stop_hours" changes
+	// the idle interval and resets its deadline, and must be the only path.
+	// Another path fails with INVALID_ARGUMENT.
 	UpdateSandbox(context.Context, *connect.Request[workspacev1.UpdateSandboxRequest]) (*connect.Response[workspacev1.UpdateSandboxResponse], error)
 	// DeleteSandbox stops a sandbox that has not ended and then removes it;
 	// every execution in it is cancelled. It returns an operation that is
@@ -1743,8 +1744,9 @@ type WorkloadServiceHandler interface {
 	// that is not running, has a stop asked for, has no limit of its own or
 	// has a raise pending, or whose host's agent cannot take a new limit,
 	// fails with FAILED_PRECONDITION. "spec.keep_stopped" changes the keep
-	// switch and must also be the only path. Another path fails with
-	// INVALID_ARGUMENT.
+	// switch and must also be the only path. "spec.auto_stop_hours" changes
+	// the idle interval and resets its deadline, and must be the only path.
+	// Another path fails with INVALID_ARGUMENT.
 	UpdateSandbox(context.Context, *connect.Request[workspacev1.UpdateSandboxRequest]) (*connect.Response[workspacev1.UpdateSandboxResponse], error)
 	// DeleteSandbox stops a sandbox that has not ended and then removes it;
 	// every execution in it is cancelled. It returns an operation that is

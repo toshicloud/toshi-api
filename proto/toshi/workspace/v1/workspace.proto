@@ -61,6 +61,8 @@ enum StopReason {
   // A newer revision of its service took over, and this run ended once its
   // running work had finished.
   STOP_REASON_REVISION_REPLACED = 10;
+  // The sandbox was idle for its auto-stop interval.
+  STOP_REASON_AUTO_STOP = 11;
 }
 
 // StopCause identifies the policy behind a stop.
@@ -317,6 +319,8 @@ message SandboxStatus {
   google.protobuf.Timestamp ends_at = 18;
   // Why its stopped end was set, once the end policy has been recorded.
   SandboxEndsReason ends_reason = 19;
+  // When the sandbox may be stopped for inactivity, if it has a deadline.
+  google.protobuf.Timestamp auto_stop_at = 20;
 }
 
 // SandboxEndsReason identifies the source of a stopped sandbox's end policy.
@@ -898,6 +902,10 @@ message SandboxSpec {
   // Exempt this sandbox from its stopped end while the plan permits it.
   // Set at create or with an UpdateSandbox of spec.keep_stopped.
   bool keep_stopped = 16;
+  // Hours without activity before an idle stop. Unset takes the plan's
+  // default; 0 turns it off only when the plan has no maximum. The owner can
+  // change it with UpdateSandbox. A sandbox with a process has no idle stop.
+  optional int32 auto_stop_hours = 17;
 }
 
 // SandboxSource is a commit of a repository that one of the workspace's

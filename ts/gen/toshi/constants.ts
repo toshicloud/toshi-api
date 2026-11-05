@@ -1047,6 +1047,7 @@ export const labels = {
   StopReason: {
     OWNER: "Stopped by its owner",
     MAX_DURATION: "Reached its time limit",
+    AUTO_STOP: "Stopped after inactivity",
     KEEP_EXPIRED: "Kept time expired",
     SPEND_CAP: "Workspace reached its spend cap",
     WORKSPACE_SUSPENDED: "Workspace suspended",

@@ -6609,8 +6609,9 @@ export const WorkloadService: GenService<{
    * that is not running, has a stop asked for, has no limit of its own or
    * has a raise pending, or whose host's agent cannot take a new limit,
    * fails with FAILED_PRECONDITION. "spec.keep_stopped" changes the keep
-   * switch and must also be the only path. Another path fails with
-   * INVALID_ARGUMENT.
+   * switch and must also be the only path. "spec.auto_stop_hours" changes
+   * the idle interval and resets its deadline, and must be the only path.
+   * Another path fails with INVALID_ARGUMENT.
    *
    * @generated from rpc toshi.workspace.v1.WorkloadService.UpdateSandbox
    */
