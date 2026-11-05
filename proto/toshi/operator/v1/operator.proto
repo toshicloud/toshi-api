@@ -528,9 +528,12 @@ service OperatorService {
   // NOT_FOUND. A member deletes a row its workspace saved with the
   // Workspace API's StorageProviderService.DeleteStorageProvider; a row the
   // operator set for the workspace is PERMISSION_DENIED to it there.
+  // Plain deletion is refused while artifacts, raw delivery bodies or
+  // unfinished deletions reference the provider. Force retirement marks the
+  // artifacts and raw bodies lost and leaves unfinished objects at the provider.
   rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
     option (toshi.key_mode) = NATURAL;
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this storage provider? It is refused while artifacts remain on it; forced, they are marked lost and can no longer be read."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this storage provider? Artifacts, raw delivery bodies and unfinished deletions prevent deletion; forcing it can lose data."};
   }
 }
 
@@ -3658,8 +3661,9 @@ message CheckStorageProviderResponse {
 message DeleteStorageProviderRequest {
   // The provider's id.
   string id = 1;
-  // Retire a provider even if artifacts remain, marking them lost. Only an
-  // operator may force retirement.
+  // Retire a provider despite its holders, marking artifacts and raw bodies
+  // lost and leaving unfinished objects at the provider. Only an operator may
+  // force retirement.
   bool force = 2;
 }
 

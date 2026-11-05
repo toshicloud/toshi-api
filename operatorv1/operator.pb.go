@@ -15109,8 +15109,9 @@ type DeleteStorageProviderRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The provider's id.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Retire a provider even if artifacts remain, marking them lost. Only an
-	// operator may force retirement.
+	// Retire a provider despite its holders, marking artifacts and raw bodies
+	// lost and leaving unfinished objects at the provider. Only an operator may
+	// force retirement.
 	Force         bool `protobuf:"varint,2,opt,name=force,proto3" json:"force,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -16646,7 +16647,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x15CreateStorageProvider\x12/.toshi.operator.v1.CreateStorageProviderRequest\x1a0.toshi.operator.v1.CreateStorageProviderResponse\"\x04\x90\xf4\x18\x01\x12w\n" +
 	"\x14ListStorageProviders\x12..toshi.operator.v1.ListStorageProvidersRequest\x1a/.toshi.operator.v1.ListStorageProvidersResponse\x12}\n" +
 	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\"\x04\x90\xf4\x18\x02\x12\x8c\x02\n" +
-	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponse\"\x8f\x01\xfa\xf3\x18\x86\x01\b\x01\x12\x81\x01Delete this storage provider? It is refused while artifacts remain on it; forced, they are marked lost and can no longer be read.\x90\xf4\x18\x02B!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
+	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponse\"\x8f\x01\xfa\xf3\x18\x86\x01\b\x01\x12\x81\x01Delete this storage provider? Artifacts, raw delivery bodies and unfinished deletions prevent deletion; forcing it can lose data.\x90\xf4\x18\x02B!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
 
 var (
 	file_toshi_operator_v1_operator_proto_rawDescOnce sync.Once

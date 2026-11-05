@@ -272,6 +272,12 @@ const (
 	ReasonStateVolumeUnavailable = "STATE_VOLUME_UNAVAILABLE"
 	// ReasonStorageFull: `BuildImage` in a workspace that may store no new data.
 	ReasonStorageFull = "STORAGE_FULL"
+	// ReasonStorageProviderArtifacts: `DeleteStorageProvider` while the provider holds artifacts; the metadata `count` is the number of artifacts.
+	ReasonStorageProviderArtifacts = "STORAGE_PROVIDER_ARTIFACTS"
+	// ReasonStorageProviderDeletionsInFlight: `DeleteStorageProvider` while the provider has unfinished deletions; the metadata `count` is the number of open deletions.
+	ReasonStorageProviderDeletionsInFlight = "STORAGE_PROVIDER_DELETIONS_IN_FLIGHT"
+	// ReasonStorageProviderRawBodies: `DeleteStorageProvider` while the provider holds raw delivery bodies; the metadata `count` is the number of bodies.
+	ReasonStorageProviderRawBodies = "STORAGE_PROVIDER_RAW_BODIES"
 	// ReasonStoreInUse: Not sent by the API: a control plane, `toshi-control admin migrate --apply` or `admin restore` whose SQLite store another process holds prints it and exits 5; `key` is `store.dsn` and `cause` says the file is held by another process.
 	ReasonStoreInUse = "STORE_IN_USE"
 	// ReasonToshiLicensedWindows: Any display open on a Windows job on a cloud pool.
@@ -2119,7 +2125,7 @@ func AskedCalls() []AskedCall {
 	return []AskedCall{
 		{Method: "toshi.operator.v1.OperatorService.DeleteClient", Question: "Delete this OAuth client? Programs that sign in with it stop working.", Answer: "yes"},
 		{Method: "toshi.operator.v1.OperatorService.DeleteFiller", Question: "Delete this filler? It is removed now, and its running run is stopped at the host's next heartbeat.", Answer: "yes"},
-		{Method: "toshi.operator.v1.OperatorService.DeleteStorageProvider", Question: "Delete this storage provider? It is refused while artifacts remain on it; forced, they are marked lost and can no longer be read.", Answer: "yes"},
+		{Method: "toshi.operator.v1.OperatorService.DeleteStorageProvider", Question: "Delete this storage provider? Artifacts, raw delivery bodies and unfinished deletions prevent deletion; forcing it can lose data.", Answer: "yes"},
 		{Method: "toshi.operator.v1.OperatorService.DeleteUser", Question: "Erase this user? Their sessions end now and their account is erased.", Answer: "yes"},
 		{Method: "toshi.operator.v1.OperatorService.RetireHost", Question: "Retire this host? It leaves the deployment's hosts now, its volume claims and snapshots are deleted, and a running agent registers again with its enrollment token.", Answer: "yes"},
 		{Method: "toshi.operator.v1.OperatorService.RetireHosts", Question: "Retire these hosts? They leave the deployment's hosts now, their volume claims and snapshots are deleted, and a running agent registers again with its enrollment token.", Answer: "yes"},
@@ -2152,7 +2158,7 @@ func AskedCalls() []AskedCall {
 		{Method: "toshi.workspace.v1.SecretService.DeleteSecretSet", Question: "Delete this secret set? Its keys and their values are deleted.", Answer: "yes"},
 		{Method: "toshi.workspace.v1.SecretService.RevokeSecretSet", Question: "Revoke this secret set grant? The access it gives ends now.", Answer: "yes"},
 		{Method: "toshi.workspace.v1.SecretService.UpdateSecretSet", Question: "Update this secret set? Keys the update leaves out are deleted with their values.", Answer: "yes"},
-		{Method: "toshi.workspace.v1.StorageProviderService.DeleteStorageProvider", Question: "Remove this bucket? Toshi stops using it now, and what it holds stays with your provider; it is refused while Toshi keeps artifacts in it.", Answer: "yes"},
+		{Method: "toshi.workspace.v1.StorageProviderService.DeleteStorageProvider", Question: "Remove this bucket? Artifacts, raw delivery bodies or unfinished deletions prevent removal; its objects stay with your provider.", Answer: "yes"},
 		{Method: "toshi.workspace.v1.TokenService.RevokeToken", Question: "Revoke this token? It stops working now.", Answer: "yes"},
 		{Method: "toshi.workspace.v1.TokenService.RollWorkspaceToken", Question: "Roll this token? The old token stops working now.", Answer: "yes"},
 		{Method: "toshi.workspace.v1.TriggerService.DeleteTrigger", Question: "Delete this trigger? It stops firing now, and the workloads it created are removed at the next pass.", Answer: "yes"},
