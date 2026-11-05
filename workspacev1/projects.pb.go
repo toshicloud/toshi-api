@@ -2638,11 +2638,11 @@ func (x *RetentionKeep) GetKeep() *durationpb.Duration {
 // workspace, and what it sets may only shorten the workspace's.
 type EnvironmentRetention struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Days the environment keeps its finished jobs. In an override, unset
-	// follows the workspace and the value is at least 1 and at most the
+	// Days the environment keeps its finished jobs. In an override, 0
+	// follows the workspace and a positive value is at most the
 	// workspace's period: an override cannot keep forever. In the retention
-	// that applies, 0 keeps forever. The maximum is the workspace's period.
-	HistoryDays *int32 `protobuf:"varint,1,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
+	// that applies, 0 keeps forever.
+	JobRetentionDays int32 `protobuf:"varint,1,opt,name=job_retention_days,json=jobRetentionDays,proto3" json:"job_retention_days,omitempty"`
 	// Each kind's keep, by kind. In an override, a kind left out follows the
 	// workspace. In the retention that applies, a kind left out is kept
 	// forever.
@@ -2681,9 +2681,9 @@ func (*EnvironmentRetention) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_projects_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *EnvironmentRetention) GetHistoryDays() int32 {
-	if x != nil && x.HistoryDays != nil {
-		return *x.HistoryDays
+func (x *EnvironmentRetention) GetJobRetentionDays() int32 {
+	if x != nil {
+		return x.JobRetentionDays
 	}
 	return 0
 }
@@ -3969,12 +3969,10 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"\rRetentionKeep\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x12H\n" +
 	"\x04keep\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x19\x8a\xf4\x18\x15\n" +
-	"\x0eretention_keep\x10\x01 \x90\x1cR\x04keep\"\xac\x01\n" +
-	"\x14EnvironmentRetention\x12J\n" +
-	"\fhistory_days\x18\x01 \x01(\x05B\"\x8a\xf4\x18\x1e\n" +
-	"\x18environment_history_days\x10\x03 \x01H\x00R\vhistoryDays\x88\x01\x01\x127\n" +
-	"\x05keeps\x18\x02 \x03(\v2!.toshi.workspace.v1.RetentionKeepR\x05keepsB\x0f\n" +
-	"\r_history_days\"\\\n" +
+	"\x0eretention_keep\x10\x01 \x90\x1cR\x04keep\"}\n" +
+	"\x14EnvironmentRetention\x12,\n" +
+	"\x12job_retention_days\x18\x01 \x01(\x05R\x10jobRetentionDays\x127\n" +
+	"\x05keeps\x18\x02 \x03(\v2!.toshi.workspace.v1.RetentionKeepR\x05keeps\"\\\n" +
 	"\x1eGetEnvironmentRetentionRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\"\x8b\x02\n" +
@@ -4292,7 +4290,6 @@ func file_toshi_workspace_v1_projects_proto_init() {
 	file_toshi_workspace_v1_model_credentials_proto_init()
 	file_toshi_workspace_v1_roles_proto_init()
 	file_toshi_workspace_v1_volumes_proto_init()
-	file_toshi_workspace_v1_projects_proto_msgTypes[37].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

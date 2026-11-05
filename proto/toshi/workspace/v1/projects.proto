@@ -210,7 +210,7 @@ service ProjectService {
   }
   // UpdateEnvironment sets the fields update_mask names on an environment:
   // retention replaces its retention override whole, which may only shorten
-  // the workspace's: history_days above the workspace's period, or a keep
+  // the workspace's: job_retention_days above the workspace's period, or a keep
   // longer than the workspace's keep of that kind, is INVALID_ARGUMENT
   // naming the field and the limit, and so is a recording-signed-in keep
   // longer than the recording keep that applies after it; an empty
@@ -820,11 +820,11 @@ message RetentionKeep {
 // and its artifacts. As an override, what it leaves out follows the
 // workspace, and what it sets may only shorten the workspace's.
 message EnvironmentRetention {
-  // Days the environment keeps its finished jobs. In an override, unset
-  // follows the workspace and the value is at least 1 and at most the
+  // Days the environment keeps its finished jobs. In an override, 0
+  // follows the workspace and a positive value is at most the
   // workspace's period: an override cannot keep forever. In the retention
-  // that applies, 0 keeps forever. The maximum is the workspace's period.
-  optional int32 history_days = 1 [(toshi.bound) = {name: "environment_history_days", unit: UNIT_COUNT, min: 1}];
+  // that applies, 0 keeps forever.
+  int32 job_retention_days = 1;
   // Each kind's keep, by kind. In an override, a kind left out follows the
   // workspace. In the retention that applies, a kind left out is kept
   // forever.

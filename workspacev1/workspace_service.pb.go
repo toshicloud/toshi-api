@@ -3661,7 +3661,7 @@ type Workspace struct {
 	DeletionBy string `protobuf:"bytes,39,opt,name=deletion_by,json=deletionBy,proto3" json:"deletion_by,omitempty"`
 	// The period the retention pass uses: the workspace's value when set, else
 	// its plan's.
-	HistoryDaysEffective int32 `protobuf:"varint,22,opt,name=history_days_effective,json=historyDaysEffective,proto3" json:"history_days_effective,omitempty"`
+	JobRetentionDaysEffective int32 `protobuf:"varint,22,opt,name=job_retention_days_effective,json=jobRetentionDaysEffective,proto3" json:"job_retention_days_effective,omitempty"`
 	// The secrets.sets_max override; unset when none is set. 0 is no cap.
 	SecretMaxSets *int32 `protobuf:"varint,24,opt,name=secret_max_sets,json=secretMaxSets,proto3,oneof" json:"secret_max_sets,omitempty"`
 	// The secrets.keys_max override; unset when none is set. 0 is no cap.
@@ -3858,9 +3858,9 @@ func (x *Workspace) GetDeletionBy() string {
 	return ""
 }
 
-func (x *Workspace) GetHistoryDaysEffective() int32 {
+func (x *Workspace) GetJobRetentionDaysEffective() int32 {
 	if x != nil {
-		return x.HistoryDaysEffective
+		return x.JobRetentionDaysEffective
 	}
 	return 0
 }
@@ -4121,7 +4121,7 @@ type WorkspaceSettings struct {
 	// plan's period, and 0 only on a plan that keeps forever; a longer one
 	// fails with INVALID_ARGUMENT. Naming it in the update mask with no value
 	// clears it, so the plan's applies again. The maximum is the plan's.
-	HistoryDays *int32 `protobuf:"varint,3,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
+	JobRetentionDays *int32 `protobuf:"varint,3,opt,name=job_retention_days,json=jobRetentionDays,proto3,oneof" json:"job_retention_days,omitempty"`
 	// The workspace's jobs wait for its own hosts and never run on shared ones.
 	OwnHostsOnly bool `protobuf:"varint,4,opt,name=own_hosts_only,json=ownHostsOnly,proto3" json:"own_hosts_only,omitempty"`
 	// Shared overflow hosts may take the workspace's jobs; its own overflow
@@ -4248,9 +4248,9 @@ func (x *WorkspaceSettings) GetSignIn() *WorkspaceSignIn {
 	return nil
 }
 
-func (x *WorkspaceSettings) GetHistoryDays() int32 {
-	if x != nil && x.HistoryDays != nil {
-		return *x.HistoryDays
+func (x *WorkspaceSettings) GetJobRetentionDays() int32 {
+	if x != nil && x.JobRetentionDays != nil {
+		return *x.JobRetentionDays
 	}
 	return 0
 }
@@ -6693,7 +6693,7 @@ type Plan struct {
 	StarterCreditCents int64 `protobuf:"varint,14,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
 	// Days of finished job history workspaces on this plan keep; 0 keeps forever.
 	// Left out of configuration, 90.
-	HistoryDays int32 `protobuf:"varint,15,opt,name=history_days,json=historyDays,proto3" json:"history_days,omitempty"`
+	JobRetentionDays int32 `protobuf:"varint,15,opt,name=job_retention_days,json=jobRetentionDays,proto3" json:"job_retention_days,omitempty"`
 	// Longest debug session, in minutes, a failed job on this plan may ask
 	// for with a toshi-debug-<n> label; 0 means the plan has no debug
 	// sessions.
@@ -6851,9 +6851,9 @@ func (x *Plan) GetStarterCreditCents() int64 {
 	return 0
 }
 
-func (x *Plan) GetHistoryDays() int32 {
+func (x *Plan) GetJobRetentionDays() int32 {
 	if x != nil {
-		return x.HistoryDays
+		return x.JobRetentionDays
 	}
 	return 0
 }
@@ -7331,7 +7331,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
 	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
-	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xdb\x11\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xe6\x11\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -7352,8 +7352,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\vpurge_after\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"purgeAfter\x12\x1f\n" +
 	"\vdeletion_by\x18' \x01(\tR\n" +
-	"deletionBy\x124\n" +
-	"\x16history_days_effective\x18\x16 \x01(\x05R\x14historyDaysEffective\x12+\n" +
+	"deletionBy\x12?\n" +
+	"\x1cjob_retention_days_effective\x18\x16 \x01(\x05R\x19jobRetentionDaysEffective\x12+\n" +
 	"\x0fsecret_max_sets\x18\x18 \x01(\x05H\x01R\rsecretMaxSets\x88\x01\x01\x12+\n" +
 	"\x0fsecret_max_keys\x18\x19 \x01(\x05H\x02R\rsecretMaxKeys\x88\x01\x01\x12)\n" +
 	"\x0esecret_max_kib\x18\x1a \x01(\x03H\x03R\fsecretMaxKib\x88\x01\x01\x12/\n" +
@@ -7387,13 +7387,13 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\tnot_after\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bnotAfter\x125\n" +
 	"\brenew_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\arenewAt\x125\n" +
 	"\bretry_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aretryAt\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error\"\xde\t\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"\xf5\t\n" +
 	"\x11WorkspaceSettings\x12\x1f\n" +
 	"\vmember_join\x18\x01 \x01(\tR\n" +
 	"memberJoin\x12R\n" +
-	"\asign_in\x18\x02 \x01(\v2#.toshi.workspace.v1.WorkspaceSignInB\x14\xda\xf3\x18\x10workspace.signinR\x06signIn\x12H\n" +
-	"\fhistory_days\x18\x03 \x01(\x05B \x8a\xf4\x18\x1c\n" +
-	"\x16workspace_history_days\x10\x03 \x01H\x00R\vhistoryDays\x88\x01\x01\x12$\n" +
+	"\asign_in\x18\x02 \x01(\v2#.toshi.workspace.v1.WorkspaceSignInB\x14\xda\xf3\x18\x10workspace.signinR\x06signIn\x12Y\n" +
+	"\x12job_retention_days\x18\x03 \x01(\x05B&\x8a\xf4\x18\"\n" +
+	"\x1cworkspace_job_retention_days\x10\x03 \x01H\x00R\x10jobRetentionDays\x88\x01\x01\x12$\n" +
 	"\x0eown_hosts_only\x18\x04 \x01(\bR\fownHostsOnly\x12%\n" +
 	"\x0eallow_overflow\x18\x05 \x01(\bR\rallowOverflow\x12(\n" +
 	"\x10allow_cache_warm\x18\x06 \x01(\bR\x0eallowCacheWarm\x122\n" +
@@ -7410,8 +7410,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x18volume_size_cap_total_gb\x18\x0f \x01(\x03B\x11\xda\xf3\x18\rbilling.writeR\x14volumeSizeCapTotalGb\x12Y\n" +
 	"\x15inbound_mail_past_cap\x18\x10 \x01(\x0e2&.toshi.workspace.v1.InboundMailPastCapR\x12inboundMailPastCap\x12e\n" +
 	"\x11endpoint_defaults\x18\x11 \x03(\v2#.toshi.workspace.v1.EndpointDefaultB\x13\xda\xf3\x18\x0fendpoints.writeR\x10endpointDefaults\x12>\n" +
-	"\x19sandbox_stopped_keep_days\x18\x12 \x01(\x03H\x04R\x16sandboxStoppedKeepDays\x88\x01\x01B\x0f\n" +
-	"\r_history_daysB\f\n" +
+	"\x19sandbox_stopped_keep_days\x18\x12 \x01(\x03H\x04R\x16sandboxStoppedKeepDays\x88\x01\x01B\x15\n" +
+	"\x13_job_retention_daysB\f\n" +
 	"\n" +
 	"_recordingB\x18\n" +
 	"\x16_recording_human_spansB\x0e\n" +
@@ -7631,7 +7631,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\vp50_seconds\x18\b \x01(\x03R\n" +
 	"p50Seconds\x12\x1f\n" +
 	"\vp95_seconds\x18\t \x01(\x03R\n" +
-	"p95Seconds\"\x82\x06\n" +
+	"p95Seconds\"\x8d\x06\n" +
 	"\x04Plan\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vconcurrency\x18\x02 \x01(\x05R\vconcurrency\x12&\n" +
@@ -7650,8 +7650,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x11card_required_for\x18\v \x03(\tR\x0fcardRequiredFor\x12)\n" +
 	"\x11max_jobs_per_hour\x18\f \x01(\x05R\x0emaxJobsPerHour\x12(\n" +
 	"\x10burst_guard_jobs\x18\r \x01(\x05R\x0eburstGuardJobs\x120\n" +
-	"\x14starter_credit_cents\x18\x0e \x01(\x03R\x12starterCreditCents\x12!\n" +
-	"\fhistory_days\x18\x0f \x01(\x05R\vhistoryDays\x12#\n" +
+	"\x14starter_credit_cents\x18\x0e \x01(\x03R\x12starterCreditCents\x12,\n" +
+	"\x12job_retention_days\x18\x0f \x01(\x05R\x10jobRetentionDays\x12#\n" +
 	"\rdebug_minutes\x18\x10 \x01(\x05R\fdebugMinutes\x12\"\n" +
 	"\rmax_own_hosts\x18\x11 \x01(\x05R\vmaxOwnHosts\x12\x1f\n" +
 	"\vopen_source\x18\x12 \x01(\bR\n" +

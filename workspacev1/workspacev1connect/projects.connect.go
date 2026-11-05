@@ -227,7 +227,7 @@ type ProjectServiceClient interface {
 	GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error)
 	// UpdateEnvironment sets the fields update_mask names on an environment:
 	// retention replaces its retention override whole, which may only shorten
-	// the workspace's: history_days above the workspace's period, or a keep
+	// the workspace's: job_retention_days above the workspace's period, or a keep
 	// longer than the workspace's keep of that kind, is INVALID_ARGUMENT
 	// naming the field and the limit, and so is a recording-signed-in keep
 	// longer than the recording keep that applies after it; an empty
@@ -686,7 +686,7 @@ type ProjectServiceHandler interface {
 	GetEnvironmentRetention(context.Context, *connect.Request[workspacev1.GetEnvironmentRetentionRequest]) (*connect.Response[workspacev1.GetEnvironmentRetentionResponse], error)
 	// UpdateEnvironment sets the fields update_mask names on an environment:
 	// retention replaces its retention override whole, which may only shorten
-	// the workspace's: history_days above the workspace's period, or a keep
+	// the workspace's: job_retention_days above the workspace's period, or a keep
 	// longer than the workspace's keep of that kind, is INVALID_ARGUMENT
 	// naming the field and the limit, and so is a recording-signed-in keep
 	// longer than the recording keep that applies after it; an empty

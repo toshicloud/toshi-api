@@ -922,7 +922,7 @@ message Workspace {
   string deletion_by = 39;
   // The period the retention pass uses: the workspace's value when set, else
   // its plan's.
-  int32 history_days_effective = 22;
+  int32 job_retention_days_effective = 22;
   // The secrets.sets_max override; unset when none is set. 0 is no cap.
   optional int32 secret_max_sets = 24;
   // The secrets.keys_max override; unset when none is set. 0 is no cap.
@@ -1044,7 +1044,7 @@ message WorkspaceSettings {
   // plan's period, and 0 only on a plan that keeps forever; a longer one
   // fails with INVALID_ARGUMENT. Naming it in the update mask with no value
   // clears it, so the plan's applies again. The maximum is the plan's.
-  optional int32 history_days = 3 [(toshi.bound) = {name: "workspace_history_days", unit: UNIT_COUNT, min: 1}];
+  optional int32 job_retention_days = 3 [(toshi.bound) = {name: "workspace_job_retention_days", unit: UNIT_COUNT, min: 1}];
   // The workspace's jobs wait for its own hosts and never run on shared ones.
   bool own_hosts_only = 4;
   // Shared overflow hosts may take the workspace's jobs; its own overflow
@@ -1688,7 +1688,7 @@ message Plan {
   int64 starter_credit_cents = 14;
   // Days of finished job history workspaces on this plan keep; 0 keeps forever.
   // Left out of configuration, 90.
-  int32 history_days = 15;
+  int32 job_retention_days = 15;
   // Longest debug session, in minutes, a failed job on this plan may ask
   // for with a toshi-debug-<n> label; 0 means the plan has no debug
   // sessions.

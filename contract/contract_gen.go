@@ -45,8 +45,6 @@ const (
 	EndpointMessageDataMax = 262144
 	// EndpointMessageNameMax is the max of endpoint_message_name.
 	EndpointMessageNameMax = 200
-	// EnvironmentHistoryDaysMin is the min of environment_history_days.
-	EnvironmentHistoryDaysMin = 1
 	// ExportAuditEventsDownloadURLTtlDefault is the default of export_audit_events_download_url_ttl.
 	ExportAuditEventsDownloadURLTtlDefault time.Duration = 5 * time.Minute
 	// ExportAuditEventsDownloadURLTtlMax is the max of export_audit_events_download_url_ttl.
@@ -133,8 +131,8 @@ const (
 	WebhookSigningSecretMin = 24
 	// WebhookSigningSecretMax is the max of webhook_signing_secret.
 	WebhookSigningSecretMax = 64
-	// WorkspaceHistoryDaysMin is the min of workspace_history_days.
-	WorkspaceHistoryDaysMin = 1
+	// WorkspaceJobRetentionDaysMin is the min of workspace_job_retention_days.
+	WorkspaceJobRetentionDaysMin = 1
 	// WorkspaceTokenLifetimeDefault is the default of workspace_token_lifetime.
 	WorkspaceTokenLifetimeDefault time.Duration = 90 * 24 * time.Hour
 	// WorkspaceTokenLifetimeMax is the max of workspace_token_lifetime.

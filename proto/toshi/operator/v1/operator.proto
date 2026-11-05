@@ -1485,10 +1485,10 @@ message Workspace {
   string deletion_by = 37;
   // Days of finished job history the workspace keeps; unset when the plan's
   // applies. 0 keeps forever.
-  optional int32 history_days = 21;
+  optional int32 job_retention_days = 21;
   // The period the retention pass uses: the workspace's value when set, else
   // its plan's.
-  int32 history_days_effective = 22;
+  int32 job_retention_days_effective = 22;
   // Whether Toshi cancels the workflow run of a job whose VM is gone, so
   // GitHub shows it within seconds as cancelled; off keeps GitHub's own
   // failure, about 10 minutes later.
@@ -1807,7 +1807,7 @@ message Plan {
   int64 starter_credit_cents = 14;
   // Days of finished job history workspaces on this plan keep; 0 keeps forever.
   // Left out of configuration, 90.
-  int32 history_days = 15;
+  int32 job_retention_days = 15;
   // Longest debug session, in minutes, a failed job on this plan may ask
   // for with a toshi-debug-<n> label; 0 means the plan has no debug
   // sessions.

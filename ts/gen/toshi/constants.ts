@@ -21,7 +21,6 @@ export const contract = {
   endpointLogExport: { unit: "bytes", default: 67108864 },
   endpointMessageData: { unit: "bytes", max: 262144 },
   endpointMessageName: { unit: "bytes", max: 200 },
-  environmentHistoryDays: { unit: "count", min: 1 },
   exportAuditEventsDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
   exportEndpointLogDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
   exportEventsDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
@@ -54,7 +53,7 @@ export const contract = {
   utilisationHourRange: { unit: "seconds", max: 2678400 },
   webhookFilterEntries: { unit: "count", max: 64 },
   webhookSigningSecret: { unit: "bytes", default: 32, min: 24, max: 64 },
-  workspaceHistoryDays: { unit: "count", min: 1 },
+  workspaceJobRetentionDays: { unit: "count", min: 1 },
   workspaceTokenLifetime: { unit: "seconds", default: 7776000, max: 7776000 },
 } as const;
 

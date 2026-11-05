@@ -4379,10 +4379,10 @@ type Workspace struct {
 	DeletionBy string `protobuf:"bytes,37,opt,name=deletion_by,json=deletionBy,proto3" json:"deletion_by,omitempty"`
 	// Days of finished job history the workspace keeps; unset when the plan's
 	// applies. 0 keeps forever.
-	HistoryDays *int32 `protobuf:"varint,21,opt,name=history_days,json=historyDays,proto3,oneof" json:"history_days,omitempty"`
+	JobRetentionDays *int32 `protobuf:"varint,21,opt,name=job_retention_days,json=jobRetentionDays,proto3,oneof" json:"job_retention_days,omitempty"`
 	// The period the retention pass uses: the workspace's value when set, else
 	// its plan's.
-	HistoryDaysEffective int32 `protobuf:"varint,22,opt,name=history_days_effective,json=historyDaysEffective,proto3" json:"history_days_effective,omitempty"`
+	JobRetentionDaysEffective int32 `protobuf:"varint,22,opt,name=job_retention_days_effective,json=jobRetentionDaysEffective,proto3" json:"job_retention_days_effective,omitempty"`
 	// Whether Toshi cancels the workflow run of a job whose VM is gone, so
 	// GitHub shows it within seconds as cancelled; off keeps GitHub's own
 	// failure, about 10 minutes later.
@@ -4608,16 +4608,16 @@ func (x *Workspace) GetDeletionBy() string {
 	return ""
 }
 
-func (x *Workspace) GetHistoryDays() int32 {
-	if x != nil && x.HistoryDays != nil {
-		return *x.HistoryDays
+func (x *Workspace) GetJobRetentionDays() int32 {
+	if x != nil && x.JobRetentionDays != nil {
+		return *x.JobRetentionDays
 	}
 	return 0
 }
 
-func (x *Workspace) GetHistoryDaysEffective() int32 {
+func (x *Workspace) GetJobRetentionDaysEffective() int32 {
 	if x != nil {
-		return x.HistoryDaysEffective
+		return x.JobRetentionDaysEffective
 	}
 	return 0
 }
@@ -6055,7 +6055,7 @@ type Plan struct {
 	StarterCreditCents int64 `protobuf:"varint,14,opt,name=starter_credit_cents,json=starterCreditCents,proto3" json:"starter_credit_cents,omitempty"`
 	// Days of finished job history workspaces on this plan keep; 0 keeps forever.
 	// Left out of configuration, 90.
-	HistoryDays int32 `protobuf:"varint,15,opt,name=history_days,json=historyDays,proto3" json:"history_days,omitempty"`
+	JobRetentionDays int32 `protobuf:"varint,15,opt,name=job_retention_days,json=jobRetentionDays,proto3" json:"job_retention_days,omitempty"`
 	// Longest debug session, in minutes, a failed job on this plan may ask
 	// for with a toshi-debug-<n> label; 0 means the plan has no debug
 	// sessions.
@@ -6213,9 +6213,9 @@ func (x *Plan) GetStarterCreditCents() int64 {
 	return 0
 }
 
-func (x *Plan) GetHistoryDays() int32 {
+func (x *Plan) GetJobRetentionDays() int32 {
 	if x != nil {
-		return x.HistoryDays
+		return x.JobRetentionDays
 	}
 	return 0
 }
@@ -15588,7 +15588,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x05hosts\x18\x01 \x03(\v2$.toshi.operator.v1.OfflineHostResultR\x05hosts\"\x81\x01\n" +
 	"\x11OfflineHostResult\x12+\n" +
 	"\x04host\x18\x01 \x01(\v2\x17.toshi.operator.v1.HostR\x04host\x12?\n" +
-	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xa4\x11\n" +
+	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xc0\x11\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -15615,9 +15615,9 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\vpurge_after\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"purgeAfter\x12\x1f\n" +
 	"\vdeletion_by\x18% \x01(\tR\n" +
-	"deletionBy\x12&\n" +
-	"\fhistory_days\x18\x15 \x01(\x05H\x01R\vhistoryDays\x88\x01\x01\x124\n" +
-	"\x16history_days_effective\x18\x16 \x01(\x05R\x14historyDaysEffective\x122\n" +
+	"deletionBy\x121\n" +
+	"\x12job_retention_days\x18\x15 \x01(\x05H\x01R\x10jobRetentionDays\x88\x01\x01\x12?\n" +
+	"\x1cjob_retention_days_effective\x18\x16 \x01(\x05R\x19jobRetentionDaysEffective\x122\n" +
 	"\x16cancel_run_on_vm_death\x18\x17 \x01(\bR\x12cancelRunOnVmDeath\x12+\n" +
 	"\x0fsecret_max_sets\x18\x18 \x01(\x05H\x02R\rsecretMaxSets\x88\x01\x01\x12+\n" +
 	"\x0fsecret_max_keys\x18\x19 \x01(\x05H\x03R\rsecretMaxKeys\x88\x01\x01\x12)\n" +
@@ -15638,8 +15638,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x19EntitlementOverridesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x12\n" +
-	"\x10_concurrency_capB\x0f\n" +
-	"\r_history_daysB\x12\n" +
+	"\x10_concurrency_capB\x15\n" +
+	"\x13_job_retention_daysB\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
 	"\x10_secret_max_keysB\x11\n" +
 	"\x0f_secret_max_kibB\x14\n" +
@@ -15732,7 +15732,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\rgrace_seconds\x18\x03 \x01(\x03R\fgraceSeconds\x12\x10\n" +
 	"\x03now\x18\x04 \x01(\bR\x03now\"U\n" +
 	"\x17DeleteWorkspaceResponse\x12:\n" +
-	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\x82\x06\n" +
+	"\tworkspace\x18\x01 \x01(\v2\x1c.toshi.operator.v1.WorkspaceR\tworkspace\"\x8d\x06\n" +
 	"\x04Plan\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vconcurrency\x18\x02 \x01(\x05R\vconcurrency\x12&\n" +
@@ -15751,8 +15751,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x11card_required_for\x18\v \x03(\tR\x0fcardRequiredFor\x12)\n" +
 	"\x11max_jobs_per_hour\x18\f \x01(\x05R\x0emaxJobsPerHour\x12(\n" +
 	"\x10burst_guard_jobs\x18\r \x01(\x05R\x0eburstGuardJobs\x120\n" +
-	"\x14starter_credit_cents\x18\x0e \x01(\x03R\x12starterCreditCents\x12!\n" +
-	"\fhistory_days\x18\x0f \x01(\x05R\vhistoryDays\x12#\n" +
+	"\x14starter_credit_cents\x18\x0e \x01(\x03R\x12starterCreditCents\x12,\n" +
+	"\x12job_retention_days\x18\x0f \x01(\x05R\x10jobRetentionDays\x12#\n" +
 	"\rdebug_minutes\x18\x10 \x01(\x05R\fdebugMinutes\x12\"\n" +
 	"\rmax_own_hosts\x18\x11 \x01(\x05R\vmaxOwnHosts\x12\x1f\n" +
 	"\vopen_source\x18\x12 \x01(\bR\n" +
