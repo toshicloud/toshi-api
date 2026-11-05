@@ -4064,7 +4064,9 @@ export type Command = Message<"toshi.workspace.v1.Command"> & {
   argv: string[];
 
   /**
-   * Added to the environment the command starts with.
+   * Added to the environment the command starts with. A job's and a
+   * sandbox's names are a letter or _, then letters, digits or _, at most
+   * 128 bytes, and do not begin with TOSHI_BINDING.
    *
    * @generated from field: map<string, string> env = 2;
    */
@@ -4093,7 +4095,9 @@ export type CommandJson = {
   argv?: string[];
 
   /**
-   * Added to the environment the command starts with.
+   * Added to the environment the command starts with. A job's and a
+   * sandbox's names are a letter or _, then letters, digits or _, at most
+   * 128 bytes, and do not begin with TOSHI_BINDING.
    *
    * @generated from field: map<string, string> env = 2;
    */

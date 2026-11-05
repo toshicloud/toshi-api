@@ -3530,7 +3530,8 @@ export type Workspace = Message<"toshi.workspace.v1.Workspace"> & {
   id: string;
 
   /**
-   * The workspace's name; not unique among workspaces.
+   * The workspace's name, 1 to 64 characters with no control character;
+   * not unique among workspaces.
    *
    * @generated from field: string name = 2;
    */
@@ -3811,7 +3812,8 @@ export type WorkspaceJson = {
   id?: string;
 
   /**
-   * The workspace's name; not unique among workspaces.
+   * The workspace's name, 1 to 64 characters with no control character;
+   * not unique among workspaces.
    *
    * @generated from field: string name = 2;
    */

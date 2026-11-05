@@ -3620,7 +3620,8 @@ type Workspace struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The workspace's id: "ws-" and 24 hex digits.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// The workspace's name; not unique among workspaces.
+	// The workspace's name, 1 to 64 characters with no control character;
+	// not unique among workspaces.
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
 	ConcurrencyCap *int32 `protobuf:"varint,3,opt,name=concurrency_cap,json=concurrencyCap,proto3,oneof" json:"concurrency_cap,omitempty"`

@@ -1199,8 +1199,8 @@ export const ListRepositoriesResponseSchema: GenMessage<ListRepositoriesResponse
  */
 export type CreateProjectRequest = Message<"toshi.workspace.v1.CreateProjectRequest"> & {
   /**
-   * The project's name, unique among the workspace's projects. Empty is
-   * INVALID_ARGUMENT.
+   * The project's name, unique among the workspace's projects: a lowercase
+   * DNS label of at most 63 bytes. Another is INVALID_ARGUMENT.
    *
    * @generated from field: string name = 1;
    */
@@ -1223,8 +1223,8 @@ export type CreateProjectRequest = Message<"toshi.workspace.v1.CreateProjectRequ
  */
 export type CreateProjectRequestJson = {
   /**
-   * The project's name, unique among the workspace's projects. Empty is
-   * INVALID_ARGUMENT.
+   * The project's name, unique among the workspace's projects: a lowercase
+   * DNS label of at most 63 bytes. Another is INVALID_ARGUMENT.
    *
    * @generated from field: string name = 1;
    */

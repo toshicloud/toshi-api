@@ -919,8 +919,9 @@ type CreateJobRequest struct {
 	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The job's spec: its command, bindings, size and image.
 	Spec *JobSpec `protobuf:"bytes,3,opt,name=spec,proto3" json:"spec,omitempty"`
-	// The job's labels; a key starting with "toshi." is refused with
-	// INVALID_ARGUMENT.
+	// The job's labels, at most 64: each key 1 to 128 bytes, each value at
+	// most 256, with no control character. Others, and a key starting with
+	// "toshi.", are refused with INVALID_ARGUMENT.
 	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Required: the same key on every retry of this create.
 	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
@@ -2707,8 +2708,9 @@ type CreateSandboxRequest struct {
 	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The sandbox's spec: its size, time limit and bindings.
 	Spec *SandboxSpec `protobuf:"bytes,3,opt,name=spec,proto3" json:"spec,omitempty"`
-	// The sandbox's labels; a key starting with "toshi." is refused with
-	// INVALID_ARGUMENT.
+	// The sandbox's labels, at most 64: each key 1 to 128 bytes, each value at
+	// most 256, with no control character. Others, and a key starting with
+	// "toshi.", are refused with INVALID_ARGUMENT.
 	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Required: the same key on every retry of this create.
 	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
@@ -3734,8 +3736,9 @@ type CreateServiceRequest struct {
 	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
 	// The service's spec: its size, mode, name and recipe.
 	Spec *ServiceSpec `protobuf:"bytes,3,opt,name=spec,proto3" json:"spec,omitempty"`
-	// The service's labels; a key starting with "toshi." is refused with
-	// INVALID_ARGUMENT.
+	// The service's labels, at most 64: each key 1 to 128 bytes, each value at
+	// most 256, with no control character. Others, and a key starting with
+	// "toshi.", are refused with INVALID_ARGUMENT.
 	Labels map[string]string `protobuf:"bytes,4,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Required: the same key on every retry of this create.
 	RequestKey string `protobuf:"bytes,5,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`

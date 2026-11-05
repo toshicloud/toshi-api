@@ -881,7 +881,8 @@ message GetVersionResponse {
 message Workspace {
   // The workspace's id: "ws-" and 24 hex digits.
   string id = 1;
-  // The workspace's name; not unique among workspaces.
+  // The workspace's name, 1 to 64 characters with no control character;
+  // not unique among workspaces.
   string name = 2;
   // The jobs.concurrency_max override; unset when none is set. 0 is unlimited.
   optional int32 concurrency_cap = 3;

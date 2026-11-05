@@ -1190,8 +1190,8 @@ func (x *ListRepositoriesResponse) GetNextPageToken() string {
 // CreateProjectRequest carries the project's name and a request key.
 type CreateProjectRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The project's name, unique among the workspace's projects. Empty is
-	// INVALID_ARGUMENT.
+	// The project's name, unique among the workspace's projects: a lowercase
+	// DNS label of at most 63 bytes. Another is INVALID_ARGUMENT.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
 	// key and request return the first answer; a different request with the

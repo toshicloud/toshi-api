@@ -4905,8 +4905,8 @@ func (x *Reservation) GetSource() string {
 // CreateWorkspaceRequest names the workspace to make.
 type CreateWorkspaceRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The workspace's name, as ListWorkspaces shows it; surrounding spaces are
-	// dropped.
+	// The workspace's name, as ListWorkspaces shows it, 1 to 64 characters
+	// with no control character; surrounding spaces are dropped.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The plan; empty for the control plane's default_plan.
 	Plan string `protobuf:"bytes,2,opt,name=plan,proto3" json:"plan,omitempty"`

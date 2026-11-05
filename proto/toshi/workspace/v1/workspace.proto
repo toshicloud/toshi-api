@@ -1039,7 +1039,9 @@ enum ServiceMode {
 message Command {
   // The program and its arguments; argv[0] is looked up on the PATH.
   repeated string argv = 1;
-  // Added to the environment the command starts with.
+  // Added to the environment the command starts with. A job's and a
+  // sandbox's names are a letter or _, then letters, digits or _, at most
+  // 128 bytes, and do not begin with TOSHI_BINDING.
   map<string, string> env = 2;
   // The working directory; empty means the VM's default.
   string cwd = 3;

@@ -940,8 +940,9 @@ export type CreateJobRequest = Message<"toshi.workspace.v1.CreateJobRequest"> & 
   spec?: JobSpec | undefined;
 
   /**
-   * The job's labels; a key starting with "toshi." is refused with
-   * INVALID_ARGUMENT.
+   * The job's labels, at most 64: each key 1 to 128 bytes, each value at
+   * most 256, with no control character. Others, and a key starting with
+   * "toshi.", are refused with INVALID_ARGUMENT.
    *
    * @generated from field: map<string, string> labels = 4;
    */
@@ -998,8 +999,9 @@ export type CreateJobRequestJson = {
   spec?: JobSpecJson;
 
   /**
-   * The job's labels; a key starting with "toshi." is refused with
-   * INVALID_ARGUMENT.
+   * The job's labels, at most 64: each key 1 to 128 bytes, each value at
+   * most 256, with no control character. Others, and a key starting with
+   * "toshi.", are refused with INVALID_ARGUMENT.
    *
    * @generated from field: map<string, string> labels = 4;
    */
@@ -2856,8 +2858,9 @@ export type CreateSandboxRequest = Message<"toshi.workspace.v1.CreateSandboxRequ
   spec?: SandboxSpec | undefined;
 
   /**
-   * The sandbox's labels; a key starting with "toshi." is refused with
-   * INVALID_ARGUMENT.
+   * The sandbox's labels, at most 64: each key 1 to 128 bytes, each value at
+   * most 256, with no control character. Others, and a key starting with
+   * "toshi.", are refused with INVALID_ARGUMENT.
    *
    * @generated from field: map<string, string> labels = 4;
    */
@@ -2907,8 +2910,9 @@ export type CreateSandboxRequestJson = {
   spec?: SandboxSpecJson;
 
   /**
-   * The sandbox's labels; a key starting with "toshi." is refused with
-   * INVALID_ARGUMENT.
+   * The sandbox's labels, at most 64: each key 1 to 128 bytes, each value at
+   * most 256, with no control character. Others, and a key starting with
+   * "toshi.", are refused with INVALID_ARGUMENT.
    *
    * @generated from field: map<string, string> labels = 4;
    */
@@ -3952,8 +3956,9 @@ export type CreateServiceRequest = Message<"toshi.workspace.v1.CreateServiceRequ
   spec?: ServiceSpec | undefined;
 
   /**
-   * The service's labels; a key starting with "toshi." is refused with
-   * INVALID_ARGUMENT.
+   * The service's labels, at most 64: each key 1 to 128 bytes, each value at
+   * most 256, with no control character. Others, and a key starting with
+   * "toshi.", are refused with INVALID_ARGUMENT.
    *
    * @generated from field: map<string, string> labels = 4;
    */
@@ -4026,8 +4031,9 @@ export type CreateServiceRequestJson = {
   spec?: ServiceSpecJson;
 
   /**
-   * The service's labels; a key starting with "toshi." is refused with
-   * INVALID_ARGUMENT.
+   * The service's labels, at most 64: each key 1 to 128 bytes, each value at
+   * most 256, with no control character. Others, and a key starting with
+   * "toshi.", are refused with INVALID_ARGUMENT.
    *
    * @generated from field: map<string, string> labels = 4;
    */

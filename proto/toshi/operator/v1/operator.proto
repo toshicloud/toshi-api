@@ -1591,8 +1591,8 @@ message Reservation {
 
 // CreateWorkspaceRequest names the workspace to make.
 message CreateWorkspaceRequest {
-  // The workspace's name, as ListWorkspaces shows it; surrounding spaces are
-  // dropped.
+  // The workspace's name, as ListWorkspaces shows it, 1 to 64 characters
+  // with no control character; surrounding spaces are dropped.
   string name = 1;
   // The plan; empty for the control plane's default_plan.
   string plan = 2;

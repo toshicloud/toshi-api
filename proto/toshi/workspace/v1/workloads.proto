@@ -1128,8 +1128,9 @@ message CreateJobRequest {
   string environment = 2;
   // The job's spec: its command, bindings, size and image.
   JobSpec spec = 3;
-  // The job's labels; a key starting with "toshi." is refused with
-  // INVALID_ARGUMENT.
+  // The job's labels, at most 64: each key 1 to 128 bytes, each value at
+  // most 256, with no control character. Others, and a key starting with
+  // "toshi.", are refused with INVALID_ARGUMENT.
   map<string, string> labels = 4;
   // Required: the same key on every retry of this create.
   string request_key = 5;
@@ -1445,8 +1446,9 @@ message CreateSandboxRequest {
   string environment = 2;
   // The sandbox's spec: its size, time limit and bindings.
   SandboxSpec spec = 3;
-  // The sandbox's labels; a key starting with "toshi." is refused with
-  // INVALID_ARGUMENT.
+  // The sandbox's labels, at most 64: each key 1 to 128 bytes, each value at
+  // most 256, with no control character. Others, and a key starting with
+  // "toshi.", are refused with INVALID_ARGUMENT.
   map<string, string> labels = 4;
   // Required: the same key on every retry of this create.
   string request_key = 5;
@@ -1632,8 +1634,9 @@ message CreateServiceRequest {
   string environment = 2;
   // The service's spec: its size, mode, name and recipe.
   ServiceSpec spec = 3;
-  // The service's labels; a key starting with "toshi." is refused with
-  // INVALID_ARGUMENT.
+  // The service's labels, at most 64: each key 1 to 128 bytes, each value at
+  // most 256, with no control character. Others, and a key starting with
+  // "toshi.", are refused with INVALID_ARGUMENT.
   map<string, string> labels = 4;
   // Required: the same key on every retry of this create.
   string request_key = 5;

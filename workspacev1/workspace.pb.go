@@ -4845,7 +4845,9 @@ type Command struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The program and its arguments; argv[0] is looked up on the PATH.
 	Argv []string `protobuf:"bytes,1,rep,name=argv,proto3" json:"argv,omitempty"`
-	// Added to the environment the command starts with.
+	// Added to the environment the command starts with. A job's and a
+	// sandbox's names are a letter or _, then letters, digits or _, at most
+	// 128 bytes, and do not begin with TOSHI_BINDING.
 	Env map[string]string `protobuf:"bytes,2,rep,name=env,proto3" json:"env,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// The working directory; empty means the VM's default.
 	Cwd           string `protobuf:"bytes,3,opt,name=cwd,proto3" json:"cwd,omitempty"`

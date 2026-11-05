@@ -5096,8 +5096,8 @@ export const ReservationSchema: GenMessage<Reservation, {jsonType: ReservationJs
  */
 export type CreateWorkspaceRequest = Message<"toshi.operator.v1.CreateWorkspaceRequest"> & {
   /**
-   * The workspace's name, as ListWorkspaces shows it; surrounding spaces are
-   * dropped.
+   * The workspace's name, as ListWorkspaces shows it, 1 to 64 characters
+   * with no control character; surrounding spaces are dropped.
    *
    * @generated from field: string name = 1;
    */
@@ -5129,8 +5129,8 @@ export type CreateWorkspaceRequest = Message<"toshi.operator.v1.CreateWorkspaceR
  */
 export type CreateWorkspaceRequestJson = {
   /**
-   * The workspace's name, as ListWorkspaces shows it; surrounding spaces are
-   * dropped.
+   * The workspace's name, as ListWorkspaces shows it, 1 to 64 characters
+   * with no control character; surrounding spaces are dropped.
    *
    * @generated from field: string name = 1;
    */
