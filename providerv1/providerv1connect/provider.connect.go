@@ -154,6 +154,9 @@ const (
 	// ProviderServiceSaveDiskProcedure is the fully-qualified name of the ProviderService's SaveDisk
 	// RPC.
 	ProviderServiceSaveDiskProcedure = "/toshi.backend.provider.v1.ProviderService/SaveDisk"
+	// ProviderServiceSavedRootBackingProcedure is the fully-qualified name of the ProviderService's
+	// SavedRootBacking RPC.
+	ProviderServiceSavedRootBackingProcedure = "/toshi.backend.provider.v1.ProviderService/SavedRootBacking"
 	// ProviderServiceDescribeProcedure is the fully-qualified name of the ProviderService's Describe
 	// RPC.
 	ProviderServiceDescribeProcedure = "/toshi.backend.provider.v1.ProviderService/Describe"
@@ -337,6 +340,8 @@ type ProviderServiceClient interface {
 	CaptureDisk(context.Context, *connect.Request[providerv1.CaptureDiskRequest]) (*connect.Response[providerv1.CaptureDiskResponse], error)
 	// SaveDisk copies a running instance's root overlay without its memory.
 	SaveDisk(context.Context, *connect.Request[providerv1.SaveDiskRequest]) (*connect.Response[providerv1.SaveDiskResponse], error)
+	// SavedRootBacking returns the identity of the backing for spec.
+	SavedRootBacking(context.Context, *connect.Request[providerv1.SavedRootBackingRequest]) (*connect.Response[providerv1.SavedRootBackingResponse], error)
 	// Describe returns the backend facets the provider offers and its
 	// capabilities.
 	Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error)
@@ -621,6 +626,12 @@ func NewProviderServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(providerServiceMethods.ByName("SaveDisk")),
 			connect.WithClientOptions(opts...),
 		),
+		savedRootBacking: connect.NewClient[providerv1.SavedRootBackingRequest, providerv1.SavedRootBackingResponse](
+			httpClient,
+			baseURL+ProviderServiceSavedRootBackingProcedure,
+			connect.WithSchema(providerServiceMethods.ByName("SavedRootBacking")),
+			connect.WithClientOptions(opts...),
+		),
 		describe: connect.NewClient[providerv1.DescribeRequest, providerv1.DescribeResponse](
 			httpClient,
 			baseURL+ProviderServiceDescribeProcedure,
@@ -775,6 +786,7 @@ type providerServiceClient struct {
 	baseImages            *connect.Client[providerv1.BaseImagesRequest, providerv1.BaseImagesResponse]
 	captureDisk           *connect.Client[providerv1.CaptureDiskRequest, providerv1.CaptureDiskResponse]
 	saveDisk              *connect.Client[providerv1.SaveDiskRequest, providerv1.SaveDiskResponse]
+	savedRootBacking      *connect.Client[providerv1.SavedRootBackingRequest, providerv1.SavedRootBackingResponse]
 	describe              *connect.Client[providerv1.DescribeRequest, providerv1.DescribeResponse]
 	preflight             *connect.Client[providerv1.PreflightRequest, providerv1.PreflightResponse]
 	status                *connect.Client[providerv1.StatusRequest, providerv1.StatusResponse]
@@ -969,6 +981,11 @@ func (c *providerServiceClient) CaptureDisk(ctx context.Context, req *connect.Re
 // SaveDisk calls toshi.backend.provider.v1.ProviderService.SaveDisk.
 func (c *providerServiceClient) SaveDisk(ctx context.Context, req *connect.Request[providerv1.SaveDiskRequest]) (*connect.Response[providerv1.SaveDiskResponse], error) {
 	return c.saveDisk.CallUnary(ctx, req)
+}
+
+// SavedRootBacking calls toshi.backend.provider.v1.ProviderService.SavedRootBacking.
+func (c *providerServiceClient) SavedRootBacking(ctx context.Context, req *connect.Request[providerv1.SavedRootBackingRequest]) (*connect.Response[providerv1.SavedRootBackingResponse], error) {
+	return c.savedRootBacking.CallUnary(ctx, req)
 }
 
 // Describe calls toshi.backend.provider.v1.ProviderService.Describe.
@@ -1193,6 +1210,8 @@ type ProviderServiceHandler interface {
 	CaptureDisk(context.Context, *connect.Request[providerv1.CaptureDiskRequest]) (*connect.Response[providerv1.CaptureDiskResponse], error)
 	// SaveDisk copies a running instance's root overlay without its memory.
 	SaveDisk(context.Context, *connect.Request[providerv1.SaveDiskRequest]) (*connect.Response[providerv1.SaveDiskResponse], error)
+	// SavedRootBacking returns the identity of the backing for spec.
+	SavedRootBacking(context.Context, *connect.Request[providerv1.SavedRootBackingRequest]) (*connect.Response[providerv1.SavedRootBackingResponse], error)
 	// Describe returns the backend facets the provider offers and its
 	// capabilities.
 	Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error)
@@ -1473,6 +1492,12 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 		connect.WithSchema(providerServiceMethods.ByName("SaveDisk")),
 		connect.WithHandlerOptions(opts...),
 	)
+	providerServiceSavedRootBackingHandler := connect.NewUnaryHandler(
+		ProviderServiceSavedRootBackingProcedure,
+		svc.SavedRootBacking,
+		connect.WithSchema(providerServiceMethods.ByName("SavedRootBacking")),
+		connect.WithHandlerOptions(opts...),
+	)
 	providerServiceDescribeHandler := connect.NewUnaryHandler(
 		ProviderServiceDescribeProcedure,
 		svc.Describe,
@@ -1659,6 +1684,8 @@ func NewProviderServiceHandler(svc ProviderServiceHandler, opts ...connect.Handl
 			providerServiceCaptureDiskHandler.ServeHTTP(w, r)
 		case ProviderServiceSaveDiskProcedure:
 			providerServiceSaveDiskHandler.ServeHTTP(w, r)
+		case ProviderServiceSavedRootBackingProcedure:
+			providerServiceSavedRootBackingHandler.ServeHTTP(w, r)
 		case ProviderServiceDescribeProcedure:
 			providerServiceDescribeHandler.ServeHTTP(w, r)
 		case ProviderServicePreflightProcedure:
@@ -1844,6 +1871,10 @@ func (UnimplementedProviderServiceHandler) CaptureDisk(context.Context, *connect
 
 func (UnimplementedProviderServiceHandler) SaveDisk(context.Context, *connect.Request[providerv1.SaveDiskRequest]) (*connect.Response[providerv1.SaveDiskResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.SaveDisk is not implemented"))
+}
+
+func (UnimplementedProviderServiceHandler) SavedRootBacking(context.Context, *connect.Request[providerv1.SavedRootBackingRequest]) (*connect.Response[providerv1.SavedRootBackingResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.backend.provider.v1.ProviderService.SavedRootBacking is not implemented"))
 }
 
 func (UnimplementedProviderServiceHandler) Describe(context.Context, *connect.Request[providerv1.DescribeRequest]) (*connect.Response[providerv1.DescribeResponse], error) {

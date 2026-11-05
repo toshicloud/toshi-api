@@ -196,6 +196,9 @@ service ProviderService {
   // SaveDisk copies a running instance's root overlay without its memory.
   rpc SaveDisk(SaveDiskRequest) returns (SaveDiskResponse);
 
+  // SavedRootBacking returns the identity of the backing for spec.
+  rpc SavedRootBacking(SavedRootBackingRequest) returns (SavedRootBackingResponse);
+
   // Checks: asked of a provider that has not started. Each carries the
   // config Open would get, and none starts the provider or acts on the host.
 
@@ -368,6 +371,8 @@ enum DiskKind {
   // A filler run's output: a raw disk file with no file system, which the
   // host reads after the instance has stopped.
   DISK_KIND_OUTPUT = 3;
+  // A saved root overlay used in place of a new overlay.
+  DISK_KIND_ROOT = 4;
 }
 
 // Disk is a disk file or directory on the host and what it holds.
@@ -375,6 +380,8 @@ message Disk {
   DiskKind kind = 1;
   // A clean absolute path.
   string path = 2;
+  // The root overlay's backing identity; set only for DISK_KIND_ROOT.
+  string backing = 3;
 }
 
 // Spec is what an instance is created with.
@@ -790,6 +797,14 @@ message SaveDiskResponse {
   int64 size_bytes = 2;
   string sha256 = 3;
   string backing_identity = 4;
+}
+
+message SavedRootBackingRequest {
+  Spec spec = 1;
+}
+
+message SavedRootBackingResponse {
+  string backing_identity = 1;
 }
 
 message DescribeRequest {

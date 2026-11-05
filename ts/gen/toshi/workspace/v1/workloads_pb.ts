@@ -6635,8 +6635,9 @@ export const WorkloadService: GenService<{
   /**
    * StopSandbox ends its run and every execution in it and moves it to
    * CREATED with stopped_at. Its state volume is saved and its VM ends,
-   * unless the sandbox has keep_vm: then its host keeps the VM. Stopping a
-   * stopped sandbox returns it as it is. One that has ended fails with
+   * unless the sandbox has keep_vm: then its host keeps the VM. On a shared
+   * host its root disk is saved too, encrypted, without its memory. Stopping
+   * a stopped sandbox returns it as it is. One that has ended fails with
    * FAILED_PRECONDITION. DeleteSandbox ends a sandbox.
    *
    * @generated from rpc toshi.workspace.v1.WorkloadService.StopSandbox
@@ -6648,7 +6649,10 @@ export const WorkloadService: GenService<{
   },
   /**
    * StartSandbox queues a new run of a stopped sandbox: a new VM booted from
-   * its image with its state volume, or its kept VM when it has keep_vm.
+   * its image with its state volume, or its kept VM when it has keep_vm. On
+   * a shared host the new VM boots on the root disk saved at the last stop;
+   * if that copy is missing or cannot be used, it boots from the image and
+   * the start still succeeds. Processes and memory never come back.
    * Starting a queued or running sandbox returns it as it is. One that has
    * ended fails with FAILED_PRECONDITION, as does a start whose state volume
    * or image is gone or out of reach, with the reason in its ErrorInfo.
