@@ -6156,8 +6156,9 @@ type ExecuteStart struct {
 	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	// The environment's name.
 	Environment string `protobuf:"bytes,2,opt,name=environment,proto3" json:"environment,omitempty"`
-	// The sandbox the command runs in.
-	SandboxId string `protobuf:"bytes,3,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	// The ID of the sandbox the command runs in. A job's or a service's ID is
+	// FAILED_PRECONDITION.
+	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// The command to run.
 	Command *Command `protobuf:"bytes,4,opt,name=command,proto3" json:"command,omitempty"`
 	// A retry with the same key does not start a second command: its stream
@@ -6216,9 +6217,9 @@ func (x *ExecuteStart) GetEnvironment() string {
 	return ""
 }
 
-func (x *ExecuteStart) GetSandboxId() string {
+func (x *ExecuteStart) GetWorkloadId() string {
 	if x != nil {
-		return x.SandboxId
+		return x.WorkloadId
 	}
 	return ""
 }
@@ -15185,12 +15186,12 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x05stdin\x18\x02 \x01(\fH\x00R\x05stdin\x12!\n" +
 	"\vclose_stdin\x18\x03 \x01(\bH\x00R\n" +
 	"closeStdinB\t\n" +
-	"\amessage\"\xd7\x01\n" +
+	"\amessage\"\xd9\x01\n" +
 	"\fExecuteStart\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
-	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1d\n" +
-	"\n" +
-	"sandbox_id\x18\x03 \x01(\tR\tsandboxId\x125\n" +
+	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
+	"\vworkload_id\x18\x03 \x01(\tR\n" +
+	"workloadId\x125\n" +
 	"\acommand\x18\x04 \x01(\v2\x1b.toshi.workspace.v1.CommandR\acommand\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +
 	"requestKey\x12\x14\n" +

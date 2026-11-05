@@ -2128,11 +2128,11 @@ const file_toshi_workspace_v1_connections_proto_rawDesc = "" +
 	"\x15GetConnectionResponse\x12>\n" +
 	"\n" +
 	"connection\x18\x01 \x01(\v2\x1e.toshi.workspace.v1.ConnectionR\n" +
-	"connection\"\xad\x03\n" +
+	"connection\"\xde\x03\n" +
 	"\x17CreateConnectionRequest\x126\n" +
-	"\x04kind\x18\x01 \x01(\x0e2\".toshi.workspace.v1.ConnectionKindR\x04kind\x12-\n" +
-	"\x04name\x18\x02 \x01(\tB\x19\x8a\xf4\x18\x15\n" +
-	"\x0fconnection_name\x10\x02(?R\x04name\x12\x18\n" +
+	"\x04kind\x18\x01 \x01(\x0e2\".toshi.workspace.v1.ConnectionKindR\x04kind\x12^\n" +
+	"\x04name\x18\x02 \x01(\tBJ\x8a\xf4\x18F\n" +
+	"\tdns_label\x10\x02(?B$^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$R\x0fconnection_nameR\x04name\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vrequest_key\x18\x05 \x01(\tR\n" +

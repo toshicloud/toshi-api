@@ -7,6 +7,8 @@
 // A workload's state is read from its kind's set, JobState, SandboxState or
 // ServiceState: the three have the same values and words.
 
+const contractBoundDnsLabel = { unit: "bytes", max: 63, pattern: "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$" } as const;
+const contractBoundEnvName = { unit: "bytes", max: 128, pattern: "^[A-Za-z_][A-Za-z0-9_]{0,127}$" } as const;
 const contractBoundOwnerRepo = { pattern: "^[^/\\s]+/[^/\\s]+$" } as const;
 
 export const contract = {
@@ -14,9 +16,11 @@ export const contract = {
   artifactDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
   branchRules: { unit: "count", max: 100 },
   channelBufferKeep: { unit: "bytes", threshold: 8388608 },
-  connectionName: { unit: "bytes", max: 63 },
+  /** @deprecated Use contract.dnsLabel instead. */
+  connectionName: contractBoundDnsLabel,
   connectionSecretOverlap: { unit: "seconds", default: 86400, min: 0, max: 604800 },
   deploymentRetentionDays: { unit: "count", max: 36500 },
+  dnsLabel: contractBoundDnsLabel,
   egressRules: { unit: "count", max: 100 },
   embedTokenExpiresIn: { unit: "seconds", default: 600 },
   embedTokenOrigins: { unit: "count", max: 10, httpHosts: ["localhost", "127.0.0.1", "::1"] },
@@ -24,6 +28,7 @@ export const contract = {
   endpointLogExport: { unit: "bytes", default: 67108864 },
   endpointMessageData: { unit: "bytes", max: 262144 },
   endpointMessageName: { unit: "bytes", max: 200 },
+  envName: contractBoundEnvName,
   environmentJobRetentionDays: { unit: "count", max: 36500 },
   exportAuditEventsDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
   exportEndpointLogDownloadURLTtl: { unit: "seconds", default: 300, max: 3600 },
@@ -50,7 +55,8 @@ export const contract = {
   recordingURLTtl: { unit: "seconds", default: 300, max: 3600 },
   retentionKeep: { unit: "seconds", min: 3600 },
   sandboxMaxDuration: { unit: "seconds", min: 60 },
-  secretName: { unit: "bytes", max: 128 },
+  /** @deprecated Use contract.envName instead. */
+  secretName: contractBoundEnvName,
   serviceShareLinkExpiry: { unit: "seconds", default: 86400 },
   streamDrain: { unit: "seconds", default: 30 },
   tokenCreatorLeftLifetime: { unit: "seconds", threshold: 2592000 },

@@ -1926,10 +1926,10 @@ const file_toshi_workspace_v1_secrets_proto_rawDesc = "" +
 	"\x0fmanifest_digest\x18\x06 \x01(\tR\x0emanifestDigest\x12%\n" +
 	"\x0emanaged_fields\x18\a \x03(\tR\rmanagedFields\x12'\n" +
 	"\x0fmanifest_origin\x18\b \x01(\tR\x0emanifestOrigin\x12\x12\n" +
-	"\x04keys\x18\t \x03(\tR\x04keys\"\x82\x02\n" +
-	"\x06Secret\x12*\n" +
-	"\x04name\x18\x01 \x01(\tB\x16\x8a\xf4\x18\x12\n" +
-	"\vsecret_name\x10\x02(\x80\x01R\x04name\x12\x18\n" +
+	"\x04keys\x18\t \x03(\tR\x04keys\"\xac\x02\n" +
+	"\x06Secret\x12T\n" +
+	"\x04name\x18\x01 \x01(\tB@\x8a\xf4\x18<\n" +
+	"\benv_name\x10\x02(\x80\x01B\x1e^[A-Za-z_][A-Za-z0-9_]{0,127}$R\vsecret_nameR\x04name\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\x03R\aversion\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x03R\x04size\x129\n" +
 	"\n" +

@@ -207,7 +207,7 @@ export type Audit = Message<"toshi.Audit"> & {
    * call that creates (Create, Reserve, Open) and the request's id
    * otherwise: "id" or "<kind>_id", or for a create "<kind>.id" of the
    * response. A source is a request field path, such as "job_id" or
-   * "start.sandbox_id", a response field path after "response.", such as
+   * "start.workload_id", a response field path after "response.", such as
    * "response.endpoint.id", "workspace" for the call's workspace, or
    * "project" for the project the call resolved.
    *
@@ -247,7 +247,7 @@ export type AuditJson = {
    * call that creates (Create, Reserve, Open) and the request's id
    * otherwise: "id" or "<kind>_id", or for a create "<kind>.id" of the
    * response. A source is a request field path, such as "job_id" or
-   * "start.sandbox_id", a response field path after "response.", such as
+   * "start.workload_id", a response field path after "response.", such as
    * "response.endpoint.id", "workspace" for the call's workspace, or
    * "project" for the project the call resolved.
    *

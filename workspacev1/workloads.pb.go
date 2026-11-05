@@ -6497,7 +6497,7 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"!SERVICE_ALARM_MISFIRE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eSERVICE_ALARM_MISFIRE_COALESCE\x10\x01\x12\x1d\n" +
 	"\x19SERVICE_ALARM_MISFIRE_ALL\x10\x02\x12\x1e\n" +
-	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xd9\\\n" +
+	"\x1aSERVICE_ALARM_MISFIRE_SKIP\x10\x032\xda\\\n" +
 	"\x0fWorkloadService\x12\x81\x01\n" +
 	"\tCreateJob\x12$.toshi.workspace.v1.CreateJobRequest\x1a%.toshi.workspace.v1.CreateJobResponse\"'\xc2\xf3\x18\n" +
 	"jobs.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12m\n" +
@@ -6523,9 +6523,9 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\vStopSandbox\x12&.toshi.workspace.v1.StopSandboxRequest\x1a'.toshi.workspace.v1.StopSandboxResponse\"&\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\x8f\x01\n" +
 	"\fStartSandbox\x12'.toshi.workspace.v1.StartSandboxRequest\x1a(.toshi.workspace.v1.StartSandboxResponse\",\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01\x12\x81\x01\n" +
 	"\vWaitSandbox\x12&.toshi.workspace.v1.WaitSandboxRequest\x1a'.toshi.workspace.v1.WaitSandboxResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment\x12\x8c\x01\n" +
-	"\x0eWatchSandboxes\x12).toshi.workspace.v1.WatchSandboxesRequest\x1a*.toshi.workspace.v1.WatchSandboxesResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\xb4\x01\n" +
-	"\aExecute\x12\".toshi.workspace.v1.ExecuteRequest\x1a#.toshi.workspace.v1.ExecuteResponse\"\\\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18,\n" +
-	"\x10sandbox.executed\x12\x18sandbox:start.sandbox_id\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01(\x010\x01\x12\x92\x01\n" +
+	"\x0eWatchSandboxes\x12).toshi.workspace.v1.WatchSandboxesRequest\x1a*.toshi.workspace.v1.WatchSandboxesResponse\"!\xc2\xf3\x18\x0esandboxes.read\xca\xf3\x18\venvironment0\x01\x12\xb5\x01\n" +
+	"\aExecute\x12\".toshi.workspace.v1.ExecuteRequest\x1a#.toshi.workspace.v1.ExecuteResponse\"]\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18-\n" +
+	"\x10sandbox.executed\x12\x19sandbox:start.workload_id\xea\xf3\x18\x02 \x01\x90\xf4\x18\x01(\x010\x01\x12\x92\x01\n" +
 	"\x0fCancelExecution\x12*.toshi.workspace.v1.CancelExecutionRequest\x1a+.toshi.workspace.v1.CancelExecutionResponse\"&\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\x90\xf4\x18\x01\x12\xad\x01\n" +
 	"\x0eExecuteCommand\x12).toshi.workspace.v1.ExecuteCommandRequest\x1a*.toshi.workspace.v1.ExecuteCommandResponse\"B\xc2\xf3\x18\x0fsandboxes.write\xca\xf3\x18\venvironment\xd2\xf3\x18\x12\n" +
 	"\x10sandbox.executed\xea\xf3\x18\x02(\x01\x90\xf4\x18\x010\x01\x12\xb4\x01\n" +

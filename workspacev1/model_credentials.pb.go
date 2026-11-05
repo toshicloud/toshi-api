@@ -1776,15 +1776,16 @@ const file_toshi_workspace_v1_model_credentials_proto_rawDesc = "" +
 	"created_by\x18\x14 \x01(\v2\x1b.toshi.workspace.v1.SubjectR\tcreatedByJ\x04\b\r\x10\x0e\"_\n" +
 	"\x16ModelCredentialDefault\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12)\n" +
-	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\xb9\x02\n" +
+	"\x10model_credential\x18\x02 \x01(\tR\x0fmodelCredential\"\xb6\x02\n" +
 	"\x1cCreateModelCredentialRequest\x125\n" +
 	"\x04name\x18\x01 \x01(\tB!\x8a\xf4\x18\x1d\n" +
 	"\x15model_credential_name\x10\x02 \x01(@R\x04name\x12\x1a\n" +
 	"\bprovider\x18\x02 \x01(\tR\bprovider\x12\x18\n" +
 	"\aproject\x18\x03 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x04 \x01(\tR\venvironment\x12\x16\n" +
-	"\x06shared\x18\x05 \x01(\bR\x06shared\x12)\n" +
-	"\x06secret\x18\x06 \x01(\tB\x11\x8a\xf4\x18\rJ\vsecret_nameR\x06secret\x12\x14\n" +
+	"\x06shared\x18\x05 \x01(\bR\x06shared\x12&\n" +
+	"\x06secret\x18\x06 \x01(\tB\x0e\x8a\xf4\x18\n" +
+	"J\benv_nameR\x06secret\x12\x14\n" +
 	"\x05value\x18\a \x01(\fR\x05value\x12\x10\n" +
 	"\x03own\x18\b \x01(\bR\x03own\x12\x1f\n" +
 	"\vrequest_key\x18\t \x01(\tR\n" +

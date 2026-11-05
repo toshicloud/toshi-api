@@ -276,7 +276,7 @@ service WorkloadService {
     option (toshi.scope) = "environment";
     option (toshi.audit) = {
       action: "sandbox.executed"
-      target: "sandbox:start.sandbox_id"
+      target: "sandbox:start.workload_id"
     };
   }
 

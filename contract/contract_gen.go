@@ -19,8 +19,14 @@ const (
 	BranchRulesMax = 100
 	// ChannelBufferKeepThreshold is the threshold of channel_buffer_keep.
 	ChannelBufferKeepThreshold = 8 << 20
-	// ConnectionNameMax is the max of connection_name.
-	ConnectionNameMax = 63
+	// ConnectionNameMax is an alias of DnsLabelMax.
+	//
+	// Deprecated: Use DnsLabelMax instead.
+	ConnectionNameMax = DnsLabelMax
+	// ConnectionNamePattern is an alias of DnsLabelPattern.
+	//
+	// Deprecated: Use DnsLabelPattern instead.
+	ConnectionNamePattern = DnsLabelPattern
 	// ConnectionSecretOverlapDefault is the default of connection_secret_overlap.
 	ConnectionSecretOverlapDefault time.Duration = 24 * time.Hour
 	// ConnectionSecretOverlapMin is the min of connection_secret_overlap.
@@ -29,6 +35,10 @@ const (
 	ConnectionSecretOverlapMax time.Duration = 7 * 24 * time.Hour
 	// DeploymentRetentionDaysMax is the max of deployment_retention_days.
 	DeploymentRetentionDaysMax = 36500
+	// DnsLabelMax is the max of dns_label.
+	DnsLabelMax = 63
+	// DnsLabelPattern is the pattern of dns_label.
+	DnsLabelPattern = "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$"
 	// EgressRulesMax is the max of egress_rules.
 	EgressRulesMax = 100
 	// EmbedTokenExpiresInDefault is the default of embed_token_expires_in.
@@ -47,6 +57,10 @@ const (
 	EndpointMessageDataMax = 262144
 	// EndpointMessageNameMax is the max of endpoint_message_name.
 	EndpointMessageNameMax = 200
+	// EnvNameMax is the max of env_name.
+	EnvNameMax = 128
+	// EnvNamePattern is the pattern of env_name.
+	EnvNamePattern = "^[A-Za-z_][A-Za-z0-9_]{0,127}$"
 	// EnvironmentJobRetentionDaysMax is the max of environment_job_retention_days.
 	EnvironmentJobRetentionDaysMax = 36500
 	// ExportAuditEventsDownloadURLTtlDefault is the default of export_audit_events_download_url_ttl.
@@ -119,8 +133,14 @@ const (
 	RetentionKeepMin time.Duration = 1 * time.Hour
 	// SandboxMaxDurationMin is the min of sandbox_max_duration.
 	SandboxMaxDurationMin time.Duration = 1 * time.Minute
-	// SecretNameMax is the max of secret_name.
-	SecretNameMax = 128
+	// SecretNameMax is an alias of EnvNameMax.
+	//
+	// Deprecated: Use EnvNameMax instead.
+	SecretNameMax = EnvNameMax
+	// SecretNamePattern is an alias of EnvNamePattern.
+	//
+	// Deprecated: Use EnvNamePattern instead.
+	SecretNamePattern = EnvNamePattern
 	// ServiceShareLinkExpiryDefault is the default of service_share_link_expiry.
 	ServiceShareLinkExpiryDefault time.Duration = 24 * time.Hour
 	// StreamDrainDefault is the default of stream_drain.
