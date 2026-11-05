@@ -1571,10 +1571,10 @@ func AlertTitles() map[string]string {
 // rule's key.
 func RuleWords() map[string]string {
 	return map[string]string{
-		"volume_ceiling.follows_plan":    "An empty or 0 ceiling in the workspace settings follows the plan's default.",
+		"volume_ceiling.follows_plan":    "Empty or 0 follows the plan's default.",
 		"volume_ceiling.no_limit":        "Where the volume caps report a ceiling of 0, there is no limit: no volume cap is checked against it.",
-		"volume_ceiling.lowering":        "Lowering the ceiling is always allowed; it bounds new volumes and any volume cap you raise.",
-		"start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a CI job waits until the window moves on.",
+		"volume_ceiling.lowering":        "Lowering is always allowed; a cap applies to new volumes and to raising a volume's cap.",
+		"start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a start waits.",
 		"start_windows.sandbox_refused":  "A start past the included count is a paid start; at the ceiling a sandbox start is refused until the window moves on.",
 		"plan.not_included":              "Not on this workspace's plan.",
 		"plan.available_from":            "Available on <plan>: the lowest plan that allows it.",
@@ -1921,11 +1921,6 @@ func Labels() map[string]map[string]string {
 			"windows": "Windows",
 			"macos":   "macOS",
 		},
-		"StartWindow": {
-			"starts_per_minute": "Per minute",
-			"starts_per_hour":   "Per hour",
-			"starts_per_day":    "Per day",
-		},
 		"WorkspaceLimit": {
 			"jobs.concurrency_max":          "Running at once",
 			"max_vcpu":                      "vCPUs",
@@ -1978,6 +1973,11 @@ func Labels() map[string]map[string]string {
 		"DisabledReason": {
 			"AFTER_GONE": "Turned off after a 410 Gone answer",
 			"BY_USER":    "Turned off by a member",
+		},
+		"StartWindow": {
+			"starts_per_minute": "Per minute",
+			"starts_per_hour":   "Per hour",
+			"starts_per_day":    "Per day",
 		},
 	}
 }

@@ -1825,7 +1825,8 @@ export const GetStartWindowsRequestSchema: GenMessage<GetStartWindowsRequest, {j
 
 /**
  * GetStartWindowsResponse is the workspace's start windows as admission
- * counts them.
+ * counts them. A start past the included count is a paid start; at the
+ * ceiling a start waits. A CreateSandbox at the ceiling is refused instead.
  *
  * @generated from message toshi.workspace.v1.GetStartWindowsResponse
  */
@@ -1857,7 +1858,8 @@ export type GetStartWindowsResponse = Message<"toshi.workspace.v1.GetStartWindow
 
 /**
  * GetStartWindowsResponse is the workspace's start windows as admission
- * counts them.
+ * counts them. A start past the included count is a paid start; at the
+ * ceiling a start waits. A CreateSandbox at the ceiling is refused instead.
  *
  * @generated from message toshi.workspace.v1.GetStartWindowsResponse
  */
@@ -4353,13 +4355,13 @@ export type WorkspaceSettings = Message<"toshi.workspace.v1.WorkspaceSettings"> 
 
   /**
    * The ceiling on the sum of the size caps of the workspace's volumes that
-   * are not deleted, in decimal GB; 0 means the plan's default: the setting
-   * follows the plan, and the ceiling in force is the plan's, which is no
-   * limit when the plan sets none (GetVolumeCaps reports that as
-   * ceiling_bytes 0). It may be at most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
-   * as does a negative one. Lowering it, and 0, is always allowed, even
-   * below what its volumes use now. It applies to new volumes and to a raise
-   * of a volume's cap only.
+   * are not deleted, in decimal GB. Empty or 0 follows the plan's default.
+   * The ceiling in force is then the plan's, which is no limit when the plan
+   * sets none (GetVolumeCaps reports that as ceiling_bytes 0). It may be at
+   * most the plan's maximum, and a higher one fails with INVALID_ARGUMENT, as
+   * does a negative one. Lowering is always allowed; a cap applies to new
+   * volumes and to raising a volume's cap. It may go below what the
+   * workspace's volumes use now, and 0 is allowed there too.
    *
    * @generated from field: int64 volume_size_cap_total_gb = 15;
    */
@@ -4554,13 +4556,13 @@ export type WorkspaceSettingsJson = {
 
   /**
    * The ceiling on the sum of the size caps of the workspace's volumes that
-   * are not deleted, in decimal GB; 0 means the plan's default: the setting
-   * follows the plan, and the ceiling in force is the plan's, which is no
-   * limit when the plan sets none (GetVolumeCaps reports that as
-   * ceiling_bytes 0). It may be at most the plan's maximum, and a higher one fails with INVALID_ARGUMENT,
-   * as does a negative one. Lowering it, and 0, is always allowed, even
-   * below what its volumes use now. It applies to new volumes and to a raise
-   * of a volume's cap only.
+   * are not deleted, in decimal GB. Empty or 0 follows the plan's default.
+   * The ceiling in force is then the plan's, which is no limit when the plan
+   * sets none (GetVolumeCaps reports that as ceiling_bytes 0). It may be at
+   * most the plan's maximum, and a higher one fails with INVALID_ARGUMENT, as
+   * does a negative one. Lowering is always allowed; a cap applies to new
+   * volumes and to raising a volume's cap. It may go below what the
+   * workspace's volumes use now, and 0 is allowed there too.
    *
    * @generated from field: int64 volume_size_cap_total_gb = 15;
    */
