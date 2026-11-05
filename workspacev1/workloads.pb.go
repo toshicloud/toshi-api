@@ -1518,8 +1518,8 @@ type WorkloadUsage struct {
 	RunningSecondsMonth int64 `protobuf:"varint,4,opt,name=running_seconds_month,json=runningSecondsMonth,proto3" json:"running_seconds_month,omitempty"`
 	// Whole seconds it has run since its first start.
 	RunningSecondsLife int64 `protobuf:"varint,5,opt,name=running_seconds_life,json=runningSecondsLife,proto3" json:"running_seconds_life,omitempty"`
-	// The CPU milliseconds its runs used, over its life.
-	CpuMillis int64 `protobuf:"varint,6,opt,name=cpu_millis,json=cpuMillis,proto3" json:"cpu_millis,omitempty"`
+	// The CPU time its runs used, in milliseconds, over its life.
+	CpuMs int64 `protobuf:"varint,6,opt,name=cpu_ms,json=cpuMs,proto3" json:"cpu_ms,omitempty"`
 	// The executions it ran, over its life.
 	Executions int64 `protobuf:"varint,7,opt,name=executions,proto3" json:"executions,omitempty"`
 	// The bytes it sent off its hosts, over its life.
@@ -1612,9 +1612,9 @@ func (x *WorkloadUsage) GetRunningSecondsLife() int64 {
 	return 0
 }
 
-func (x *WorkloadUsage) GetCpuMillis() int64 {
+func (x *WorkloadUsage) GetCpuMs() int64 {
 	if x != nil {
-		return x.CpuMillis
+		return x.CpuMs
 	}
 	return 0
 }
@@ -6132,16 +6132,15 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\x05month\x18\x06 \x01(\tR\x05month\x12\x14\n" +
 	"\x05grant\x18\a \x01(\tR\x05grant\"S\n" +
 	"\x18GetWorkloadUsageResponse\x127\n" +
-	"\x05usage\x18\x01 \x01(\v2!.toshi.workspace.v1.WorkloadUsageR\x05usage\"\x82\x06\n" +
+	"\x05usage\x18\x01 \x01(\v2!.toshi.workspace.v1.WorkloadUsageR\x05usage\"\xfa\x05\n" +
 	"\rWorkloadUsage\x12\x1f\n" +
 	"\vworkload_id\x18\x01 \x01(\tR\n" +
 	"workloadId\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x14\n" +
 	"\x05month\x18\x03 \x01(\tR\x05month\x122\n" +
 	"\x15running_seconds_month\x18\x04 \x01(\x03R\x13runningSecondsMonth\x120\n" +
-	"\x14running_seconds_life\x18\x05 \x01(\x03R\x12runningSecondsLife\x12\x1d\n" +
-	"\n" +
-	"cpu_millis\x18\x06 \x01(\x03R\tcpuMillis\x12\x1e\n" +
+	"\x14running_seconds_life\x18\x05 \x01(\x03R\x12runningSecondsLife\x12\x15\n" +
+	"\x06cpu_ms\x18\x06 \x01(\x03R\x05cpuMs\x12\x1e\n" +
 	"\n" +
 	"executions\x18\a \x01(\x03R\n" +
 	"executions\x12!\n" +

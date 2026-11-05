@@ -305,7 +305,7 @@ message Host {
   int32 cpus = 4;
   // The memory the host offers VMs, in MiB: what its agent reported at its
   // last registration, or 4096 per vCPU of a cloud host's max_vcpus.
-  int32 memory_mib = 5;
+  int64 memory_mib = 5;
   // Labels the operator set on the host's agent, such as a region; a cloud
   // host's cloud, region and zone.
   map<string, string> labels = 6;

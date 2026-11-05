@@ -1234,8 +1234,8 @@ message WorkloadUsage {
   int64 running_seconds_month = 4;
   // Whole seconds it has run since its first start.
   int64 running_seconds_life = 5;
-  // The CPU milliseconds its runs used, over its life.
-  int64 cpu_millis = 6;
+  // The CPU time its runs used, in milliseconds, over its life.
+  int64 cpu_ms = 6;
   // The executions it ran, over its life.
   int64 executions = 7;
   // The bytes it sent off its hosts, over its life.

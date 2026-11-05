@@ -2185,7 +2185,7 @@ type Host struct {
 	// The host's CPUs, as its agent reported them.
 	Cpus int32 `protobuf:"varint,4,opt,name=cpus,proto3" json:"cpus,omitempty"`
 	// The host's memory in MiB, as its agent reported it.
-	MemoryMib int32 `protobuf:"varint,5,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
+	MemoryMib int64 `protobuf:"varint,5,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
 	// The labels the host's agent reported at its last registration; a
 	// cloud pool's host has cloud and region.
 	Labels map[string]string `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
@@ -2345,7 +2345,7 @@ func (x *Host) GetCpus() int32 {
 	return 0
 }
 
-func (x *Host) GetMemoryMib() int32 {
+func (x *Host) GetMemoryMib() int64 {
 	if x != nil {
 		return x.MemoryMib
 	}
@@ -13998,10 +13998,11 @@ func (x *PoolSuggestionSize) GetWithSuggested() *PoolSuggestionOutcome {
 // PoolSuggestionOutcome is one replay's prediction for a size.
 type PoolSuggestionOutcome struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The jobs' start delay, queued to running.
-	P50Seconds float64 `protobuf:"fixed64,1,opt,name=p50_seconds,json=p50Seconds,proto3" json:"p50_seconds,omitempty"`
-	// The 95th percentile, in seconds.
-	P95Seconds float64 `protobuf:"fixed64,2,opt,name=p95_seconds,json=p95Seconds,proto3" json:"p95_seconds,omitempty"`
+	// The median of the jobs' start delay, queued to running, in milliseconds.
+	P50Ms int64 `protobuf:"varint,4,opt,name=p50_ms,json=p50Ms,proto3" json:"p50_ms,omitempty"`
+	// The 95th percentile of the jobs' start delay, queued to running, in
+	// milliseconds.
+	P95Ms int64 `protobuf:"varint,5,opt,name=p95_ms,json=p95Ms,proto3" json:"p95_ms,omitempty"`
 	// The size's VM time that ran jobs: run time over run time plus idle
 	// warm time, as a fraction. Boot and restore time are in neither.
 	Utilisation   float64 `protobuf:"fixed64,3,opt,name=utilisation,proto3" json:"utilisation,omitempty"`
@@ -14039,16 +14040,16 @@ func (*PoolSuggestionOutcome) Descriptor() ([]byte, []int) {
 	return file_toshi_operator_v1_operator_proto_rawDescGZIP(), []int{150}
 }
 
-func (x *PoolSuggestionOutcome) GetP50Seconds() float64 {
+func (x *PoolSuggestionOutcome) GetP50Ms() int64 {
 	if x != nil {
-		return x.P50Seconds
+		return x.P50Ms
 	}
 	return 0
 }
 
-func (x *PoolSuggestionOutcome) GetP95Seconds() float64 {
+func (x *PoolSuggestionOutcome) GetP95Ms() int64 {
 	if x != nil {
-		return x.P95Seconds
+		return x.P95Ms
 	}
 	return 0
 }
@@ -15411,7 +15412,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x02os\x18\x03 \x03(\tR\x02os\x12\x12\n" +
 	"\x04cpus\x18\x04 \x01(\x05R\x04cpus\x12\x1d\n" +
 	"\n" +
-	"memory_mib\x18\x05 \x01(\x05R\tmemoryMib\x12;\n" +
+	"memory_mib\x18\x05 \x01(\x03R\tmemoryMib\x12;\n" +
 	"\x06labels\x18\x06 \x03(\v2#.toshi.operator.v1.Host.LabelsEntryR\x06labels\x122\n" +
 	"\x05state\x18\a \x01(\x0e2\x1c.toshi.operator.v1.HostStateR\x05state\x12<\n" +
 	"\flast_seen_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -16389,13 +16390,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x10unreported_hosts\x18\x05 \x01(\x05R\x0funreportedHosts\x12\x1c\n" +
 	"\tsuggested\x18\x06 \x01(\x05R\tsuggested\x12>\n" +
 	"\x05today\x18\a \x01(\v2(.toshi.operator.v1.PoolSuggestionOutcomeR\x05today\x12O\n" +
-	"\x0ewith_suggested\x18\b \x01(\v2(.toshi.operator.v1.PoolSuggestionOutcomeR\rwithSuggested\"{\n" +
-	"\x15PoolSuggestionOutcome\x12\x1f\n" +
-	"\vp50_seconds\x18\x01 \x01(\x01R\n" +
-	"p50Seconds\x12\x1f\n" +
-	"\vp95_seconds\x18\x02 \x01(\x01R\n" +
-	"p95Seconds\x12 \n" +
-	"\vutilisation\x18\x03 \x01(\x01R\vutilisation\"D\n" +
+	"\x0ewith_suggested\x18\b \x01(\v2(.toshi.operator.v1.PoolSuggestionOutcomeR\rwithSuggested\"\x8d\x01\n" +
+	"\x15PoolSuggestionOutcome\x12\x15\n" +
+	"\x06p50_ms\x18\x04 \x01(\x03R\x05p50Ms\x12\x15\n" +
+	"\x06p95_ms\x18\x05 \x01(\x03R\x05p95Ms\x12 \n" +
+	"\vutilisation\x18\x03 \x01(\x01R\vutilisationJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03R\vp50_secondsR\vp95_seconds\"D\n" +
 	"\x14PoolSuggestionTarget\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\tR\x04size\x12\x18\n" +
 	"\acurrent\x18\x02 \x01(\x05R\acurrent\"A\n" +

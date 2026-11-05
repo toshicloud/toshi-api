@@ -1386,7 +1386,7 @@ type Host struct {
 	Cpus int32 `protobuf:"varint,4,opt,name=cpus,proto3" json:"cpus,omitempty"`
 	// The memory the host offers VMs, in MiB: what its agent reported at its
 	// last registration, or 4096 per vCPU of a cloud host's max_vcpus.
-	MemoryMib int32 `protobuf:"varint,5,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
+	MemoryMib int64 `protobuf:"varint,5,opt,name=memory_mib,json=memoryMib,proto3" json:"memory_mib,omitempty"`
 	// Labels the operator set on the host's agent, such as a region; a cloud
 	// host's cloud, region and zone.
 	Labels map[string]string `protobuf:"bytes,6,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
@@ -1529,7 +1529,7 @@ func (x *Host) GetCpus() int32 {
 	return 0
 }
 
-func (x *Host) GetMemoryMib() int32 {
+func (x *Host) GetMemoryMib() int64 {
 	if x != nil {
 		return x.MemoryMib
 	}
@@ -2544,7 +2544,7 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x02os\x18\x03 \x03(\tR\x02os\x12\x12\n" +
 	"\x04cpus\x18\x04 \x01(\x05R\x04cpus\x12\x1d\n" +
 	"\n" +
-	"memory_mib\x18\x05 \x01(\x05R\tmemoryMib\x12<\n" +
+	"memory_mib\x18\x05 \x01(\x03R\tmemoryMib\x12<\n" +
 	"\x06labels\x18\x06 \x03(\v2$.toshi.workspace.v1.Host.LabelsEntryR\x06labels\x123\n" +
 	"\x05state\x18\a \x01(\x0e2\x1d.toshi.workspace.v1.HostStateR\x05state\x12<\n" +
 	"\flast_seen_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +

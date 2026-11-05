@@ -560,7 +560,7 @@ type ProjectRecordingDefaults struct {
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// recording_max_mib limits one recording's size. Zero follows the plan;
 	// positive values are capped by the plan. Negative values are INVALID_ARGUMENT.
-	RecordingMaxMib int32 `protobuf:"varint,7,opt,name=recording_max_mib,json=recordingMaxMib,proto3" json:"recording_max_mib,omitempty"`
+	RecordingMaxMib int64 `protobuf:"varint,7,opt,name=recording_max_mib,json=recordingMaxMib,proto3" json:"recording_max_mib,omitempty"`
 	// recording_segment_seconds limits a sandbox strip's duration, in seconds;
 	// it must be a whole number of minutes. Zero follows the plan; positive
 	// values are capped by the plan and frame limit. Negative values are
@@ -635,7 +635,7 @@ func (x *ProjectRecordingDefaults) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *ProjectRecordingDefaults) GetRecordingMaxMib() int32 {
+func (x *ProjectRecordingDefaults) GetRecordingMaxMib() int64 {
 	if x != nil {
 		return x.RecordingMaxMib
 	}
@@ -3832,7 +3832,7 @@ const file_toshi_workspace_v1_projects_proto_rawDesc = "" +
 	"updated_by\x18\x04 \x01(\tR\tupdatedBy\x129\n" +
 	"\n" +
 	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12*\n" +
-	"\x11recording_max_mib\x18\a \x01(\x05R\x0frecordingMaxMib\x12:\n" +
+	"\x11recording_max_mib\x18\a \x01(\x03R\x0frecordingMaxMib\x12:\n" +
 	"\x19recording_segment_seconds\x18\b \x01(\x03R\x17recordingSegmentSecondsJ\x04\b\x06\x10\aR\x19recording_segment_minutes\"\xcc\x04\n" +
 	"\x12ProjectEnvironment\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +

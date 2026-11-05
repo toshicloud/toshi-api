@@ -980,7 +980,7 @@ message Host {
   // The host's CPUs, as its agent reported them.
   int32 cpus = 4;
   // The host's memory in MiB, as its agent reported it.
-  int32 memory_mib = 5;
+  int64 memory_mib = 5;
   // The labels the host's agent reported at its last registration; a
   // cloud pool's host has cloud and region.
   map<string, string> labels = 6;
@@ -3438,13 +3438,17 @@ message PoolSuggestionSize {
 
 // PoolSuggestionOutcome is one replay's prediction for a size.
 message PoolSuggestionOutcome {
-  // The jobs' start delay, queued to running.
-  double p50_seconds = 1;
-  // The 95th percentile, in seconds.
-  double p95_seconds = 2;
+  // The median of the jobs' start delay, queued to running, in milliseconds.
+  int64 p50_ms = 4;
+  // The 95th percentile of the jobs' start delay, queued to running, in
+  // milliseconds.
+  int64 p95_ms = 5;
   // The size's VM time that ran jobs: run time over run time plus idle
   // warm time, as a fraction. Boot and restore time are in neither.
   double utilisation = 3;
+
+  reserved 1, 2;
+  reserved "p50_seconds", "p95_seconds";
 }
 
 // PoolSuggestionTarget is a size's reported target.
