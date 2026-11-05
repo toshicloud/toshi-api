@@ -927,18 +927,17 @@ message Workspace {
   optional int32 secret_max_sets = 24;
   // The secrets.keys_max override; unset when none is set. 0 is no cap.
   optional int32 secret_max_keys = 25;
-  // The secrets.size_max_bytes override, rounded up to whole KiB and capped at
-  // 2147483647 KiB; unset when none is set. 0 is no cap.
-  optional int64 secret_max_kib = 26;
+  // The secrets.size_max_bytes override, in bytes; unset when none is set. 0
+  // is no cap.
+  optional int64 secret_max_bytes = 26;
   // The previews.ports_max override; unset when none is set. 0 is no cap.
   optional int32 preview_max_ports = 27;
   // The resolved secrets.sets_max; 0 is no cap.
   int32 secret_max_sets_effective = 28;
   // The resolved secrets.keys_max; 0 is no cap.
   int32 secret_max_keys_effective = 29;
-  // The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
-  // 2147483647 KiB; 0 is no cap.
-  int64 secret_max_kib_effective = 30;
+  // The resolved secrets.size_max_bytes, in bytes; 0 is no cap.
+  int64 secret_max_bytes_effective = 30;
   // The resolved previews.ports_max; 0 is no cap.
   int32 preview_max_ports_effective = 31;
   // What the workspace's members choose; UpdateWorkspace changes it.

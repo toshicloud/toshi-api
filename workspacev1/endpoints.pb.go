@@ -2903,10 +2903,10 @@ type ListEndpointRequestsRequest struct {
 	// Only the records after this sequence number, oldest first; zero lists
 	// the newest first.
 	AfterSeq int64 `protobuf:"varint,5,opt,name=after_seq,json=afterSeq,proto3" json:"after_seq,omitempty"`
-	// Only the records that arrived at or after since, and before until.
-	Since *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=since,proto3" json:"since,omitempty"`
+	// Only the records that arrived at or after start_at, and before end_at.
+	StartAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
 	// The end of the time range, excluded; unset lists to the newest record.
-	Until *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=until,proto3" json:"until,omitempty"`
+	EndAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
 	// Only this status, such as 404, or this class, such as 4xx.
 	Status string `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
 	// Only this exact host.
@@ -2984,16 +2984,16 @@ func (x *ListEndpointRequestsRequest) GetAfterSeq() int64 {
 	return 0
 }
 
-func (x *ListEndpointRequestsRequest) GetSince() *timestamppb.Timestamp {
+func (x *ListEndpointRequestsRequest) GetStartAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.StartAt
 	}
 	return nil
 }
 
-func (x *ListEndpointRequestsRequest) GetUntil() *timestamppb.Timestamp {
+func (x *ListEndpointRequestsRequest) GetEndAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Until
+		return x.EndAt
 	}
 	return nil
 }
@@ -3230,10 +3230,10 @@ type ExportEndpointLogRequest struct {
 	// number; unset runs to the newest kept.
 	To *int64 `protobuf:"varint,5,opt,name=to,proto3,oneof" json:"to,omitempty"`
 	// For records only, in place of from and to: the records that arrived
-	// at or after since, and before until.
-	Since *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=since,proto3" json:"since,omitempty"`
+	// at or after start_at, and before end_at.
+	StartAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
 	// The end of the time range, excluded; unset runs to the newest record.
-	Until *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=until,proto3" json:"until,omitempty"`
+	EndAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
 	// When true, the export is written to the workspace's storage and the
 	// stream carries one response with a signed URL that downloads the whole
 	// file, in place of the data chunks. The URL stops working at its
@@ -3312,16 +3312,16 @@ func (x *ExportEndpointLogRequest) GetTo() int64 {
 	return 0
 }
 
-func (x *ExportEndpointLogRequest) GetSince() *timestamppb.Timestamp {
+func (x *ExportEndpointLogRequest) GetStartAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.StartAt
 	}
 	return nil
 }
 
-func (x *ExportEndpointLogRequest) GetUntil() *timestamppb.Timestamp {
+func (x *ExportEndpointLogRequest) GetEndAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Until
+		return x.EndAt
 	}
 	return nil
 }
@@ -4671,16 +4671,16 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"updateMask\x12=\n" +
 	"\astreams\x18\x03 \x01(\x0e2#.toshi.workspace.v1.EndpointStreamsR\astreams\"R\n" +
 	"\x16UpdateEndpointResponse\x128\n" +
-	"\bendpoint\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.EndpointR\bendpoint\"\xea\x02\n" +
+	"\bendpoint\x18\x01 \x01(\v2\x1c.toshi.workspace.v1.EndpointR\bendpoint\"\xf0\x02\n" +
 	"\x1bListEndpointRequestsRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x04 \x01(\tR\tpageToken\x12\x1b\n" +
-	"\tafter_seq\x18\x05 \x01(\x03R\bafterSeq\x120\n" +
-	"\x05since\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x120\n" +
-	"\x05until\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x05until\x12\x16\n" +
+	"\tafter_seq\x18\x05 \x01(\x03R\bafterSeq\x125\n" +
+	"\bstart_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\astartAt\x121\n" +
+	"\x06end_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x05endAt\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x12\x12\n" +
 	"\x04host\x18\t \x01(\tR\x04host\x12\x16\n" +
 	"\x06method\x18\n" +
@@ -4699,15 +4699,15 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
 	"\x03seq\x18\x03 \x01(\x03R\x03seq\"[\n" +
 	"\x1aGetEndpointRequestResponse\x12=\n" +
-	"\arequest\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointRequestR\arequest\"\x92\x03\n" +
+	"\arequest\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointRequestR\arequest\"\x98\x03\n" +
 	"\x18ExportEndpointLogRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x121\n" +
 	"\x03log\x18\x03 \x01(\x0e2\x1f.toshi.workspace.v1.EndpointLogR\x03log\x12\x17\n" +
 	"\x04from\x18\x04 \x01(\x03H\x00R\x04from\x88\x01\x01\x12\x13\n" +
-	"\x02to\x18\x05 \x01(\x03H\x01R\x02to\x88\x01\x01\x120\n" +
-	"\x05since\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x120\n" +
-	"\x05until\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x05until\x12!\n" +
+	"\x02to\x18\x05 \x01(\x03H\x01R\x02to\x88\x01\x01\x125\n" +
+	"\bstart_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\astartAt\x121\n" +
+	"\x06end_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x05endAt\x12!\n" +
 	"\fdownload_url\x18\b \x01(\bR\vdownloadUrl\x12S\n" +
 	"\vttl_seconds\x18\t \x01(\x03B2\x8a\xf4\x18.\n" +
 	"$export_endpoint_log_download_url_ttl\x10\x01\x18\xac\x02(\x90\x1cR\n" +
@@ -4974,13 +4974,13 @@ var file_toshi_workspace_v1_endpoints_proto_depIdxs = []int32{
 	61, // 44: toshi.workspace.v1.UpdateEndpointRequest.update_mask:type_name -> google.protobuf.FieldMask
 	3,  // 45: toshi.workspace.v1.UpdateEndpointRequest.streams:type_name -> toshi.workspace.v1.EndpointStreams
 	6,  // 46: toshi.workspace.v1.UpdateEndpointResponse.endpoint:type_name -> toshi.workspace.v1.Endpoint
-	56, // 47: toshi.workspace.v1.ListEndpointRequestsRequest.since:type_name -> google.protobuf.Timestamp
-	56, // 48: toshi.workspace.v1.ListEndpointRequestsRequest.until:type_name -> google.protobuf.Timestamp
+	56, // 47: toshi.workspace.v1.ListEndpointRequestsRequest.start_at:type_name -> google.protobuf.Timestamp
+	56, // 48: toshi.workspace.v1.ListEndpointRequestsRequest.end_at:type_name -> google.protobuf.Timestamp
 	16, // 49: toshi.workspace.v1.ListEndpointRequestsResponse.requests:type_name -> toshi.workspace.v1.EndpointRequest
 	16, // 50: toshi.workspace.v1.GetEndpointRequestResponse.request:type_name -> toshi.workspace.v1.EndpointRequest
 	4,  // 51: toshi.workspace.v1.ExportEndpointLogRequest.log:type_name -> toshi.workspace.v1.EndpointLog
-	56, // 52: toshi.workspace.v1.ExportEndpointLogRequest.since:type_name -> google.protobuf.Timestamp
-	56, // 53: toshi.workspace.v1.ExportEndpointLogRequest.until:type_name -> google.protobuf.Timestamp
+	56, // 52: toshi.workspace.v1.ExportEndpointLogRequest.start_at:type_name -> google.protobuf.Timestamp
+	56, // 53: toshi.workspace.v1.ExportEndpointLogRequest.end_at:type_name -> google.protobuf.Timestamp
 	56, // 54: toshi.workspace.v1.ExportEndpointLogResponse.expires_at:type_name -> google.protobuf.Timestamp
 	2,  // 55: toshi.workspace.v1.CreateEndpointConnectTokenRequest.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
 	56, // 56: toshi.workspace.v1.CreateEndpointConnectTokenResponse.expires_at:type_name -> google.protobuf.Timestamp

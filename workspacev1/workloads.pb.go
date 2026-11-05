@@ -727,9 +727,9 @@ type ExportEventsRequest struct {
 	// and environment.
 	WorkloadId string `protobuf:"bytes,3,opt,name=workload_id,json=workloadId,proto3" json:"workload_id,omitempty"`
 	// The start of the range; required.
-	Since *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=since,proto3" json:"since,omitempty"`
+	StartAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
 	// The end of the range; unset means now.
-	Until *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=until,proto3" json:"until,omitempty"`
+	EndAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
 	// Resume after the last row of an earlier response; empty for the first.
 	Cursor string `protobuf:"bytes,6,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	// When true, the export is written to the workspace's storage and the
@@ -796,16 +796,16 @@ func (x *ExportEventsRequest) GetWorkloadId() string {
 	return ""
 }
 
-func (x *ExportEventsRequest) GetSince() *timestamppb.Timestamp {
+func (x *ExportEventsRequest) GetStartAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.StartAt
 	}
 	return nil
 }
 
-func (x *ExportEventsRequest) GetUntil() *timestamppb.Timestamp {
+func (x *ExportEventsRequest) GetEndAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Until
+		return x.EndAt
 	}
 	return nil
 }
@@ -6063,14 +6063,14 @@ const file_toshi_workspace_v1_workloads_proto_rawDesc = "" +
 	"\vrequest_key\x18\x06 \x01(\tR\n" +
 	"requestKey\"L\n" +
 	"\x19EmitWorkloadEventResponse\x12/\n" +
-	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"\xe0\x02\n" +
+	"\x05event\x18\x01 \x01(\v2\x19.toshi.workspace.v1.EventR\x05event\"\xe6\x02\n" +
 	"\x13ExportEventsRequest\x12\x18\n" +
 	"\aproject\x18\x01 \x01(\tR\aproject\x12 \n" +
 	"\venvironment\x18\x02 \x01(\tR\venvironment\x12\x1f\n" +
 	"\vworkload_id\x18\x03 \x01(\tR\n" +
-	"workloadId\x120\n" +
-	"\x05since\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x120\n" +
-	"\x05until\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x05until\x12\x16\n" +
+	"workloadId\x125\n" +
+	"\bstart_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\astartAt\x121\n" +
+	"\x06end_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x05endAt\x12\x16\n" +
 	"\x06cursor\x18\x06 \x01(\tR\x06cursor\x12!\n" +
 	"\fdownload_url\x18\a \x01(\bR\vdownloadUrl\x12M\n" +
 	"\vttl_seconds\x18\b \x01(\x03B,\x8a\xf4\x18(\n" +
@@ -6798,8 +6798,8 @@ var file_toshi_workspace_v1_workloads_proto_depIdxs = []int32{
 	5,   // 1: toshi.workspace.v1.ListPromptDecisionsResponse.decisions:type_name -> toshi.workspace.v1.PromptDecision
 	87,  // 2: toshi.workspace.v1.PromptDecision.decided_at:type_name -> google.protobuf.Timestamp
 	86,  // 3: toshi.workspace.v1.EmitWorkloadEventResponse.event:type_name -> toshi.workspace.v1.Event
-	87,  // 4: toshi.workspace.v1.ExportEventsRequest.since:type_name -> google.protobuf.Timestamp
-	87,  // 5: toshi.workspace.v1.ExportEventsRequest.until:type_name -> google.protobuf.Timestamp
+	87,  // 4: toshi.workspace.v1.ExportEventsRequest.start_at:type_name -> google.protobuf.Timestamp
+	87,  // 5: toshi.workspace.v1.ExportEventsRequest.end_at:type_name -> google.protobuf.Timestamp
 	87,  // 6: toshi.workspace.v1.ExportEventsResponse.expires_at:type_name -> google.protobuf.Timestamp
 	88,  // 7: toshi.workspace.v1.CreateJobRequest.spec:type_name -> toshi.workspace.v1.JobSpec
 	80,  // 8: toshi.workspace.v1.CreateJobRequest.labels:type_name -> toshi.workspace.v1.CreateJobRequest.LabelsEntry

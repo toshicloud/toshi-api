@@ -3666,18 +3666,17 @@ type Workspace struct {
 	SecretMaxSets *int32 `protobuf:"varint,24,opt,name=secret_max_sets,json=secretMaxSets,proto3,oneof" json:"secret_max_sets,omitempty"`
 	// The secrets.keys_max override; unset when none is set. 0 is no cap.
 	SecretMaxKeys *int32 `protobuf:"varint,25,opt,name=secret_max_keys,json=secretMaxKeys,proto3,oneof" json:"secret_max_keys,omitempty"`
-	// The secrets.size_max_bytes override, rounded up to whole KiB and capped at
-	// 2147483647 KiB; unset when none is set. 0 is no cap.
-	SecretMaxKib *int64 `protobuf:"varint,26,opt,name=secret_max_kib,json=secretMaxKib,proto3,oneof" json:"secret_max_kib,omitempty"`
+	// The secrets.size_max_bytes override, in bytes; unset when none is set. 0
+	// is no cap.
+	SecretMaxBytes *int64 `protobuf:"varint,26,opt,name=secret_max_bytes,json=secretMaxBytes,proto3,oneof" json:"secret_max_bytes,omitempty"`
 	// The previews.ports_max override; unset when none is set. 0 is no cap.
 	PreviewMaxPorts *int32 `protobuf:"varint,27,opt,name=preview_max_ports,json=previewMaxPorts,proto3,oneof" json:"preview_max_ports,omitempty"`
 	// The resolved secrets.sets_max; 0 is no cap.
 	SecretMaxSetsEffective int32 `protobuf:"varint,28,opt,name=secret_max_sets_effective,json=secretMaxSetsEffective,proto3" json:"secret_max_sets_effective,omitempty"`
 	// The resolved secrets.keys_max; 0 is no cap.
 	SecretMaxKeysEffective int32 `protobuf:"varint,29,opt,name=secret_max_keys_effective,json=secretMaxKeysEffective,proto3" json:"secret_max_keys_effective,omitempty"`
-	// The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
-	// 2147483647 KiB; 0 is no cap.
-	SecretMaxKibEffective int64 `protobuf:"varint,30,opt,name=secret_max_kib_effective,json=secretMaxKibEffective,proto3" json:"secret_max_kib_effective,omitempty"`
+	// The resolved secrets.size_max_bytes, in bytes; 0 is no cap.
+	SecretMaxBytesEffective int64 `protobuf:"varint,30,opt,name=secret_max_bytes_effective,json=secretMaxBytesEffective,proto3" json:"secret_max_bytes_effective,omitempty"`
 	// The resolved previews.ports_max; 0 is no cap.
 	PreviewMaxPortsEffective int32 `protobuf:"varint,31,opt,name=preview_max_ports_effective,json=previewMaxPortsEffective,proto3" json:"preview_max_ports_effective,omitempty"`
 	// What the workspace's members choose; UpdateWorkspace changes it.
@@ -3879,9 +3878,9 @@ func (x *Workspace) GetSecretMaxKeys() int32 {
 	return 0
 }
 
-func (x *Workspace) GetSecretMaxKib() int64 {
-	if x != nil && x.SecretMaxKib != nil {
-		return *x.SecretMaxKib
+func (x *Workspace) GetSecretMaxBytes() int64 {
+	if x != nil && x.SecretMaxBytes != nil {
+		return *x.SecretMaxBytes
 	}
 	return 0
 }
@@ -3907,9 +3906,9 @@ func (x *Workspace) GetSecretMaxKeysEffective() int32 {
 	return 0
 }
 
-func (x *Workspace) GetSecretMaxKibEffective() int64 {
+func (x *Workspace) GetSecretMaxBytesEffective() int64 {
 	if x != nil {
-		return x.SecretMaxKibEffective
+		return x.SecretMaxBytesEffective
 	}
 	return 0
 }
@@ -7331,7 +7330,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
 	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
-	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xe6\x11\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xf0\x11\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -7355,12 +7354,12 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"deletionBy\x12?\n" +
 	"\x1cjob_retention_days_effective\x18\x16 \x01(\x05R\x19jobRetentionDaysEffective\x12+\n" +
 	"\x0fsecret_max_sets\x18\x18 \x01(\x05H\x01R\rsecretMaxSets\x88\x01\x01\x12+\n" +
-	"\x0fsecret_max_keys\x18\x19 \x01(\x05H\x02R\rsecretMaxKeys\x88\x01\x01\x12)\n" +
-	"\x0esecret_max_kib\x18\x1a \x01(\x03H\x03R\fsecretMaxKib\x88\x01\x01\x12/\n" +
+	"\x0fsecret_max_keys\x18\x19 \x01(\x05H\x02R\rsecretMaxKeys\x88\x01\x01\x12-\n" +
+	"\x10secret_max_bytes\x18\x1a \x01(\x03H\x03R\x0esecretMaxBytes\x88\x01\x01\x12/\n" +
 	"\x11preview_max_ports\x18\x1b \x01(\x05H\x04R\x0fpreviewMaxPorts\x88\x01\x01\x129\n" +
 	"\x19secret_max_sets_effective\x18\x1c \x01(\x05R\x16secretMaxSetsEffective\x129\n" +
-	"\x19secret_max_keys_effective\x18\x1d \x01(\x05R\x16secretMaxKeysEffective\x127\n" +
-	"\x18secret_max_kib_effective\x18\x1e \x01(\x03R\x15secretMaxKibEffective\x12=\n" +
+	"\x19secret_max_keys_effective\x18\x1d \x01(\x05R\x16secretMaxKeysEffective\x12;\n" +
+	"\x1asecret_max_bytes_effective\x18\x1e \x01(\x03R\x17secretMaxBytesEffective\x12=\n" +
 	"\x1bpreview_max_ports_effective\x18\x1f \x01(\x05R\x18previewMaxPortsEffective\x12A\n" +
 	"\bsettings\x18! \x01(\v2%.toshi.workspace.v1.WorkspaceSettingsR\bsettings\x12\x12\n" +
 	"\x04etag\x18\" \x01(\tR\x04etag\x12W\n" +
@@ -7376,8 +7375,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x14read_only_expires_at\x18, \x01(\v2\x1a.google.protobuf.TimestampR\x11readOnlyExpiresAtB\x12\n" +
 	"\x10_concurrency_capB\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
-	"\x10_secret_max_keysB\x11\n" +
-	"\x0f_secret_max_kibB\x14\n" +
+	"\x10_secret_max_keysB\x13\n" +
+	"\x11_secret_max_bytesB\x14\n" +
 	"\x12_preview_max_portsJ\x04\b\b\x10\tJ\x04\b\t\x10\n" +
 	"J\x04\b\n" +
 	"\x10\vJ\x04\b\x0e\x10\x0fJ\x04\b\x0f\x10\x10J\x04\b\x15\x10\x16J\x04\b\x17\x10\x18J\x04\b \x10!R\x0eown_hosts_onlyR\x0fspend_cap_centsR\x11max_jobs_per_hourR\x0eallow_overflowR\x10allow_cache_warmR\fhistory_daysR\x16cancel_run_on_vm_deathR\vmember_join\"\xa8\x02\n" +

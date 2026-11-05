@@ -30,12 +30,12 @@ service AuditEventService {
   // AuditEvent per line. The plan must include audit export or the call fails
   // with PERMISSION_DENIED.
   //
-  // Since is required; until defaults to now. Since must be before until,
-  // else INVALID_ARGUMENT. A cursor from a previous response resumes after
-  // its last row, sending the header again. A malformed cursor or one from
-  // another range fails with INVALID_ARGUMENT; a resume cursor at or behind
-  // the retention boundary fails with OUT_OF_RANGE. When resuming without an
-  // until, the cursor keeps the original range's until.
+  // start_at is required; end_at defaults to now. start_at must be before
+  // end_at, else INVALID_ARGUMENT. A cursor from a previous response resumes
+  // after its last row, sending the header again. A malformed cursor or one
+  // from another range fails with INVALID_ARGUMENT; a resume cursor at or
+  // behind the retention boundary fails with OUT_OF_RANGE. When resuming
+  // without an end_at, the cursor keeps the original range's end_at.
   rpc ExportAuditEvents(ExportAuditEventsRequest) returns (stream ExportAuditEventsResponse) {
     option (toshi.permission) = "audit.read";
     option (toshi.audit) = {
@@ -125,12 +125,12 @@ message ListAuditEventsResponse {
 // ExportAuditEventsRequest selects the range of the audit log to export.
 message ExportAuditEventsRequest {
   // The start of the range, inclusive; required, else INVALID_ARGUMENT.
-  google.protobuf.Timestamp since = 1;
+  google.protobuf.Timestamp start_at = 1;
   // The end of the range, exclusive; unset is now, and on a resume the
   // range's original end.
-  google.protobuf.Timestamp until = 2;
+  google.protobuf.Timestamp end_at = 2;
   // A cursor from a previous response, to resume after its last row; empty
-  // starts at since.
+  // starts at start_at.
   string cursor = 3;
   // When true, the export is written to the workspace's storage and the
   // stream carries one response with a signed URL that downloads the whole

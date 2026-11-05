@@ -8542,7 +8542,7 @@ type EgressDenial struct {
 	// Packets or DNS queries refused.
 	Packets int64 `protobuf:"varint,6,opt,name=packets,proto3" json:"packets,omitempty"`
 	// When the host reported it.
-	Time          *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=time,proto3" json:"time,omitempty"`
+	ReportedAt    *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=reported_at,json=reportedAt,proto3" json:"reported_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8619,9 +8619,9 @@ func (x *EgressDenial) GetPackets() int64 {
 	return 0
 }
 
-func (x *EgressDenial) GetTime() *timestamppb.Timestamp {
+func (x *EgressDenial) GetReportedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Time
+		return x.ReportedAt
 	}
 	return nil
 }
@@ -15333,15 +15333,16 @@ const file_toshi_workspace_v1_workspace_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tR\x06reason\"f\n" +
 	"\x11EgressDeniedEvent\x12\x15\n" +
 	"\x06run_id\x18\x01 \x01(\tR\x05runId\x12:\n" +
-	"\adenials\x18\x02 \x03(\v2 .toshi.workspace.v1.EgressDenialR\adenials\"\xce\x01\n" +
+	"\adenials\x18\x02 \x03(\v2 .toshi.workspace.v1.EgressDenialR\adenials\"\xdb\x01\n" +
 	"\fEgressDenial\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x1a\n" +
 	"\bprotocol\x18\x02 \x01(\tR\bprotocol\x12\x12\n" +
 	"\x04port\x18\x03 \x01(\x05R\x04port\x12\x14\n" +
 	"\x05layer\x18\x04 \x01(\tR\x05layer\x12\x14\n" +
 	"\x05entry\x18\x05 \x01(\tR\x05entry\x12\x18\n" +
-	"\apackets\x18\x06 \x01(\x03R\apackets\x12.\n" +
-	"\x04time\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x04time\"\xb0\x02\n" +
+	"\apackets\x18\x06 \x01(\x03R\apackets\x12;\n" +
+	"\vreported_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"reportedAt\"\xb0\x02\n" +
 	"\rTriggerResult\x12\x1d\n" +
 	"\n" +
 	"trigger_id\x18\x01 \x01(\tR\ttriggerId\x12!\n" +
@@ -16362,7 +16363,7 @@ var file_toshi_workspace_v1_workspace_proto_depIdxs = []int32{
 	183, // 152: toshi.workspace.v1.ServiceRestoredEvent.lost:type_name -> google.protobuf.Duration
 	92,  // 153: toshi.workspace.v1.SecretWithheldEvent.keys:type_name -> toshi.workspace.v1.WithheldSecret
 	94,  // 154: toshi.workspace.v1.EgressDeniedEvent.denials:type_name -> toshi.workspace.v1.EgressDenial
-	180, // 155: toshi.workspace.v1.EgressDenial.time:type_name -> google.protobuf.Timestamp
+	180, // 155: toshi.workspace.v1.EgressDenial.reported_at:type_name -> google.protobuf.Timestamp
 	72,  // 156: toshi.workspace.v1.ExecutionEvent.exit:type_name -> toshi.workspace.v1.ExecutionExit
 	100, // 157: toshi.workspace.v1.EndpointACPEvent.options:type_name -> toshi.workspace.v1.PermissionOption
 	180, // 158: toshi.workspace.v1.AgentPrompt.asked_at:type_name -> google.protobuf.Timestamp

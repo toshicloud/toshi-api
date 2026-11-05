@@ -1640,12 +1640,12 @@ type JobTelemetrySummary struct {
 	OomKilled bool `protobuf:"varint,1,opt,name=oom_killed,json=oomKilled,proto3" json:"oom_killed,omitempty"`
 	// How long the VM's threads waited for a host CPU, as a percentage of the
 	// CPU time they used plus that wait. 0 when they never waited.
-	CpuThrottledPct float64 `protobuf:"fixed64,2,opt,name=cpu_throttled_pct,json=cpuThrottledPct,proto3" json:"cpu_throttled_pct,omitempty"`
+	CpuThrottledPercent float64 `protobuf:"fixed64,2,opt,name=cpu_throttled_percent,json=cpuThrottledPercent,proto3" json:"cpu_throttled_percent,omitempty"`
 	// The most memory in use inside the guest, in bytes; the host's resident
 	// memory of the VM when the guest does not report it.
 	PeakMemoryBytes int64 `protobuf:"varint,3,opt,name=peak_memory_bytes,json=peakMemoryBytes,proto3" json:"peak_memory_bytes,omitempty"`
 	// CPU time used as a percentage of the VM's vCPUs over the sampled time.
-	CpuUtilisationPct float64 `protobuf:"fixed64,4,opt,name=cpu_utilisation_pct,json=cpuUtilisationPct,proto3" json:"cpu_utilisation_pct,omitempty"`
+	CpuUtilisationPercent float64 `protobuf:"fixed64,4,opt,name=cpu_utilisation_percent,json=cpuUtilisationPercent,proto3" json:"cpu_utilisation_percent,omitempty"`
 	// How many samples the job has.
 	Samples int32 `protobuf:"varint,5,opt,name=samples,proto3" json:"samples,omitempty"`
 	// The job's memory limit in MiB: the memory its runner size gives its VM,
@@ -1709,9 +1709,9 @@ func (x *JobTelemetrySummary) GetOomKilled() bool {
 	return false
 }
 
-func (x *JobTelemetrySummary) GetCpuThrottledPct() float64 {
+func (x *JobTelemetrySummary) GetCpuThrottledPercent() float64 {
 	if x != nil {
-		return x.CpuThrottledPct
+		return x.CpuThrottledPercent
 	}
 	return 0
 }
@@ -1723,9 +1723,9 @@ func (x *JobTelemetrySummary) GetPeakMemoryBytes() int64 {
 	return 0
 }
 
-func (x *JobTelemetrySummary) GetCpuUtilisationPct() float64 {
+func (x *JobTelemetrySummary) GetCpuUtilisationPercent() float64 {
 	if x != nil {
-		return x.CpuUtilisationPct
+		return x.CpuUtilisationPercent
 	}
 	return 0
 }
@@ -1917,13 +1917,13 @@ type JobTelemetrySizeRow struct {
 	// Each job's peak memory as a percentage of its memory limit (its host's
 	// limit on a container tier host, else the size's memory), over the jobs
 	// whose limit is known.
-	PeakMemoryPct *TelemetryPercentiles `protobuf:"bytes,9,opt,name=peak_memory_pct,json=peakMemoryPct,proto3" json:"peak_memory_pct,omitempty"`
+	PeakMemoryPercent *TelemetryPercentiles `protobuf:"bytes,9,opt,name=peak_memory_percent,json=peakMemoryPercent,proto3" json:"peak_memory_percent,omitempty"`
 	// Each job's CPU time as a percentage of the size's vCPUs over its
 	// sampled time, over the jobs whose size is known.
-	CpuUtilisationPct *TelemetryPercentiles `protobuf:"bytes,10,opt,name=cpu_utilisation_pct,json=cpuUtilisationPct,proto3" json:"cpu_utilisation_pct,omitempty"`
+	CpuUtilisationPercent *TelemetryPercentiles `protobuf:"bytes,10,opt,name=cpu_utilisation_percent,json=cpuUtilisationPercent,proto3" json:"cpu_utilisation_percent,omitempty"`
 	// The CPU wait of these jobs together as a percentage of their CPU time
 	// plus that wait.
-	CpuThrottledPct float64 `protobuf:"fixed64,11,opt,name=cpu_throttled_pct,json=cpuThrottledPct,proto3" json:"cpu_throttled_pct,omitempty"`
+	CpuThrottledPercent float64 `protobuf:"fixed64,11,opt,name=cpu_throttled_percent,json=cpuThrottledPercent,proto3" json:"cpu_throttled_percent,omitempty"`
 	// The jobs that counted an out-of-memory kill.
 	OomKilled int32 `protobuf:"varint,12,opt,name=oom_killed,json=oomKilled,proto3" json:"oom_killed,omitempty"`
 	// The jobs whose peak memory reached 90 % of their memory limit or more.
@@ -2018,23 +2018,23 @@ func (x *JobTelemetrySizeRow) GetPeakHostMemoryBytes() *TelemetryPercentiles {
 	return nil
 }
 
-func (x *JobTelemetrySizeRow) GetPeakMemoryPct() *TelemetryPercentiles {
+func (x *JobTelemetrySizeRow) GetPeakMemoryPercent() *TelemetryPercentiles {
 	if x != nil {
-		return x.PeakMemoryPct
+		return x.PeakMemoryPercent
 	}
 	return nil
 }
 
-func (x *JobTelemetrySizeRow) GetCpuUtilisationPct() *TelemetryPercentiles {
+func (x *JobTelemetrySizeRow) GetCpuUtilisationPercent() *TelemetryPercentiles {
 	if x != nil {
-		return x.CpuUtilisationPct
+		return x.CpuUtilisationPercent
 	}
 	return nil
 }
 
-func (x *JobTelemetrySizeRow) GetCpuThrottledPct() float64 {
+func (x *JobTelemetrySizeRow) GetCpuThrottledPercent() float64 {
 	if x != nil {
-		return x.CpuThrottledPct
+		return x.CpuThrottledPercent
 	}
 	return 0
 }
@@ -4391,18 +4391,17 @@ type Workspace struct {
 	SecretMaxSets *int32 `protobuf:"varint,24,opt,name=secret_max_sets,json=secretMaxSets,proto3,oneof" json:"secret_max_sets,omitempty"`
 	// The secrets.keys_max override; unset when none is set. 0 is no cap.
 	SecretMaxKeys *int32 `protobuf:"varint,25,opt,name=secret_max_keys,json=secretMaxKeys,proto3,oneof" json:"secret_max_keys,omitempty"`
-	// The secrets.size_max_bytes override, rounded up to whole KiB and capped at
-	// 2147483647 KiB; unset when none is set. 0 is no cap.
-	SecretMaxKib *int64 `protobuf:"varint,26,opt,name=secret_max_kib,json=secretMaxKib,proto3,oneof" json:"secret_max_kib,omitempty"`
+	// The secrets.size_max_bytes override, in bytes; unset when none is set. 0
+	// is no cap.
+	SecretMaxBytes *int64 `protobuf:"varint,26,opt,name=secret_max_bytes,json=secretMaxBytes,proto3,oneof" json:"secret_max_bytes,omitempty"`
 	// The previews.ports_max override; unset when none is set. 0 is no cap.
 	PreviewMaxPorts *int32 `protobuf:"varint,27,opt,name=preview_max_ports,json=previewMaxPorts,proto3,oneof" json:"preview_max_ports,omitempty"`
 	// The resolved secrets.sets_max; 0 is no cap.
 	SecretMaxSetsEffective int32 `protobuf:"varint,28,opt,name=secret_max_sets_effective,json=secretMaxSetsEffective,proto3" json:"secret_max_sets_effective,omitempty"`
 	// The resolved secrets.keys_max; 0 is no cap.
 	SecretMaxKeysEffective int32 `protobuf:"varint,29,opt,name=secret_max_keys_effective,json=secretMaxKeysEffective,proto3" json:"secret_max_keys_effective,omitempty"`
-	// The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
-	// 2147483647 KiB; 0 is no cap.
-	SecretMaxKibEffective int64 `protobuf:"varint,30,opt,name=secret_max_kib_effective,json=secretMaxKibEffective,proto3" json:"secret_max_kib_effective,omitempty"`
+	// The resolved secrets.size_max_bytes, in bytes; 0 is no cap.
+	SecretMaxBytesEffective int64 `protobuf:"varint,30,opt,name=secret_max_bytes_effective,json=secretMaxBytesEffective,proto3" json:"secret_max_bytes_effective,omitempty"`
 	// The resolved previews.ports_max; 0 is no cap.
 	PreviewMaxPortsEffective int32 `protobuf:"varint,31,opt,name=preview_max_ports_effective,json=previewMaxPortsEffective,proto3" json:"preview_max_ports_effective,omitempty"`
 	// Who may join the workspace through its GitHub App installation on an
@@ -4643,9 +4642,9 @@ func (x *Workspace) GetSecretMaxKeys() int32 {
 	return 0
 }
 
-func (x *Workspace) GetSecretMaxKib() int64 {
-	if x != nil && x.SecretMaxKib != nil {
-		return *x.SecretMaxKib
+func (x *Workspace) GetSecretMaxBytes() int64 {
+	if x != nil && x.SecretMaxBytes != nil {
+		return *x.SecretMaxBytes
 	}
 	return 0
 }
@@ -4671,9 +4670,9 @@ func (x *Workspace) GetSecretMaxKeysEffective() int32 {
 	return 0
 }
 
-func (x *Workspace) GetSecretMaxKibEffective() int64 {
+func (x *Workspace) GetSecretMaxBytesEffective() int64 {
 	if x != nil {
-		return x.SecretMaxKibEffective
+		return x.SecretMaxBytesEffective
 	}
 	return 0
 }
@@ -15359,13 +15358,13 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"skipReason\x12)\n" +
 	"\x10generation_bytes\x18\x05 \x01(\x03R\x0fgenerationBytes\x12\"\n" +
 	"\rwrite_back_ms\x18\x06 \x01(\x03R\vwriteBackMs\x12\x12\n" +
-	"\x04line\x18\a \x01(\tR\x04line\"\xf7\x02\n" +
+	"\x04line\x18\a \x01(\tR\x04line\"\x87\x03\n" +
 	"\x13JobTelemetrySummary\x12\x1d\n" +
 	"\n" +
-	"oom_killed\x18\x01 \x01(\bR\toomKilled\x12*\n" +
-	"\x11cpu_throttled_pct\x18\x02 \x01(\x01R\x0fcpuThrottledPct\x12*\n" +
-	"\x11peak_memory_bytes\x18\x03 \x01(\x03R\x0fpeakMemoryBytes\x12.\n" +
-	"\x13cpu_utilisation_pct\x18\x04 \x01(\x01R\x11cpuUtilisationPct\x12\x18\n" +
+	"oom_killed\x18\x01 \x01(\bR\toomKilled\x122\n" +
+	"\x15cpu_throttled_percent\x18\x02 \x01(\x01R\x13cpuThrottledPercent\x12*\n" +
+	"\x11peak_memory_bytes\x18\x03 \x01(\x03R\x0fpeakMemoryBytes\x126\n" +
+	"\x17cpu_utilisation_percent\x18\x04 \x01(\x01R\x15cpuUtilisationPercent\x12\x18\n" +
 	"\asamples\x18\x05 \x01(\x05R\asamples\x12(\n" +
 	"\x10memory_limit_mib\x18\x06 \x01(\x03R\x0ememoryLimitMib\x12\x15\n" +
 	"\x06cpu_ms\x18\a \x01(\x03R\x05cpuMs\x12\x1d\n" +
@@ -15380,7 +15379,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1dSummariseJobTelemetryResponse\x12:\n" +
 	"\x04rows\x18\x01 \x03(\v2&.toshi.operator.v1.JobTelemetrySizeRowR\x04rows\x12.\n" +
 	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
-	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\"\xfd\x04\n" +
+	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\"\x95\x05\n" +
 	"\x13JobTelemetrySizeRow\x12\x0e\n" +
 	"\x02os\x18\x01 \x01(\tR\x02os\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\tR\x04size\x12\x14\n" +
@@ -15390,11 +15389,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x04jobs\x18\x05 \x01(\x05R\x04jobs\x12%\n" +
 	"\x0ejobs_unsampled\x18\x06 \x01(\x05R\rjobsUnsampled\x12S\n" +
 	"\x11peak_memory_bytes\x18\a \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x0fpeakMemoryBytes\x12\\\n" +
-	"\x16peak_host_memory_bytes\x18\b \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x13peakHostMemoryBytes\x12O\n" +
-	"\x0fpeak_memory_pct\x18\t \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\rpeakMemoryPct\x12W\n" +
-	"\x13cpu_utilisation_pct\x18\n" +
-	" \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x11cpuUtilisationPct\x12*\n" +
-	"\x11cpu_throttled_pct\x18\v \x01(\x01R\x0fcpuThrottledPct\x12\x1d\n" +
+	"\x16peak_host_memory_bytes\x18\b \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x13peakHostMemoryBytes\x12W\n" +
+	"\x13peak_memory_percent\x18\t \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x11peakMemoryPercent\x12_\n" +
+	"\x17cpu_utilisation_percent\x18\n" +
+	" \x01(\v2'.toshi.operator.v1.TelemetryPercentilesR\x15cpuUtilisationPercent\x122\n" +
+	"\x15cpu_throttled_percent\x18\v \x01(\x01R\x13cpuThrottledPercent\x12\x1d\n" +
 	"\n" +
 	"oom_killed\x18\f \x01(\x05R\toomKilled\x12*\n" +
 	"\x11near_memory_limit\x18\r \x01(\x05R\x0fnearMemoryLimit\"L\n" +
@@ -15589,7 +15588,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x05hosts\x18\x01 \x03(\v2$.toshi.operator.v1.OfflineHostResultR\x05hosts\"\x81\x01\n" +
 	"\x11OfflineHostResult\x12+\n" +
 	"\x04host\x18\x01 \x01(\v2\x17.toshi.operator.v1.HostR\x04host\x12?\n" +
-	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xc0\x11\n" +
+	"\aoutcome\x18\x02 \x01(\x0e2%.toshi.operator.v1.OfflineHostOutcomeR\aoutcome\"\xca\x11\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -15621,12 +15620,12 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1cjob_retention_days_effective\x18\x16 \x01(\x05R\x19jobRetentionDaysEffective\x122\n" +
 	"\x16cancel_run_on_vm_death\x18\x17 \x01(\bR\x12cancelRunOnVmDeath\x12+\n" +
 	"\x0fsecret_max_sets\x18\x18 \x01(\x05H\x02R\rsecretMaxSets\x88\x01\x01\x12+\n" +
-	"\x0fsecret_max_keys\x18\x19 \x01(\x05H\x03R\rsecretMaxKeys\x88\x01\x01\x12)\n" +
-	"\x0esecret_max_kib\x18\x1a \x01(\x03H\x04R\fsecretMaxKib\x88\x01\x01\x12/\n" +
+	"\x0fsecret_max_keys\x18\x19 \x01(\x05H\x03R\rsecretMaxKeys\x88\x01\x01\x12-\n" +
+	"\x10secret_max_bytes\x18\x1a \x01(\x03H\x04R\x0esecretMaxBytes\x88\x01\x01\x12/\n" +
 	"\x11preview_max_ports\x18\x1b \x01(\x05H\x05R\x0fpreviewMaxPorts\x88\x01\x01\x129\n" +
 	"\x19secret_max_sets_effective\x18\x1c \x01(\x05R\x16secretMaxSetsEffective\x129\n" +
-	"\x19secret_max_keys_effective\x18\x1d \x01(\x05R\x16secretMaxKeysEffective\x127\n" +
-	"\x18secret_max_kib_effective\x18\x1e \x01(\x03R\x15secretMaxKibEffective\x12=\n" +
+	"\x19secret_max_keys_effective\x18\x1d \x01(\x05R\x16secretMaxKeysEffective\x12;\n" +
+	"\x1asecret_max_bytes_effective\x18\x1e \x01(\x03R\x17secretMaxBytesEffective\x12=\n" +
 	"\x1bpreview_max_ports_effective\x18\x1f \x01(\x05R\x18previewMaxPortsEffective\x12\x1f\n" +
 	"\vmember_join\x18  \x01(\tR\n" +
 	"memberJoin\x12V\n" +
@@ -15642,8 +15641,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x10_concurrency_capB\x15\n" +
 	"\x13_job_retention_daysB\x12\n" +
 	"\x10_secret_max_setsB\x12\n" +
-	"\x10_secret_max_keysB\x11\n" +
-	"\x0f_secret_max_kibB\x14\n" +
+	"\x10_secret_max_keysB\x13\n" +
+	"\x11_secret_max_bytesB\x14\n" +
 	"\x12_preview_max_portsB#\n" +
 	"!_volume_snapshot_interval_seconds\"\xa7\x02\n" +
 	"\x12HostingCertificate\x12\x12\n" +
@@ -16866,8 +16865,8 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	181, // 18: toshi.operator.v1.SummariseJobTelemetryResponse.to:type_name -> google.protobuf.Timestamp
 	19,  // 19: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_bytes:type_name -> toshi.operator.v1.TelemetryPercentiles
 	19,  // 20: toshi.operator.v1.JobTelemetrySizeRow.peak_host_memory_bytes:type_name -> toshi.operator.v1.TelemetryPercentiles
-	19,  // 21: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_pct:type_name -> toshi.operator.v1.TelemetryPercentiles
-	19,  // 22: toshi.operator.v1.JobTelemetrySizeRow.cpu_utilisation_pct:type_name -> toshi.operator.v1.TelemetryPercentiles
+	19,  // 21: toshi.operator.v1.JobTelemetrySizeRow.peak_memory_percent:type_name -> toshi.operator.v1.TelemetryPercentiles
+	19,  // 22: toshi.operator.v1.JobTelemetrySizeRow.cpu_utilisation_percent:type_name -> toshi.operator.v1.TelemetryPercentiles
 	177, // 23: toshi.operator.v1.Host.labels:type_name -> toshi.operator.v1.Host.LabelsEntry
 	2,   // 24: toshi.operator.v1.Host.state:type_name -> toshi.operator.v1.HostState
 	181, // 25: toshi.operator.v1.Host.last_seen_at:type_name -> google.protobuf.Timestamp

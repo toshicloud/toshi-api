@@ -54,12 +54,12 @@ type AuditEventServiceClient interface {
 	// AuditEvent per line. The plan must include audit export or the call fails
 	// with PERMISSION_DENIED.
 	//
-	// Since is required; until defaults to now. Since must be before until,
-	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
-	// its last row, sending the header again. A malformed cursor or one from
-	// another range fails with INVALID_ARGUMENT; a resume cursor at or behind
-	// the retention boundary fails with OUT_OF_RANGE. When resuming without an
-	// until, the cursor keeps the original range's until.
+	// start_at is required; end_at defaults to now. start_at must be before
+	// end_at, else INVALID_ARGUMENT. A cursor from a previous response resumes
+	// after its last row, sending the header again. A malformed cursor or one
+	// from another range fails with INVALID_ARGUMENT; a resume cursor at or
+	// behind the retention boundary fails with OUT_OF_RANGE. When resuming
+	// without an end_at, the cursor keeps the original range's end_at.
 	ExportAuditEvents(context.Context, *connect.Request[workspacev1.ExportAuditEventsRequest]) (*connect.ServerStreamForClient[workspacev1.ExportAuditEventsResponse], error)
 }
 
@@ -119,12 +119,12 @@ type AuditEventServiceHandler interface {
 	// AuditEvent per line. The plan must include audit export or the call fails
 	// with PERMISSION_DENIED.
 	//
-	// Since is required; until defaults to now. Since must be before until,
-	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
-	// its last row, sending the header again. A malformed cursor or one from
-	// another range fails with INVALID_ARGUMENT; a resume cursor at or behind
-	// the retention boundary fails with OUT_OF_RANGE. When resuming without an
-	// until, the cursor keeps the original range's until.
+	// start_at is required; end_at defaults to now. start_at must be before
+	// end_at, else INVALID_ARGUMENT. A cursor from a previous response resumes
+	// after its last row, sending the header again. A malformed cursor or one
+	// from another range fails with INVALID_ARGUMENT; a resume cursor at or
+	// behind the retention boundary fails with OUT_OF_RANGE. When resuming
+	// without an end_at, the cursor keeps the original range's end_at.
 	ExportAuditEvents(context.Context, *connect.Request[workspacev1.ExportAuditEventsRequest], *connect.ServerStream[workspacev1.ExportAuditEventsResponse]) error
 }
 

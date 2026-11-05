@@ -864,12 +864,12 @@ message JobTelemetrySummary {
   bool oom_killed = 1;
   // How long the VM's threads waited for a host CPU, as a percentage of the
   // CPU time they used plus that wait. 0 when they never waited.
-  double cpu_throttled_pct = 2;
+  double cpu_throttled_percent = 2;
   // The most memory in use inside the guest, in bytes; the host's resident
   // memory of the VM when the guest does not report it.
   int64 peak_memory_bytes = 3;
   // CPU time used as a percentage of the VM's vCPUs over the sampled time.
-  double cpu_utilisation_pct = 4;
+  double cpu_utilisation_percent = 4;
   // How many samples the job has.
   int32 samples = 5;
   // The job's memory limit in MiB: the memory its runner size gives its VM,
@@ -937,13 +937,13 @@ message JobTelemetrySizeRow {
   // Each job's peak memory as a percentage of its memory limit (its host's
   // limit on a container tier host, else the size's memory), over the jobs
   // whose limit is known.
-  TelemetryPercentiles peak_memory_pct = 9;
+  TelemetryPercentiles peak_memory_percent = 9;
   // Each job's CPU time as a percentage of the size's vCPUs over its
   // sampled time, over the jobs whose size is known.
-  TelemetryPercentiles cpu_utilisation_pct = 10;
+  TelemetryPercentiles cpu_utilisation_percent = 10;
   // The CPU wait of these jobs together as a percentage of their CPU time
   // plus that wait.
-  double cpu_throttled_pct = 11;
+  double cpu_throttled_percent = 11;
   // The jobs that counted an out-of-memory kill.
   int32 oom_killed = 12;
   // The jobs whose peak memory reached 90 % of their memory limit or more.
@@ -1497,18 +1497,17 @@ message Workspace {
   optional int32 secret_max_sets = 24;
   // The secrets.keys_max override; unset when none is set. 0 is no cap.
   optional int32 secret_max_keys = 25;
-  // The secrets.size_max_bytes override, rounded up to whole KiB and capped at
-  // 2147483647 KiB; unset when none is set. 0 is no cap.
-  optional int64 secret_max_kib = 26;
+  // The secrets.size_max_bytes override, in bytes; unset when none is set. 0
+  // is no cap.
+  optional int64 secret_max_bytes = 26;
   // The previews.ports_max override; unset when none is set. 0 is no cap.
   optional int32 preview_max_ports = 27;
   // The resolved secrets.sets_max; 0 is no cap.
   int32 secret_max_sets_effective = 28;
   // The resolved secrets.keys_max; 0 is no cap.
   int32 secret_max_keys_effective = 29;
-  // The resolved secrets.size_max_bytes, rounded up to whole KiB and capped at
-  // 2147483647 KiB; 0 is no cap.
-  int64 secret_max_kib_effective = 30;
+  // The resolved secrets.size_max_bytes, in bytes; 0 is no cap.
+  int64 secret_max_bytes_effective = 30;
   // The resolved previews.ports_max; 0 is no cap.
   int32 preview_max_ports_effective = 31;
   // Who may join the workspace through its GitHub App installation on an

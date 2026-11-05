@@ -537,12 +537,12 @@ message HostJobTelemetrySummary {
   bool oom_killed = 1;
   // How long the VM's threads waited for a host CPU, as a percentage of the
   // CPU time they used plus that wait. 0 when they never waited.
-  double cpu_throttled_pct = 2;
+  double cpu_throttled_percent = 2;
   // The most memory in use inside the guest, in bytes; the host's resident
   // memory of the VM when the guest does not report it.
   int64 peak_memory_bytes = 3;
   // CPU time used as a percentage of the VM's vCPUs over the sampled time.
-  double cpu_utilisation_pct = 4;
+  double cpu_utilisation_percent = 4;
   // How many samples the job has.
   int32 samples = 5;
   // The job's memory limit in MiB: the memory its runner size gives its VM,

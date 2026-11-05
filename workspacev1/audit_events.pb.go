@@ -364,12 +364,12 @@ func (x *ListAuditEventsResponse) GetNextPageToken() string {
 type ExportAuditEventsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The start of the range, inclusive; required, else INVALID_ARGUMENT.
-	Since *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=since,proto3" json:"since,omitempty"`
+	StartAt *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
 	// The end of the range, exclusive; unset is now, and on a resume the
 	// range's original end.
-	Until *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=until,proto3" json:"until,omitempty"`
+	EndAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
 	// A cursor from a previous response, to resume after its last row; empty
-	// starts at since.
+	// starts at start_at.
 	Cursor string `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	// When true, the export is written to the workspace's storage and the
 	// stream carries one response with a signed URL that downloads the whole
@@ -414,16 +414,16 @@ func (*ExportAuditEventsRequest) Descriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_audit_events_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ExportAuditEventsRequest) GetSince() *timestamppb.Timestamp {
+func (x *ExportAuditEventsRequest) GetStartAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.StartAt
 	}
 	return nil
 }
 
-func (x *ExportAuditEventsRequest) GetUntil() *timestamppb.Timestamp {
+func (x *ExportAuditEventsRequest) GetEndAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Until
+		return x.EndAt
 	}
 	return nil
 }
@@ -565,10 +565,10 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\aoutcome\x18\b \x01(\tR\aoutcome\"y\n" +
 	"\x17ListAuditEventsResponse\x126\n" +
 	"\x06events\x18\x01 \x03(\v2\x1e.toshi.workspace.v1.AuditEventR\x06events\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x8e\x02\n" +
-	"\x18ExportAuditEventsRequest\x120\n" +
-	"\x05since\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x120\n" +
-	"\x05until\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05until\x12\x16\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x94\x02\n" +
+	"\x18ExportAuditEventsRequest\x125\n" +
+	"\bstart_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\astartAt\x121\n" +
+	"\x06end_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05endAt\x12\x16\n" +
 	"\x06cursor\x18\x03 \x01(\tR\x06cursor\x12!\n" +
 	"\fdownload_url\x18\x04 \x01(\bR\vdownloadUrl\x12S\n" +
 	"\vttl_seconds\x18\x05 \x01(\x03B2\x8a\xf4\x18.\n" +
@@ -612,8 +612,8 @@ var file_toshi_workspace_v1_audit_events_proto_depIdxs = []int32{
 	5, // 0: toshi.workspace.v1.AuditEvent.at:type_name -> google.protobuf.Timestamp
 	5, // 1: toshi.workspace.v1.ListAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
 	0, // 2: toshi.workspace.v1.ListAuditEventsResponse.events:type_name -> toshi.workspace.v1.AuditEvent
-	5, // 3: toshi.workspace.v1.ExportAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
-	5, // 4: toshi.workspace.v1.ExportAuditEventsRequest.until:type_name -> google.protobuf.Timestamp
+	5, // 3: toshi.workspace.v1.ExportAuditEventsRequest.start_at:type_name -> google.protobuf.Timestamp
+	5, // 4: toshi.workspace.v1.ExportAuditEventsRequest.end_at:type_name -> google.protobuf.Timestamp
 	5, // 5: toshi.workspace.v1.ExportAuditEventsResponse.expires_at:type_name -> google.protobuf.Timestamp
 	1, // 6: toshi.workspace.v1.AuditEventService.ListAuditEvents:input_type -> toshi.workspace.v1.ListAuditEventsRequest
 	3, // 7: toshi.workspace.v1.AuditEventService.ExportAuditEvents:input_type -> toshi.workspace.v1.ExportAuditEventsRequest

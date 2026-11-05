@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file toshi/workspace/v1/audit_events.proto.
  */
 export const file_toshi_workspace_v1_audit_events: GenFile = /*@__PURE__*/
-  fileDesc("CiV0b3NoaS93b3Jrc3BhY2UvdjEvYXVkaXRfZXZlbnRzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiigIKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAMSJgoCYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFjdG9yX2tpbmQYAyABKAkSEAoIYWN0b3JfaWQYBCABKAkSDgoGYWN0aW9uGAUgASgJEg4KBnRhcmdldBgGIAEoCRIUCgxkZXRhaWxzX2pzb24YByABKAkSEgoKcmVxdWVzdF9pZBgIIAEoCRISCgpwZXJtaXNzaW9uGAkgASgJEg0KBXNjb3BlGAogASgJEg8KB291dGNvbWUYCyABKAkSEAoIdG9rZW5faWQYDCABKAkSEgoKYWN0b3JfbmFtZRgNIAEoCSK7AQoWTGlzdEF1ZGl0RXZlbnRzUmVxdWVzdBIOCgZhY3Rpb24YASABKAkSKQoFc2luY2UYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCXBhZ2Vfc2l6ZRgDIAEoBRINCgVhY3RvchgEIAEoCRIPCgdhY3Rpb25zGAUgAygJEg4KBnRhcmdldBgGIAEoCRISCgpwYWdlX3Rva2VuGAcgASgJEg8KB291dGNvbWUYCCABKAkiYgoXTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2USLgoGZXZlbnRzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkF1ZGl0RXZlbnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIt8BChhFeHBvcnRBdWRpdEV2ZW50c1JlcXVlc3QSKQoFc2luY2UYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIOCgZjdXJzb3IYAyABKAkSFAoMZG93bmxvYWRfdXJsGAQgASgIEkcKC3R0bF9zZWNvbmRzGAUgASgDQjKK9BguCiRleHBvcnRfYXVkaXRfZXZlbnRzX2Rvd25sb2FkX3VybF90dGwQARisAiiQHCJ2ChlFeHBvcnRBdWRpdEV2ZW50c1Jlc3BvbnNlEgwKBGRhdGEYASABKAwSDgoGY3Vyc29yGAIgASgJEgsKA3VybBgDIAEoCRIuCgpleHBpcmVzX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDLEAgoRQXVkaXRFdmVudFNlcnZpY2USegoPTGlzdEF1ZGl0RXZlbnRzEioudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBdWRpdEV2ZW50c1JlcXVlc3QaKy50b3NoaS53b3Jrc3BhY2UudjEuTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2UiDsLzGAphdWRpdC5yZWFkErIBChFFeHBvcnRBdWRpdEV2ZW50cxIsLnRvc2hpLndvcmtzcGFjZS52MS5FeHBvcnRBdWRpdEV2ZW50c1JlcXVlc3QaLS50b3NoaS53b3Jrc3BhY2UudjEuRXhwb3J0QXVkaXRFdmVudHNSZXNwb25zZSI+wvMYCmF1ZGl0LnJlYWTS8xgsChVhdWRpdF9ldmVudHMuZXhwb3J0ZWQSE3dvcmtzcGFjZTp3b3Jrc3BhY2UwAUIiWiBnby50b3NoaWNsb3VkLmlvL2FwaS93b3Jrc3BhY2V2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_toshi_permission]);
+  fileDesc("CiV0b3NoaS93b3Jrc3BhY2UvdjEvYXVkaXRfZXZlbnRzLnByb3RvEhJ0b3NoaS53b3Jrc3BhY2UudjEiigIKCkF1ZGl0RXZlbnQSCgoCaWQYASABKAMSJgoCYXQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhIKCmFjdG9yX2tpbmQYAyABKAkSEAoIYWN0b3JfaWQYBCABKAkSDgoGYWN0aW9uGAUgASgJEg4KBnRhcmdldBgGIAEoCRIUCgxkZXRhaWxzX2pzb24YByABKAkSEgoKcmVxdWVzdF9pZBgIIAEoCRISCgpwZXJtaXNzaW9uGAkgASgJEg0KBXNjb3BlGAogASgJEg8KB291dGNvbWUYCyABKAkSEAoIdG9rZW5faWQYDCABKAkSEgoKYWN0b3JfbmFtZRgNIAEoCSK7AQoWTGlzdEF1ZGl0RXZlbnRzUmVxdWVzdBIOCgZhY3Rpb24YASABKAkSKQoFc2luY2UYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhEKCXBhZ2Vfc2l6ZRgDIAEoBRINCgVhY3RvchgEIAEoCRIPCgdhY3Rpb25zGAUgAygJEg4KBnRhcmdldBgGIAEoCRISCgpwYWdlX3Rva2VuGAcgASgJEg8KB291dGNvbWUYCCABKAkiYgoXTGlzdEF1ZGl0RXZlbnRzUmVzcG9uc2USLgoGZXZlbnRzGAEgAygLMh4udG9zaGkud29ya3NwYWNlLnYxLkF1ZGl0RXZlbnQSFwoPbmV4dF9wYWdlX3Rva2VuGAIgASgJIuMBChhFeHBvcnRBdWRpdEV2ZW50c1JlcXVlc3QSLAoIc3RhcnRfYXQYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEioKBmVuZF9hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDgoGY3Vyc29yGAMgASgJEhQKDGRvd25sb2FkX3VybBgEIAEoCBJHCgt0dGxfc2Vjb25kcxgFIAEoA0IyivQYLgokZXhwb3J0X2F1ZGl0X2V2ZW50c19kb3dubG9hZF91cmxfdHRsEAEYrAIokBwidgoZRXhwb3J0QXVkaXRFdmVudHNSZXNwb25zZRIMCgRkYXRhGAEgASgMEg4KBmN1cnNvchgCIAEoCRILCgN1cmwYAyABKAkSLgoKZXhwaXJlc19hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAyxAIKEUF1ZGl0RXZlbnRTZXJ2aWNlEnoKD0xpc3RBdWRpdEV2ZW50cxIqLnRvc2hpLndvcmtzcGFjZS52MS5MaXN0QXVkaXRFdmVudHNSZXF1ZXN0GisudG9zaGkud29ya3NwYWNlLnYxLkxpc3RBdWRpdEV2ZW50c1Jlc3BvbnNlIg7C8xgKYXVkaXQucmVhZBKyAQoRRXhwb3J0QXVkaXRFdmVudHMSLC50b3NoaS53b3Jrc3BhY2UudjEuRXhwb3J0QXVkaXRFdmVudHNSZXF1ZXN0Gi0udG9zaGkud29ya3NwYWNlLnYxLkV4cG9ydEF1ZGl0RXZlbnRzUmVzcG9uc2UiPsLzGAphdWRpdC5yZWFk0vMYLAoVYXVkaXRfZXZlbnRzLmV4cG9ydGVkEhN3b3Jrc3BhY2U6d29ya3NwYWNlMAFCIlogZ28udG9zaGljbG91ZC5pby9hcGkvd29ya3NwYWNldjFiBnByb3RvMw", [file_google_protobuf_timestamp, file_toshi_permission]);
 
 /**
  * AuditEvent is one append-only audit log entry.
@@ -447,21 +447,21 @@ export type ExportAuditEventsRequest = Message<"toshi.workspace.v1.ExportAuditEv
   /**
    * The start of the range, inclusive; required, else INVALID_ARGUMENT.
    *
-   * @generated from field: google.protobuf.Timestamp since = 1;
+   * @generated from field: google.protobuf.Timestamp start_at = 1;
    */
-  since?: Timestamp | undefined;
+  startAt?: Timestamp | undefined;
 
   /**
    * The end of the range, exclusive; unset is now, and on a resume the
    * range's original end.
    *
-   * @generated from field: google.protobuf.Timestamp until = 2;
+   * @generated from field: google.protobuf.Timestamp end_at = 2;
    */
-  until?: Timestamp | undefined;
+  endAt?: Timestamp | undefined;
 
   /**
    * A cursor from a previous response, to resume after its last row; empty
-   * starts at since.
+   * starts at start_at.
    *
    * @generated from field: string cursor = 3;
    */
@@ -496,21 +496,21 @@ export type ExportAuditEventsRequestJson = {
   /**
    * The start of the range, inclusive; required, else INVALID_ARGUMENT.
    *
-   * @generated from field: google.protobuf.Timestamp since = 1;
+   * @generated from field: google.protobuf.Timestamp start_at = 1;
    */
-  since?: TimestampJson;
+  startAt?: TimestampJson;
 
   /**
    * The end of the range, exclusive; unset is now, and on a resume the
    * range's original end.
    *
-   * @generated from field: google.protobuf.Timestamp until = 2;
+   * @generated from field: google.protobuf.Timestamp end_at = 2;
    */
-  until?: TimestampJson;
+  endAt?: TimestampJson;
 
   /**
    * A cursor from a previous response, to resume after its last row; empty
-   * starts at since.
+   * starts at start_at.
    *
    * @generated from field: string cursor = 3;
    */
@@ -663,12 +663,12 @@ export const AuditEventService: GenService<{
    * AuditEvent per line. The plan must include audit export or the call fails
    * with PERMISSION_DENIED.
    *
-   * Since is required; until defaults to now. Since must be before until,
-   * else INVALID_ARGUMENT. A cursor from a previous response resumes after
-   * its last row, sending the header again. A malformed cursor or one from
-   * another range fails with INVALID_ARGUMENT; a resume cursor at or behind
-   * the retention boundary fails with OUT_OF_RANGE. When resuming without an
-   * until, the cursor keeps the original range's until.
+   * start_at is required; end_at defaults to now. start_at must be before
+   * end_at, else INVALID_ARGUMENT. A cursor from a previous response resumes
+   * after its last row, sending the header again. A malformed cursor or one
+   * from another range fails with INVALID_ARGUMENT; a resume cursor at or
+   * behind the retention boundary fails with OUT_OF_RANGE. When resuming
+   * without an end_at, the cursor keeps the original range's end_at.
    *
    * @generated from rpc toshi.workspace.v1.AuditEventService.ExportAuditEvents
    */

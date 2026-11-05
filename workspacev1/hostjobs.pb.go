@@ -1870,12 +1870,12 @@ type HostJobTelemetrySummary struct {
 	OomKilled bool `protobuf:"varint,1,opt,name=oom_killed,json=oomKilled,proto3" json:"oom_killed,omitempty"`
 	// How long the VM's threads waited for a host CPU, as a percentage of the
 	// CPU time they used plus that wait. 0 when they never waited.
-	CpuThrottledPct float64 `protobuf:"fixed64,2,opt,name=cpu_throttled_pct,json=cpuThrottledPct,proto3" json:"cpu_throttled_pct,omitempty"`
+	CpuThrottledPercent float64 `protobuf:"fixed64,2,opt,name=cpu_throttled_percent,json=cpuThrottledPercent,proto3" json:"cpu_throttled_percent,omitempty"`
 	// The most memory in use inside the guest, in bytes; the host's resident
 	// memory of the VM when the guest does not report it.
 	PeakMemoryBytes int64 `protobuf:"varint,3,opt,name=peak_memory_bytes,json=peakMemoryBytes,proto3" json:"peak_memory_bytes,omitempty"`
 	// CPU time used as a percentage of the VM's vCPUs over the sampled time.
-	CpuUtilisationPct float64 `protobuf:"fixed64,4,opt,name=cpu_utilisation_pct,json=cpuUtilisationPct,proto3" json:"cpu_utilisation_pct,omitempty"`
+	CpuUtilisationPercent float64 `protobuf:"fixed64,4,opt,name=cpu_utilisation_percent,json=cpuUtilisationPercent,proto3" json:"cpu_utilisation_percent,omitempty"`
 	// How many samples the job has.
 	Samples int32 `protobuf:"varint,5,opt,name=samples,proto3" json:"samples,omitempty"`
 	// The job's memory limit in MiB: the memory its runner size gives its VM,
@@ -1939,9 +1939,9 @@ func (x *HostJobTelemetrySummary) GetOomKilled() bool {
 	return false
 }
 
-func (x *HostJobTelemetrySummary) GetCpuThrottledPct() float64 {
+func (x *HostJobTelemetrySummary) GetCpuThrottledPercent() float64 {
 	if x != nil {
-		return x.CpuThrottledPct
+		return x.CpuThrottledPercent
 	}
 	return 0
 }
@@ -1953,9 +1953,9 @@ func (x *HostJobTelemetrySummary) GetPeakMemoryBytes() int64 {
 	return 0
 }
 
-func (x *HostJobTelemetrySummary) GetCpuUtilisationPct() float64 {
+func (x *HostJobTelemetrySummary) GetCpuUtilisationPercent() float64 {
 	if x != nil {
-		return x.CpuUtilisationPct
+		return x.CpuUtilisationPercent
 	}
 	return 0
 }
@@ -2527,13 +2527,13 @@ const file_toshi_workspace_v1_hostjobs_proto_rawDesc = "" +
 	"conclusion\x18\n" +
 	" \x01(\tR\n" +
 	"conclusion\x12\x10\n" +
-	"\x03end\x18\v \x01(\tR\x03end\"\xfb\x02\n" +
+	"\x03end\x18\v \x01(\tR\x03end\"\x8b\x03\n" +
 	"\x17HostJobTelemetrySummary\x12\x1d\n" +
 	"\n" +
-	"oom_killed\x18\x01 \x01(\bR\toomKilled\x12*\n" +
-	"\x11cpu_throttled_pct\x18\x02 \x01(\x01R\x0fcpuThrottledPct\x12*\n" +
-	"\x11peak_memory_bytes\x18\x03 \x01(\x03R\x0fpeakMemoryBytes\x12.\n" +
-	"\x13cpu_utilisation_pct\x18\x04 \x01(\x01R\x11cpuUtilisationPct\x12\x18\n" +
+	"oom_killed\x18\x01 \x01(\bR\toomKilled\x122\n" +
+	"\x15cpu_throttled_percent\x18\x02 \x01(\x01R\x13cpuThrottledPercent\x12*\n" +
+	"\x11peak_memory_bytes\x18\x03 \x01(\x03R\x0fpeakMemoryBytes\x126\n" +
+	"\x17cpu_utilisation_percent\x18\x04 \x01(\x01R\x15cpuUtilisationPercent\x12\x18\n" +
 	"\asamples\x18\x05 \x01(\x05R\asamples\x12(\n" +
 	"\x10memory_limit_mib\x18\x06 \x01(\x03R\x0ememoryLimitMib\x12\x15\n" +
 	"\x06cpu_ms\x18\a \x01(\x03R\x05cpuMs\x12\x1d\n" +

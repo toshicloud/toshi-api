@@ -1764,7 +1764,7 @@ message EgressDenial {
   // Packets or DNS queries refused.
   int64 packets = 6;
   // When the host reported it.
-  google.protobuf.Timestamp time = 7;
+  google.protobuf.Timestamp reported_at = 7;
 }
 
 // TriggerResult is the payload of a trigger's events: the trigger, the key

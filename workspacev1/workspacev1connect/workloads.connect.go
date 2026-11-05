@@ -738,12 +738,13 @@ type WorkloadServiceClient interface {
 	// Event per line. The plan must include event export or the call fails with
 	// PERMISSION_DENIED. Project and environment are required as in ListEvents.
 	//
-	// Since is required; until defaults to now. Since must be before until,
-	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
-	// its last row, sending the header again. A malformed cursor or one from
-	// another range or filter fails with INVALID_ARGUMENT; a resume cursor at
-	// or behind the retention boundary fails with OUT_OF_RANGE. When resuming
-	// without an until, the cursor keeps the original range's until.
+	// start_at is required; end_at defaults to now. start_at must be before
+	// end_at, else INVALID_ARGUMENT. A cursor from a previous response resumes
+	// after its last row, sending the header again. A malformed cursor or one
+	// from another range or filter fails with INVALID_ARGUMENT; a resume
+	// cursor at or behind the retention boundary fails with OUT_OF_RANGE. When
+	// resuming without an end_at, the cursor keeps the original range's
+	// end_at.
 	ExportEvents(context.Context, *connect.Request[workspacev1.ExportEventsRequest]) (*connect.ServerStreamForClient[workspacev1.ExportEventsResponse], error)
 	// WatchEvents streams the events after a cursor, then each new event as
 	// it is written, for a client that stays connected.
@@ -2129,12 +2130,13 @@ type WorkloadServiceHandler interface {
 	// Event per line. The plan must include event export or the call fails with
 	// PERMISSION_DENIED. Project and environment are required as in ListEvents.
 	//
-	// Since is required; until defaults to now. Since must be before until,
-	// else INVALID_ARGUMENT. A cursor from a previous response resumes after
-	// its last row, sending the header again. A malformed cursor or one from
-	// another range or filter fails with INVALID_ARGUMENT; a resume cursor at
-	// or behind the retention boundary fails with OUT_OF_RANGE. When resuming
-	// without an until, the cursor keeps the original range's until.
+	// start_at is required; end_at defaults to now. start_at must be before
+	// end_at, else INVALID_ARGUMENT. A cursor from a previous response resumes
+	// after its last row, sending the header again. A malformed cursor or one
+	// from another range or filter fails with INVALID_ARGUMENT; a resume
+	// cursor at or behind the retention boundary fails with OUT_OF_RANGE. When
+	// resuming without an end_at, the cursor keeps the original range's
+	// end_at.
 	ExportEvents(context.Context, *connect.Request[workspacev1.ExportEventsRequest], *connect.ServerStream[workspacev1.ExportEventsResponse]) error
 	// WatchEvents streams the events after a cursor, then each new event as
 	// it is written, for a client that stays connected.
