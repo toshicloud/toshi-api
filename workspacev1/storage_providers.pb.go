@@ -923,12 +923,12 @@ const file_toshi_workspace_v1_storage_providers_proto_rawDesc = "" +
 	"checked_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcheckedAt\".\n" +
 	"\x1cDeleteStorageProviderRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
-	"\x1dDeleteStorageProviderResponse2\xf0\x05\n" +
+	"\x1dDeleteStorageProviderResponse2\x80\x06\n" +
 	"\x16StorageProviderService\x12\x8b\x01\n" +
 	"\x14ListStorageProviders\x12/.toshi.workspace.v1.ListStorageProvidersRequest\x1a0.toshi.workspace.v1.ListStorageProvidersResponse\"\x10\xc2\xf3\x18\fstorage.read\x12\x93\x01\n" +
 	"\x15CreateStorageProvider\x120.toshi.workspace.v1.CreateStorageProviderRequest\x1a1.toshi.workspace.v1.CreateStorageProviderResponse\"\x15\xc2\xf3\x18\rstorage.write\x90\xf4\x18\x01\x12\x90\x01\n" +
-	"\x14CheckStorageProvider\x12/.toshi.workspace.v1.CheckStorageProviderRequest\x1a0.toshi.workspace.v1.CheckStorageProviderResponse\"\x15\xc2\xf3\x18\rstorage.write\x90\xf4\x18\x02\x12\x9e\x02\n" +
-	"\x15DeleteStorageProvider\x120.toshi.workspace.v1.DeleteStorageProviderRequest\x1a1.toshi.workspace.v1.DeleteStorageProviderResponse\"\x9f\x01\xc2\xf3\x18\rstorage.write\xfa\xf3\x18\x85\x01\b\x01\x12\x80\x01Remove this bucket? Artifacts, raw delivery bodies or unfinished deletions prevent removal; its objects stay with your provider.\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
+	"\x14CheckStorageProvider\x12/.toshi.workspace.v1.CheckStorageProviderRequest\x1a0.toshi.workspace.v1.CheckStorageProviderResponse\"\x15\xc2\xf3\x18\rstorage.write\x90\xf4\x18\x02\x12\xae\x02\n" +
+	"\x15DeleteStorageProvider\x120.toshi.workspace.v1.DeleteStorageProviderRequest\x1a1.toshi.workspace.v1.DeleteStorageProviderResponse\"\xaf\x01\xc2\xf3\x18\rstorage.write\xfa\xf3\x18\x95\x01\b\x01\x12\x90\x01Remove this bucket? Artifacts, raw delivery bodies, unfinished deletions or image versions prevent removal; its objects stay with your provider.\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
 var (
 	file_toshi_workspace_v1_storage_providers_proto_rawDescOnce sync.Once

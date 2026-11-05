@@ -81,8 +81,9 @@ type StorageProviderServiceClient interface {
 	// DeleteStorageProvider removes a provider the workspace saved. An
 	// unknown ID, and another workspace's, fails with NOT_FOUND; a row the
 	// operator set for the workspace, and the default provider, with
-	// PERMISSION_DENIED. Removal is refused while artifacts, raw delivery bodies
-	// or unfinished deletions reference it; its objects stay with the provider.
+	// PERMISSION_DENIED. Removal is refused while artifacts, raw delivery bodies,
+	// unfinished deletions or image versions reference it; its objects stay with
+	// the provider.
 	DeleteStorageProvider(context.Context, *connect.Request[workspacev1.DeleteStorageProviderRequest]) (*connect.Response[workspacev1.DeleteStorageProviderResponse], error)
 }
 
@@ -186,8 +187,9 @@ type StorageProviderServiceHandler interface {
 	// DeleteStorageProvider removes a provider the workspace saved. An
 	// unknown ID, and another workspace's, fails with NOT_FOUND; a row the
 	// operator set for the workspace, and the default provider, with
-	// PERMISSION_DENIED. Removal is refused while artifacts, raw delivery bodies
-	// or unfinished deletions reference it; its objects stay with the provider.
+	// PERMISSION_DENIED. Removal is refused while artifacts, raw delivery bodies,
+	// unfinished deletions or image versions reference it; its objects stay with
+	// the provider.
 	DeleteStorageProvider(context.Context, *connect.Request[workspacev1.DeleteStorageProviderRequest]) (*connect.Response[workspacev1.DeleteStorageProviderResponse], error)
 }
 

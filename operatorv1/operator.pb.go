@@ -16576,7 +16576,7 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\x1aCLOUD_HOST_CHECK_STATUS_OK\x10\x01\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_WARN\x10\x02\x12 \n" +
 	"\x1cCLOUD_HOST_CHECK_STATUS_FAIL\x10\x03\x12#\n" +
-	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xbe6\n" +
+	"\x1fCLOUD_HOST_CHECK_STATUS_SKIPPED\x10\x042\xce6\n" +
 	"\x0fOperatorService\x12\xc8\x01\n" +
 	"\n" +
 	"DeleteUser\x12$.toshi.operator.v1.DeleteUserRequest\x1a%.toshi.operator.v1.DeleteUserResponse\"m\xd2\xf3\x18\x13\n" +
@@ -16647,8 +16647,8 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\fSuggestPools\x12&.toshi.operator.v1.SuggestPoolsRequest\x1a'.toshi.operator.v1.SuggestPoolsResponse\x12\x80\x01\n" +
 	"\x15CreateStorageProvider\x12/.toshi.operator.v1.CreateStorageProviderRequest\x1a0.toshi.operator.v1.CreateStorageProviderResponse\"\x04\x90\xf4\x18\x01\x12w\n" +
 	"\x14ListStorageProviders\x12..toshi.operator.v1.ListStorageProvidersRequest\x1a/.toshi.operator.v1.ListStorageProvidersResponse\x12}\n" +
-	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\"\x04\x90\xf4\x18\x02\x12\x8c\x02\n" +
-	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponse\"\x8f\x01\xfa\xf3\x18\x86\x01\b\x01\x12\x81\x01Delete this storage provider? Artifacts, raw delivery bodies and unfinished deletions prevent deletion; forcing it can lose data.\x90\xf4\x18\x02B!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
+	"\x14CheckStorageProvider\x12..toshi.operator.v1.CheckStorageProviderRequest\x1a/.toshi.operator.v1.CheckStorageProviderResponse\"\x04\x90\xf4\x18\x02\x12\x9c\x02\n" +
+	"\x15DeleteStorageProvider\x12/.toshi.operator.v1.DeleteStorageProviderRequest\x1a0.toshi.operator.v1.DeleteStorageProviderResponse\"\x9f\x01\xfa\xf3\x18\x96\x01\b\x01\x12\x91\x01Delete this storage provider? Artifacts, raw delivery bodies, unfinished deletions and image versions prevent deletion; forcing it can lose data.\x90\xf4\x18\x02B!Z\x1fgo.toshicloud.io/api/operatorv1b\x06proto3"
 
 var (
 	file_toshi_operator_v1_operator_proto_rawDescOnce sync.Once

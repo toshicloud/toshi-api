@@ -57,12 +57,13 @@ service StorageProviderService {
   // DeleteStorageProvider removes a provider the workspace saved. An
   // unknown ID, and another workspace's, fails with NOT_FOUND; a row the
   // operator set for the workspace, and the default provider, with
-  // PERMISSION_DENIED. Removal is refused while artifacts, raw delivery bodies
-  // or unfinished deletions reference it; its objects stay with the provider.
+  // PERMISSION_DENIED. Removal is refused while artifacts, raw delivery bodies,
+  // unfinished deletions or image versions reference it; its objects stay with
+  // the provider.
   rpc DeleteStorageProvider(DeleteStorageProviderRequest) returns (DeleteStorageProviderResponse) {
     option (toshi.key_mode) = NATURAL;
     option (toshi.permission) = "storage.write";
-    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Remove this bucket? Artifacts, raw delivery bodies or unfinished deletions prevent removal; its objects stay with your provider."};
+    option (toshi.surface) = {asks: ASKS_ALWAYS question: "Remove this bucket? Artifacts, raw delivery bodies, unfinished deletions or image versions prevent removal; its objects stay with your provider."};
   }
 }
 

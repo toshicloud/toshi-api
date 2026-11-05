@@ -558,9 +558,10 @@ type OperatorServiceClient interface {
 	// NOT_FOUND. A member deletes a row its workspace saved with the
 	// Workspace API's StorageProviderService.DeleteStorageProvider; a row the
 	// operator set for the workspace is PERMISSION_DENIED to it there.
-	// Plain deletion is refused while artifacts, raw delivery bodies or
-	// unfinished deletions reference the provider. Force retirement marks the
-	// artifacts and raw bodies lost and leaves unfinished objects at the provider.
+	// Plain deletion is refused while artifacts, raw delivery bodies,
+	// unfinished deletions or image versions reference the provider. Force
+	// retirement marks artifacts and raw bodies lost, leaves unfinished objects
+	// at the provider and leaves image versions unreadable.
 	DeleteStorageProvider(context.Context, *connect.Request[operatorv1.DeleteStorageProviderRequest]) (*connect.Response[operatorv1.DeleteStorageProviderResponse], error)
 }
 
@@ -1562,9 +1563,10 @@ type OperatorServiceHandler interface {
 	// NOT_FOUND. A member deletes a row its workspace saved with the
 	// Workspace API's StorageProviderService.DeleteStorageProvider; a row the
 	// operator set for the workspace is PERMISSION_DENIED to it there.
-	// Plain deletion is refused while artifacts, raw delivery bodies or
-	// unfinished deletions reference the provider. Force retirement marks the
-	// artifacts and raw bodies lost and leaves unfinished objects at the provider.
+	// Plain deletion is refused while artifacts, raw delivery bodies,
+	// unfinished deletions or image versions reference the provider. Force
+	// retirement marks artifacts and raw bodies lost, leaves unfinished objects
+	// at the provider and leaves image versions unreadable.
 	DeleteStorageProvider(context.Context, *connect.Request[operatorv1.DeleteStorageProviderRequest]) (*connect.Response[operatorv1.DeleteStorageProviderResponse], error)
 }
 
