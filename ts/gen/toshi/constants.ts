@@ -652,7 +652,7 @@ export const ruleWords = {
   "volume_ceiling.follows_plan": "Empty or 0 follows the plan's default.",
   "volume_ceiling.no_limit": "Where the volume caps report a ceiling of 0, there is no limit: no volume cap is checked against it.",
   "volume_ceiling.lowering": "Lowering is always allowed; a cap applies to new volumes and to raising a volume's cap.",
-  "start_windows.paid_and_waiting": "A start past the included count is a paid start; at the ceiling a start waits.",
+  "start_windows.paid_and_waiting": "A job start outside the window waits for it.",
   "start_windows.sandbox_refused": "A start past the included count is a paid start; at the ceiling a sandbox start is refused until the window moves on.",
   "plan.not_included": "Not on this workspace's plan.",
   "plan.available_from": "Available on <plan>: the lowest plan that allows it.",
@@ -1051,6 +1051,10 @@ export const labels = {
     starts_per_minute: "Per minute",
     starts_per_hour: "Per hour",
     starts_per_day: "Per day",
+  },
+  LatencyRank: {
+    median: "P50",
+    rank: "P95",
   },
 } as const;
 export const paging = {

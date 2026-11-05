@@ -1825,8 +1825,7 @@ export const GetStartWindowsRequestSchema: GenMessage<GetStartWindowsRequest, {j
 
 /**
  * GetStartWindowsResponse is the workspace's start windows as admission
- * counts them. A start past the included count is a paid start; at the
- * ceiling a start waits. A CreateSandbox at the ceiling is refused instead.
+ * counts them. A job start outside the window waits for it.
  *
  * @generated from message toshi.workspace.v1.GetStartWindowsResponse
  */
@@ -1858,8 +1857,7 @@ export type GetStartWindowsResponse = Message<"toshi.workspace.v1.GetStartWindow
 
 /**
  * GetStartWindowsResponse is the workspace's start windows as admission
- * counts them. A start past the included count is a paid start; at the
- * ceiling a start waits. A CreateSandbox at the ceiling is refused instead.
+ * counts them. A job start outside the window waits for it.
  *
  * @generated from message toshi.workspace.v1.GetStartWindowsResponse
  */

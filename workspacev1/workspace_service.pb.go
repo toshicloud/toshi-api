@@ -2035,8 +2035,7 @@ func (*GetStartWindowsRequest) Descriptor() ([]byte, []int) {
 }
 
 // GetStartWindowsResponse is the workspace's start windows as admission
-// counts them. A start past the included count is a paid start; at the
-// ceiling a start waits. A CreateSandbox at the ceiling is refused instead.
+// counts them. A job start outside the window waits for it.
 type GetStartWindowsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// False when no start is counted for the workspace: its plan sets no start
