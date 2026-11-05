@@ -194,7 +194,7 @@ type ListAuditEventsRequest struct {
 	// Only this action; empty matches every action.
 	Action string `protobuf:"bytes,1,opt,name=action,proto3" json:"action,omitempty"`
 	// Only events at or after this time; unset is unbounded.
-	Since *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=since,proto3" json:"since,omitempty"`
+	StartAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
 	// The most events in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// Only events whose actor_id is exactly this: the id without the kind (a
@@ -255,9 +255,9 @@ func (x *ListAuditEventsRequest) GetAction() string {
 	return ""
 }
 
-func (x *ListAuditEventsRequest) GetSince() *timestamppb.Timestamp {
+func (x *ListAuditEventsRequest) GetStartAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.StartAt
 	}
 	return nil
 }
@@ -552,10 +552,10 @@ const file_toshi_workspace_v1_audit_events_proto_rawDesc = "" +
 	"\aoutcome\x18\v \x01(\tR\aoutcome\x12\x19\n" +
 	"\btoken_id\x18\f \x01(\tR\atokenId\x12\x1d\n" +
 	"\n" +
-	"actor_name\x18\r \x01(\tR\tactorName\"\x80\x02\n" +
+	"actor_name\x18\r \x01(\tR\tactorName\"\x85\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x16\n" +
-	"\x06action\x18\x01 \x01(\tR\x06action\x120\n" +
-	"\x05since\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x1b\n" +
+	"\x06action\x18\x01 \x01(\tR\x06action\x125\n" +
+	"\bstart_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\astartAt\x12\x1b\n" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12\x14\n" +
 	"\x05actor\x18\x04 \x01(\tR\x05actor\x12\x18\n" +
 	"\aactions\x18\x05 \x03(\tR\aactions\x12\x16\n" +
@@ -610,7 +610,7 @@ var file_toshi_workspace_v1_audit_events_proto_goTypes = []any{
 }
 var file_toshi_workspace_v1_audit_events_proto_depIdxs = []int32{
 	5, // 0: toshi.workspace.v1.AuditEvent.at:type_name -> google.protobuf.Timestamp
-	5, // 1: toshi.workspace.v1.ListAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
+	5, // 1: toshi.workspace.v1.ListAuditEventsRequest.start_at:type_name -> google.protobuf.Timestamp
 	0, // 2: toshi.workspace.v1.ListAuditEventsResponse.events:type_name -> toshi.workspace.v1.AuditEvent
 	5, // 3: toshi.workspace.v1.ExportAuditEventsRequest.start_at:type_name -> google.protobuf.Timestamp
 	5, // 4: toshi.workspace.v1.ExportAuditEventsRequest.end_at:type_name -> google.protobuf.Timestamp

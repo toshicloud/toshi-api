@@ -2062,12 +2062,13 @@ type HostAlert struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// kind is the alert, such as "runner_exits_without_job".
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
-	// raised_at is when it was raised; since is the first event it counts.
+	// raised_at is when it was raised; first_event_at is the first event it
+	// counts.
 	RaisedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=raised_at,json=raisedAt,proto3" json:"raised_at,omitempty"`
 	// The time of the first event the alert counts.
-	Since *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since,proto3" json:"since,omitempty"`
-	// count is the events counted from since, and reasons the same events by
-	// reason; top_reason has the most.
+	FirstEventAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=first_event_at,json=firstEventAt,proto3" json:"first_event_at,omitempty"`
+	// count is the events counted from first_event_at, and reasons the same
+	// events by reason; top_reason has the most.
 	Count int64 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
 	// The counted events by reason: the host, workspace or reason class each
 	// one is counted under.
@@ -2124,9 +2125,9 @@ func (x *HostAlert) GetRaisedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *HostAlert) GetSince() *timestamppb.Timestamp {
+func (x *HostAlert) GetFirstEventAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.FirstEventAt
 	}
 	return nil
 }
@@ -2612,11 +2613,11 @@ const file_toshi_workspace_v1_hosts_proto_rawDesc = "" +
 	"\x06job_id\x18\t \x01(\tR\x05jobId\x129\n" +
 	"\n" +
 	"claimed_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tclaimedAt\"\xdb\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tclaimedAt\"\xeb\x02\n" +
 	"\tHostAlert\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x127\n" +
-	"\traised_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\braisedAt\x120\n" +
-	"\x05since\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x14\n" +
+	"\traised_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\braisedAt\x12@\n" +
+	"\x0efirst_event_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\ffirstEventAt\x12\x14\n" +
 	"\x05count\x18\x04 \x01(\x03R\x05count\x12D\n" +
 	"\areasons\x18\x05 \x03(\v2*.toshi.workspace.v1.HostAlert.ReasonsEntryR\areasons\x12\x1d\n" +
 	"\n" +
@@ -2775,7 +2776,7 @@ var file_toshi_workspace_v1_hosts_proto_depIdxs = []int32{
 	34, // 23: toshi.workspace.v1.HostEgress.changed_at:type_name -> google.protobuf.Timestamp
 	34, // 24: toshi.workspace.v1.HostVolume.claimed_at:type_name -> google.protobuf.Timestamp
 	34, // 25: toshi.workspace.v1.HostAlert.raised_at:type_name -> google.protobuf.Timestamp
-	34, // 26: toshi.workspace.v1.HostAlert.since:type_name -> google.protobuf.Timestamp
+	34, // 26: toshi.workspace.v1.HostAlert.first_event_at:type_name -> google.protobuf.Timestamp
 	30, // 27: toshi.workspace.v1.HostAlert.reasons:type_name -> toshi.workspace.v1.HostAlert.ReasonsEntry
 	31, // 28: toshi.workspace.v1.CloudHost.instance_types:type_name -> toshi.workspace.v1.CloudHost.InstanceTypesEntry
 	34, // 29: toshi.workspace.v1.CloudHost.created_at:type_name -> google.protobuf.Timestamp

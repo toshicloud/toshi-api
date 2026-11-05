@@ -449,8 +449,8 @@ message EndpointClient {
   // connect_token when a connect token admitted its last attach; empty
   // otherwise.
   string credential = 5;
-  // When its last attach began.
-  google.protobuf.Timestamp attached_since = 6;
+  // When its last attach began; it survives the attach ending.
+  google.protobuf.Timestamp attached_at = 6;
   // Its last attach or acknowledgement.
   google.protobuf.Timestamp seen_at = 7;
   // When its last connection ended, if recorded; unset while attached.

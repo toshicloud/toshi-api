@@ -499,12 +499,13 @@ message HostVolume {
 message HostAlert {
   // kind is the alert, such as "runner_exits_without_job".
   string kind = 1;
-  // raised_at is when it was raised; since is the first event it counts.
+  // raised_at is when it was raised; first_event_at is the first event it
+  // counts.
   google.protobuf.Timestamp raised_at = 2;
   // The time of the first event the alert counts.
-  google.protobuf.Timestamp since = 3;
-  // count is the events counted from since, and reasons the same events by
-  // reason; top_reason has the most.
+  google.protobuf.Timestamp first_event_at = 3;
+  // count is the events counted from first_event_at, and reasons the same
+  // events by reason; top_reason has the most.
   int64 count = 4;
   // The counted events by reason: the host, workspace or reason class each
   // one is counted under.

@@ -1225,7 +1225,7 @@ message ListAuditEventsRequest {
   // Only this action; empty matches every action.
   string action = 2;
   // Only events at or after this time; unset is unbounded.
-  google.protobuf.Timestamp since = 3;
+  google.protobuf.Timestamp start_at = 3;
   // The most events in one page; zero lets the server choose.
   int32 page_size = 4;
   reserved 5;
@@ -1875,12 +1875,13 @@ message ListHostAlertsResponse {
 message OperatorAlert {
   // kind is the alert, such as "runner_exits_without_job".
   string kind = 1;
-  // raised_at is when it was raised; since is the first event it counts.
+  // raised_at is when it was raised; first_event_at is the first event it
+  // counts.
   google.protobuf.Timestamp raised_at = 2;
-  // The first event it counts.
-  google.protobuf.Timestamp since = 3;
-  // count is the events counted from since, and reasons the same events by
-  // reason; top_reason has the most.
+  // The time of the first event the alert counts.
+  google.protobuf.Timestamp first_event_at = 3;
+  // count is the events counted from first_event_at, and reasons the same
+  // events by reason; top_reason has the most.
   int64 count = 4;
   // The events counted, by reason.
   map<string, int64> reasons = 5;

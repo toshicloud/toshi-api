@@ -3092,7 +3092,7 @@ type ListAuditEventsRequest struct {
 	// Only this action; empty matches every action.
 	Action string `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
 	// Only events at or after this time; unset is unbounded.
-	Since *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since,proto3" json:"since,omitempty"`
+	StartAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
 	// The most events in one page; zero lets the server choose.
 	PageSize int32 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// Only events whose actor_id is exactly this: the id without the kind (a
@@ -3160,9 +3160,9 @@ func (x *ListAuditEventsRequest) GetAction() string {
 	return ""
 }
 
-func (x *ListAuditEventsRequest) GetSince() *timestamppb.Timestamp {
+func (x *ListAuditEventsRequest) GetStartAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.StartAt
 	}
 	return nil
 }
@@ -6502,12 +6502,13 @@ type OperatorAlert struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// kind is the alert, such as "runner_exits_without_job".
 	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
-	// raised_at is when it was raised; since is the first event it counts.
+	// raised_at is when it was raised; first_event_at is the first event it
+	// counts.
 	RaisedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=raised_at,json=raisedAt,proto3" json:"raised_at,omitempty"`
-	// The first event it counts.
-	Since *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since,proto3" json:"since,omitempty"`
-	// count is the events counted from since, and reasons the same events by
-	// reason; top_reason has the most.
+	// The time of the first event the alert counts.
+	FirstEventAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=first_event_at,json=firstEventAt,proto3" json:"first_event_at,omitempty"`
+	// count is the events counted from first_event_at, and reasons the same
+	// events by reason; top_reason has the most.
 	Count int64 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
 	// The events counted, by reason.
 	Reasons map[string]int64 `protobuf:"bytes,5,rep,name=reasons,proto3" json:"reasons,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
@@ -6565,9 +6566,9 @@ func (x *OperatorAlert) GetRaisedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *OperatorAlert) GetSince() *timestamppb.Timestamp {
+func (x *OperatorAlert) GetFirstEventAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Since
+		return x.FirstEventAt
 	}
 	return nil
 }
@@ -15511,11 +15512,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"\aoutcome\x18\f \x01(\tR\aoutcome\x12\x19\n" +
 	"\btoken_id\x18\r \x01(\tR\atokenId\x12\x1d\n" +
 	"\n" +
-	"actor_name\x18\x0e \x01(\tR\tactorName\"\xaf\x02\n" +
+	"actor_name\x18\x0e \x01(\tR\tactorName\"\xb4\x02\n" +
 	"\x16ListAuditEventsRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x16\n" +
-	"\x06action\x18\x02 \x01(\tR\x06action\x120\n" +
-	"\x05since\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x1b\n" +
+	"\x06action\x18\x02 \x01(\tR\x06action\x125\n" +
+	"\bstart_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\astartAt\x12\x1b\n" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x14\n" +
 	"\x05actor\x18\x06 \x01(\tR\x05actor\x12\x18\n" +
 	"\aactions\x18\a \x03(\tR\aactions\x12\x16\n" +
@@ -15781,11 +15782,11 @@ const file_toshi_operator_v1_operator_proto_rawDesc = "" +
 	"page_token\x18\x03 \x01(\tR\tpageToken\"z\n" +
 	"\x16ListHostAlertsResponse\x128\n" +
 	"\x06alerts\x18\x01 \x03(\v2 .toshi.operator.v1.OperatorAlertR\x06alerts\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x80\x03\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x90\x03\n" +
 	"\rOperatorAlert\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x127\n" +
-	"\traised_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\braisedAt\x120\n" +
-	"\x05since\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x05since\x12\x14\n" +
+	"\traised_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\braisedAt\x12@\n" +
+	"\x0efirst_event_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\ffirstEventAt\x12\x14\n" +
 	"\x05count\x18\x04 \x01(\x03R\x05count\x12G\n" +
 	"\areasons\x18\x05 \x03(\v2-.toshi.operator.v1.OperatorAlert.ReasonsEntryR\areasons\x12\x1d\n" +
 	"\n" +
@@ -16888,7 +16889,7 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	0,   // 35: toshi.operator.v1.ListJobsRequest.states:type_name -> toshi.operator.v1.JobState
 	13,  // 36: toshi.operator.v1.ListJobsResponse.jobs:type_name -> toshi.operator.v1.Job
 	181, // 37: toshi.operator.v1.AuditEvent.at:type_name -> google.protobuf.Timestamp
-	181, // 38: toshi.operator.v1.ListAuditEventsRequest.since:type_name -> google.protobuf.Timestamp
+	181, // 38: toshi.operator.v1.ListAuditEventsRequest.start_at:type_name -> google.protobuf.Timestamp
 	26,  // 39: toshi.operator.v1.ListAuditEventsResponse.events:type_name -> toshi.operator.v1.AuditEvent
 	2,   // 40: toshi.operator.v1.ListHostsRequest.states:type_name -> toshi.operator.v1.HostState
 	21,  // 41: toshi.operator.v1.ListHostsResponse.hosts:type_name -> toshi.operator.v1.Host
@@ -16936,7 +16937,7 @@ var file_toshi_operator_v1_operator_proto_depIdxs = []int32{
 	73,  // 83: toshi.operator.v1.ListOperatorAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
 	73,  // 84: toshi.operator.v1.ListHostAlertsResponse.alerts:type_name -> toshi.operator.v1.OperatorAlert
 	181, // 85: toshi.operator.v1.OperatorAlert.raised_at:type_name -> google.protobuf.Timestamp
-	181, // 86: toshi.operator.v1.OperatorAlert.since:type_name -> google.protobuf.Timestamp
+	181, // 86: toshi.operator.v1.OperatorAlert.first_event_at:type_name -> google.protobuf.Timestamp
 	179, // 87: toshi.operator.v1.OperatorAlert.reasons:type_name -> toshi.operator.v1.OperatorAlert.ReasonsEntry
 	68,  // 88: toshi.operator.v1.ListPlansResponse.plans:type_name -> toshi.operator.v1.Plan
 	8,   // 89: toshi.operator.v1.Check.state:type_name -> toshi.operator.v1.CheckState

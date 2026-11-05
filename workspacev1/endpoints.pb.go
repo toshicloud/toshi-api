@@ -1002,8 +1002,8 @@ type EndpointClient struct {
 	// connect_token when a connect token admitted its last attach; empty
 	// otherwise.
 	Credential string `protobuf:"bytes,5,opt,name=credential,proto3" json:"credential,omitempty"`
-	// When its last attach began.
-	AttachedSince *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=attached_since,json=attachedSince,proto3" json:"attached_since,omitempty"`
+	// When its last attach began; it survives the attach ending.
+	AttachedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=attached_at,json=attachedAt,proto3" json:"attached_at,omitempty"`
 	// Its last attach or acknowledgement.
 	SeenAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=seen_at,json=seenAt,proto3" json:"seen_at,omitempty"`
 	// When its last connection ended, if recorded; unset while attached.
@@ -1082,9 +1082,9 @@ func (x *EndpointClient) GetCredential() string {
 	return ""
 }
 
-func (x *EndpointClient) GetAttachedSince() *timestamppb.Timestamp {
+func (x *EndpointClient) GetAttachedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.AttachedSince
+		return x.AttachedAt
 	}
 	return nil
 }
@@ -4515,7 +4515,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\vreplayed_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"replayedAt\x12?\n" +
 	"\rscheduled_for\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\fscheduledFor\x12=\n" +
-	"\benvelope\x18\x0e \x01(\v2!.toshi.workspace.v1.EventEnvelopeR\benvelopeJ\x04\b\x01\x10\x02J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\x06\x10\aR\x02idR\x04nameR\x04timeR\x06sourceR\x04data\"\xa9\x03\n" +
+	"\benvelope\x18\x0e \x01(\v2!.toshi.workspace.v1.EventEnvelopeR\benvelopeJ\x04\b\x01\x10\x02J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\x06\x10\aR\x02idR\x04nameR\x04timeR\x06sourceR\x04data\"\xa3\x03\n" +
 	"\x0eEndpointClient\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12:\n" +
 	"\x04mode\x18\x02 \x01(\x0e2&.toshi.workspace.v1.EndpointAttachModeR\x04mode\x12\x1f\n" +
@@ -4524,8 +4524,9 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x06device\x18\x04 \x01(\tR\x06device\x12\x1e\n" +
 	"\n" +
 	"credential\x18\x05 \x01(\tR\n" +
-	"credential\x12A\n" +
-	"\x0eattached_since\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\rattachedSince\x123\n" +
+	"credential\x12;\n" +
+	"\vattached_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"attachedAt\x123\n" +
 	"\aseen_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x06seenAt\x12;\n" +
 	"\vdetached_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"detachedAt\x12!\n" +
@@ -4946,7 +4947,7 @@ var file_toshi_workspace_v1_endpoints_proto_depIdxs = []int32{
 	56, // 16: toshi.workspace.v1.EndpointMessage.scheduled_for:type_name -> google.protobuf.Timestamp
 	58, // 17: toshi.workspace.v1.EndpointMessage.envelope:type_name -> toshi.workspace.v1.EventEnvelope
 	2,  // 18: toshi.workspace.v1.EndpointClient.mode:type_name -> toshi.workspace.v1.EndpointAttachMode
-	56, // 19: toshi.workspace.v1.EndpointClient.attached_since:type_name -> google.protobuf.Timestamp
+	56, // 19: toshi.workspace.v1.EndpointClient.attached_at:type_name -> google.protobuf.Timestamp
 	56, // 20: toshi.workspace.v1.EndpointClient.seen_at:type_name -> google.protobuf.Timestamp
 	56, // 21: toshi.workspace.v1.EndpointClient.detached_at:type_name -> google.protobuf.Timestamp
 	59, // 22: toshi.workspace.v1.EndpointDefault.workload_kind:type_name -> toshi.workspace.v1.HostJobKind
