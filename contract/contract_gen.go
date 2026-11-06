@@ -2001,7 +2001,7 @@ func Labels() map[string]map[string]string {
 			"mail_expired":          "Raw message expired",
 			"export_expired":        "Export link expired",
 			"sandbox_stop_snapshot": "Saved disk expired",
-			"sandbox_stop_orphan":   "Saved disk never reported",
+			"sandbox_stop_orphan":   "Saved disk never finished",
 		},
 		"WorkloadKind": {
 			"job":     "Job",
