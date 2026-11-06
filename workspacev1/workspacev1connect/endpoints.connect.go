@@ -127,10 +127,17 @@ type EndpointServiceClient interface {
 	GetEndpointRequest(context.Context, *connect.Request[workspacev1.GetEndpointRequestRequest]) (*connect.Response[workspacev1.GetEndpointRequestResponse], error)
 	// ExportEndpointLog streams a file of an endpoint's log: a stream endpoint's
 	// output between two offsets, as bytes, or an http endpoint's request
-	// records between two sequence numbers or times, one JSON line each,
-	// oldest first. One export holds at most the control plane's export
-	// limit, 64 MiB unless set; the first response's next says where the
-	// following export starts. Each export is recorded in the audit log.
+	// records between two sequence numbers or times as JSON lines, oldest
+	// first. The first line of records is {"header":{"since":...,"until":...,
+	// "retention_boundary":...|null,"crossed":true|false,"from":...,"to":...,
+	// "oldest_kept":...,"job":...,"endpoint":...,"exported_at":...}}, followed
+	// by one EndpointRequest per line. One export holds at most the control
+	// plane's export limit, 64 MiB unless set; the first response's next says
+	// where the following export starts, and a cursor from a response resumes
+	// after its last record, sending the header again. A malformed cursor or
+	// one from another range fails with INVALID_ARGUMENT; a cursor behind the
+	// oldest record kept fails with OUT_OF_RANGE. Each export is recorded in
+	// the audit log.
 	ExportEndpointLog(context.Context, *connect.Request[workspacev1.ExportEndpointLogRequest]) (*connect.ServerStreamForClient[workspacev1.ExportEndpointLogResponse], error)
 	// CreateEndpointConnectToken mints a token that attaches one client to an
 	// endpoint, or opens a preview in a browser, once, before it expires. An
@@ -433,10 +440,17 @@ type EndpointServiceHandler interface {
 	GetEndpointRequest(context.Context, *connect.Request[workspacev1.GetEndpointRequestRequest]) (*connect.Response[workspacev1.GetEndpointRequestResponse], error)
 	// ExportEndpointLog streams a file of an endpoint's log: a stream endpoint's
 	// output between two offsets, as bytes, or an http endpoint's request
-	// records between two sequence numbers or times, one JSON line each,
-	// oldest first. One export holds at most the control plane's export
-	// limit, 64 MiB unless set; the first response's next says where the
-	// following export starts. Each export is recorded in the audit log.
+	// records between two sequence numbers or times as JSON lines, oldest
+	// first. The first line of records is {"header":{"since":...,"until":...,
+	// "retention_boundary":...|null,"crossed":true|false,"from":...,"to":...,
+	// "oldest_kept":...,"job":...,"endpoint":...,"exported_at":...}}, followed
+	// by one EndpointRequest per line. One export holds at most the control
+	// plane's export limit, 64 MiB unless set; the first response's next says
+	// where the following export starts, and a cursor from a response resumes
+	// after its last record, sending the header again. A malformed cursor or
+	// one from another range fails with INVALID_ARGUMENT; a cursor behind the
+	// oldest record kept fails with OUT_OF_RANGE. Each export is recorded in
+	// the audit log.
 	ExportEndpointLog(context.Context, *connect.Request[workspacev1.ExportEndpointLogRequest], *connect.ServerStream[workspacev1.ExportEndpointLogResponse]) error
 	// CreateEndpointConnectToken mints a token that attaches one client to an
 	// endpoint, or opens a preview in a browser, once, before it expires. An

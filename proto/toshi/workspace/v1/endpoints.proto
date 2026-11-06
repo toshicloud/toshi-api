@@ -104,10 +104,17 @@ service EndpointService {
 
   // ExportEndpointLog streams a file of an endpoint's log: a stream endpoint's
   // output between two offsets, as bytes, or an http endpoint's request
-  // records between two sequence numbers or times, one JSON line each,
-  // oldest first. One export holds at most the control plane's export
-  // limit, 64 MiB unless set; the first response's next says where the
-  // following export starts. Each export is recorded in the audit log.
+  // records between two sequence numbers or times as JSON lines, oldest
+  // first. The first line of records is {"header":{"since":...,"until":...,
+  // "retention_boundary":...|null,"crossed":true|false,"from":...,"to":...,
+  // "oldest_kept":...,"job":...,"endpoint":...,"exported_at":...}}, followed
+  // by one EndpointRequest per line. One export holds at most the control
+  // plane's export limit, 64 MiB unless set; the first response's next says
+  // where the following export starts, and a cursor from a response resumes
+  // after its last record, sending the header again. A malformed cursor or
+  // one from another range fails with INVALID_ARGUMENT; a cursor behind the
+  // oldest record kept fails with OUT_OF_RANGE. Each export is recorded in
+  // the audit log.
   rpc ExportEndpointLog(ExportEndpointLogRequest) returns (stream ExportEndpointLogResponse) {
     option (toshi.permission) = "endpoints.read";
     option (toshi.audit) = {
@@ -907,15 +914,19 @@ message ExportEndpointLogRequest {
   // default; above 3600 seconds is INVALID_ARGUMENT. Set without
   // download_url, it is INVALID_ARGUMENT.
   int64 ttl_seconds = 9 [(toshi.bound) = {name: "export_endpoint_log_download_url_ttl", unit: UNIT_SECONDS, default: 300, max: 3600}];
+  // For records only: a cursor from a previous response, to resume after its
+  // last record. The other range fields must be the ones that call had.
+  string cursor = 10;
 }
 
 // ExportEndpointLogResponse carries one chunk of the exported file, or the
 // one response of a download_url export.
 message ExportEndpointLogResponse {
-  // The file's next bytes.
+  // The file's next bytes. Records come as complete JSON lines, unless one
+  // line alone is longer than a response holds.
   bytes data = 1;
-  // The rest is set on the first response only. The file's name, with
-  // the range it holds.
+  // file_name, content_type, from and next are set on the first response
+  // only. The file's name, with the range it holds.
   string file_name = 2;
   // application/octet-stream for output, application/x-ndjson for
   // records.
@@ -931,6 +942,10 @@ message ExportEndpointLogResponse {
   string url = 6;
   // When url stops working; set with url.
   google.protobuf.Timestamp expires_at = 7;
+  // For records only: resumes after the last record in data. Empty on a
+  // response that ends no line; a file with no record keeps the cursor the
+  // call started with.
+  string cursor = 8;
 }
 
 // CreateEndpointConnectTokenRequest names the endpoint a connect token

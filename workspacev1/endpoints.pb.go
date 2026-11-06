@@ -3241,7 +3241,10 @@ type ExportEndpointLogRequest struct {
 	// How long a download_url export's URL stays valid: 0 is 300 seconds, the
 	// default; above 3600 seconds is INVALID_ARGUMENT. Set without
 	// download_url, it is INVALID_ARGUMENT.
-	TtlSeconds    int64 `protobuf:"varint,9,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
+	TtlSeconds int64 `protobuf:"varint,9,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`
+	// For records only: a cursor from a previous response, to resume after its
+	// last record. The other range fields must be the ones that call had.
+	Cursor        string `protobuf:"bytes,10,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3339,14 +3342,22 @@ func (x *ExportEndpointLogRequest) GetTtlSeconds() int64 {
 	return 0
 }
 
+func (x *ExportEndpointLogRequest) GetCursor() string {
+	if x != nil {
+		return x.Cursor
+	}
+	return ""
+}
+
 // ExportEndpointLogResponse carries one chunk of the exported file, or the
 // one response of a download_url export.
 type ExportEndpointLogResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The file's next bytes.
+	// The file's next bytes. Records come as complete JSON lines, unless one
+	// line alone is longer than a response holds.
 	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	// The rest is set on the first response only. The file's name, with
-	// the range it holds.
+	// file_name, content_type, from and next are set on the first response
+	// only. The file's name, with the range it holds.
 	FileName string `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
 	// application/octet-stream for output, application/x-ndjson for
 	// records.
@@ -3361,7 +3372,11 @@ type ExportEndpointLogResponse struct {
 	// file until expires_at.
 	Url string `protobuf:"bytes,6,opt,name=url,proto3" json:"url,omitempty"`
 	// When url stops working; set with url.
-	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// For records only: resumes after the last record in data. Empty on a
+	// response that ends no line; a file with no record keeps the cursor the
+	// call started with.
+	Cursor        string `protobuf:"bytes,8,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3443,6 +3458,13 @@ func (x *ExportEndpointLogResponse) GetExpiresAt() *timestamppb.Timestamp {
 		return x.ExpiresAt
 	}
 	return nil
+}
+
+func (x *ExportEndpointLogResponse) GetCursor() string {
+	if x != nil {
+		return x.Cursor
+	}
+	return ""
 }
 
 // CreateEndpointConnectTokenRequest names the endpoint a connect token
@@ -4699,7 +4721,7 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
 	"\x03seq\x18\x03 \x01(\x03R\x03seq\"[\n" +
 	"\x1aGetEndpointRequestResponse\x12=\n" +
-	"\arequest\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointRequestR\arequest\"\x98\x03\n" +
+	"\arequest\x18\x01 \x01(\v2#.toshi.workspace.v1.EndpointRequestR\arequest\"\xb0\x03\n" +
 	"\x18ExportEndpointLogRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x121\n" +
@@ -4711,9 +4733,11 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\fdownload_url\x18\b \x01(\bR\vdownloadUrl\x12S\n" +
 	"\vttl_seconds\x18\t \x01(\x03B2\x8a\xf4\x18.\n" +
 	"$export_endpoint_log_download_url_ttl\x10\x01\x18\xac\x02(\x90\x1cR\n" +
-	"ttlSecondsB\a\n" +
+	"ttlSeconds\x12\x16\n" +
+	"\x06cursor\x18\n" +
+	" \x01(\tR\x06cursorB\a\n" +
 	"\x05_fromB\x05\n" +
-	"\x03_to\"\xe4\x01\n" +
+	"\x03_to\"\xfc\x01\n" +
 	"\x19ExportEndpointLogResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x01(\fR\x04data\x12\x1b\n" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12!\n" +
@@ -4722,7 +4746,8 @@ const file_toshi_workspace_v1_endpoints_proto_rawDesc = "" +
 	"\x04next\x18\x05 \x01(\x03R\x04next\x12\x10\n" +
 	"\x03url\x18\x06 \x01(\tR\x03url\x129\n" +
 	"\n" +
-	"expires_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xd9\x01\n" +
+	"expires_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\x12\x16\n" +
+	"\x06cursor\x18\b \x01(\tR\x06cursor\"\xd9\x01\n" +
 	"!CreateEndpointConnectTokenRequest\x12\x15\n" +
 	"\x06job_id\x18\x01 \x01(\tR\x05jobId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
