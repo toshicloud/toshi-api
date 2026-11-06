@@ -1613,6 +1613,7 @@ func AlertTitles() map[string]string {
 		"vm_died":                  "VM died under a job",
 		"spend_cap_reached":        "Workspace at its spending cap",
 		"backup_overdue":           "Backup overdue",
+		"backup_not_configured":    "Backup not configured",
 		"backup_copy_failed":       "Backup copy failed",
 		"restore_drill_overdue":    "Restore drill overdue",
 		"store_size_over":          "Store over its size limit",
