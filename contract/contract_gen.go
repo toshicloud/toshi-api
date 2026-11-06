@@ -360,7 +360,7 @@ const (
 	ReasonPlanLimit = "PLAN_LIMIT"
 	// ReasonProjectLimit: Creating a volume or raising its cap would pass the project's volume ceiling; metadata carries `key`, `cause`, `limit`, `requested`, `raisable`, `in_use_bytes` and `unit`.
 	ReasonProjectLimit = "PROJECT_LIMIT"
-	// ReasonRateLimited: A rate no plan owns, set in the deployment's configuration: a Workspace API caller, a webhook connection, agent registration from one address, or failed host enrollments; `key` names the configuration key, `limit` its value and `next_at` (RFC 3339, UTC) when to try again.
+	// ReasonRateLimited: A limit no plan owns, set in the deployment's configuration or an endpoint's policy: a Workspace API caller, a webhook connection, agent registration from one address, failed host enrollments, a debug session's relays and their bytes, or a stream endpoint's clients; `key` names the key that sets it, `limit` its value and `next_at` (RFC 3339, UTC) when to try again, where that time is known.
 	ReasonRateLimited = "RATE_LIMITED"
 	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_at` (RFC 3339, UTC) is the earliest time every window has room again, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
 	ReasonStartRate = "START_RATE"
