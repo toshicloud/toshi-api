@@ -39,9 +39,9 @@ enum EndReason {
 enum StopReason {
   // Not set: a workload that was not stopped has none.
   STOP_REASON_UNSPECIFIED = 0;
-  // Its owner stopped it: deleted it, or cancelled its job.
+  // Its owner stopped it: deleted it, or cancelled it.
   STOP_REASON_OWNER = 1;
-  // Its max_duration, or the plan's sandbox cap, passed.
+  // Its max_duration, or its plan's cap on a sandbox or a job, passed.
   STOP_REASON_MAX_DURATION = 2;
   // The workspace's spend this month reached its spending cap.
   STOP_REASON_SPEND_CAP = 3;
@@ -49,7 +49,7 @@ enum StopReason {
   STOP_REASON_WORKSPACE_SUSPENDED = 4;
   // The workspace's deletion was scheduled.
   STOP_REASON_WORKSPACE_DELETED = 5;
-  // An operator cancelled its job.
+  // An operator cancelled it.
   STOP_REASON_OPERATOR = 6;
   // Toshi stopped it for a policy; stop_cause says which.
   STOP_REASON_POLICY = 7;
@@ -63,6 +63,10 @@ enum StopReason {
   STOP_REASON_REVISION_REPLACED = 10;
   // The sandbox was idle for its auto-stop interval.
   STOP_REASON_AUTO_STOP = 11;
+  // Its service went to sleep. Not on a status yet.
+  STOP_REASON_SLEEP = 12;
+  // Its service started a new run. Not on a status yet.
+  STOP_REASON_SERVICE_RESTART = 13;
 }
 
 // StopCause identifies the policy behind a stop.
@@ -175,6 +179,10 @@ message JobStatus {
   // runner is one. 0 until an attempt started, and for a job that ended
   // before any did.
   int32 attempt = 16;
+  // Why the job was stopped: OWNER, MAX_DURATION, OPERATOR or POLICY. Unset
+  // for a job nothing stopped, and for one that ended before Toshi recorded
+  // this.
+  StopReason stop_reason = 17;
 }
 
 // JobAttempt is one attempt of a job: one assignment to a runner, and how
