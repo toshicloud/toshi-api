@@ -284,8 +284,9 @@ type Connection struct {
 	Target *ConnectionTarget `protobuf:"bytes,10,opt,name=target,proto3" json:"target,omitempty"`
 	// The inbound address a WEBHOOK connection's sender POSTs to: the
 	// deployment's public address and /ingress/ with the connection's
-	// address token. Empty for GITHUB and MAIL, and when the deployment names
-	// no public address.
+	// address token. Empty for GITHUB and MAIL, when the deployment names no
+	// public address, and on a closed workspace, where the address is kept and
+	// not shown.
 	IngressUrl string `protobuf:"bytes,11,opt,name=ingress_url,json=ingressUrl,proto3" json:"ingress_url,omitempty"`
 	// Who manages this object: "manifest" when the project manifest declares
 	// it, empty when nothing does. A manifest apply sets managed_by,

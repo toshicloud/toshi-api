@@ -94,8 +94,9 @@ export type Connection = Message<"toshi.workspace.v1.Connection"> & {
   /**
    * The inbound address a WEBHOOK connection's sender POSTs to: the
    * deployment's public address and /ingress/ with the connection's
-   * address token. Empty for GITHUB and MAIL, and when the deployment names
-   * no public address.
+   * address token. Empty for GITHUB and MAIL, when the deployment names no
+   * public address, and on a closed workspace, where the address is kept and
+   * not shown.
    *
    * @generated from field: string ingress_url = 11;
    */
@@ -221,8 +222,9 @@ export type ConnectionJson = {
   /**
    * The inbound address a WEBHOOK connection's sender POSTs to: the
    * deployment's public address and /ingress/ with the connection's
-   * address token. Empty for GITHUB and MAIL, and when the deployment names
-   * no public address.
+   * address token. Empty for GITHUB and MAIL, when the deployment names no
+   * public address, and on a closed workspace, where the address is kept and
+   * not shown.
    *
    * @generated from field: string ingress_url = 11;
    */

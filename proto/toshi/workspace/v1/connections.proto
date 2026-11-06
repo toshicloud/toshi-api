@@ -192,8 +192,9 @@ message Connection {
   ConnectionTarget target = 10;
   // The inbound address a WEBHOOK connection's sender POSTs to: the
   // deployment's public address and /ingress/ with the connection's
-  // address token. Empty for GITHUB and MAIL, and when the deployment names
-  // no public address.
+  // address token. Empty for GITHUB and MAIL, when the deployment names no
+  // public address, and on a closed workspace, where the address is kept and
+  // not shown.
   string ingress_url = 11;
   // Who manages this object: "manifest" when the project manifest declares
   // it, empty when nothing does. A manifest apply sets managed_by,
