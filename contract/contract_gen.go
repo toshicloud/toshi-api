@@ -292,6 +292,8 @@ const (
 	ReasonRequestKeyTargetGone = "REQUEST_KEY_TARGET_GONE"
 	// ReasonRestorePeriodEnded: `RestoreProject` after the project's purge time has passed; the metadata `purge_at` (RFC 3339, UTC) is that time.
 	ReasonRestorePeriodEnded = "RESTORE_PERIOD_ENDED"
+	// ReasonRootKeyMismatch: Not sent by the API: a control plane start stops with it, before it serves, when the key provider cannot unwrap the store's key check row or the value differs, and a store with no row stops with it when none of its newest wrapped values opens.
+	ReasonRootKeyMismatch = "ROOT_KEY_MISMATCH"
 	// ReasonSigninUntested: Setting `settings.sign_in` from a session or token not signed in through that provider.
 	ReasonSigninUntested = "SIGNIN_UNTESTED"
 	// ReasonStateVolumeGone: `StartSandbox` of a sandbox without `keep_vm` whose state volume was deleted or lost; the sandbox stays stopped.
@@ -917,6 +919,8 @@ const (
 	AuditActionStoreRestored = "store.restored"
 	// AuditActionStoreRestoreDrilled is the "store.restore_drilled" audit action.
 	AuditActionStoreRestoreDrilled = "store.restore_drilled"
+	// AuditActionStoreKeyCheckReset is the "store.key_check_reset" audit action.
+	AuditActionStoreKeyCheckReset = "store.key_check_reset"
 	// AuditActionAdmissionAllowed is the "admission.allowed" audit action.
 	AuditActionAdmissionAllowed = "admission.allowed"
 	// AuditActionAdmissionDenied is the "admission.denied" audit action.
@@ -1457,6 +1461,7 @@ func AuditActionNames() []string {
 		"store.backup_copy_failed",
 		"store.restored",
 		"store.restore_drilled",
+		"store.key_check_reset",
 		"admission.allowed",
 		"admission.denied",
 		"delivery.failed",
