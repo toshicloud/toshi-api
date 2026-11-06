@@ -1034,6 +1034,17 @@ export const labels = {
     unknown: "Unknown secret",
     missing_key: "No key sent",
   },
+  StorageDeletionReason: {
+    artifact_expired: "Artifact expired",
+    upload_abandoned: "Upload abandoned",
+    upload_completed: "Upload completed",
+    tenant_purge: "Workspace purged",
+    volume_deleted: "Volume deleted",
+    mail_expired: "Raw message expired",
+    export_expired: "Export link expired",
+    sandbox_stop_snapshot: "Saved disk expired",
+    sandbox_stop_orphan: "Saved disk never reported",
+  },
   WorkloadKind: {
     job: "Job",
     sandbox: "Sandbox",

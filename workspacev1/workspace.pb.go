@@ -114,7 +114,8 @@ const (
 	StopReason_STOP_REASON_WORKSPACE_SUSPENDED StopReason = 4
 	// The workspace's deletion was scheduled.
 	StopReason_STOP_REASON_WORKSPACE_DELETED StopReason = 5
-	// An operator cancelled it.
+	// It was cancelled with no workspace caller and no other reason recorded:
+	// by an operator, or by Toshi with no one calling, as when a server closes.
 	StopReason_STOP_REASON_OPERATOR StopReason = 6
 	// Toshi stopped it for a policy; stop_cause says which.
 	StopReason_STOP_REASON_POLICY StopReason = 7
@@ -1779,9 +1780,13 @@ type JobStatus struct {
 	// runner is one. 0 until an attempt started, and for a job that ended
 	// before any did.
 	Attempt int32 `protobuf:"varint,16,opt,name=attempt,proto3" json:"attempt,omitempty"`
-	// Why the job was stopped: OWNER, MAX_DURATION, OPERATOR or POLICY. Unset
-	// for a job nothing stopped, and for one that ended before Toshi recorded
-	// this.
+	// Why the job was stopped: OWNER when it was cancelled or deleted in its
+	// workspace, as an operator's token that calls CancelJob on a job with a
+	// run open also reads; MAX_DURATION when its plan's run cap passed;
+	// OPERATOR when it was cancelled with no workspace caller and no other
+	// reason recorded, by an operator or by Toshi with no one calling; POLICY
+	// when Toshi stopped it for a policy. Unset for a job nothing stopped, and
+	// for one that ended before Toshi recorded this.
 	StopReason StopReason `protobuf:"varint,17,opt,name=stop_reason,json=stopReason,proto3,enum=toshi.workspace.v1.StopReason" json:"stop_reason,omitempty"`
 	// The cause of a policy stop; unspecified for another stop.
 	StopCause     StopCause `protobuf:"varint,18,opt,name=stop_cause,json=stopCause,proto3,enum=toshi.workspace.v1.StopCause" json:"stop_cause,omitempty"`

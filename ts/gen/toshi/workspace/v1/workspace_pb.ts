@@ -361,9 +361,13 @@ export type JobStatus = Message<"toshi.workspace.v1.JobStatus"> & {
   attempt: number;
 
   /**
-   * Why the job was stopped: OWNER, MAX_DURATION, OPERATOR or POLICY. Unset
-   * for a job nothing stopped, and for one that ended before Toshi recorded
-   * this.
+   * Why the job was stopped: OWNER when it was cancelled or deleted in its
+   * workspace, as an operator's token that calls CancelJob on a job with a
+   * run open also reads; MAX_DURATION when its plan's run cap passed;
+   * OPERATOR when it was cancelled with no workspace caller and no other
+   * reason recorded, by an operator or by Toshi with no one calling; POLICY
+   * when Toshi stopped it for a policy. Unset for a job nothing stopped, and
+   * for one that ended before Toshi recorded this.
    *
    * @generated from field: toshi.workspace.v1.StopReason stop_reason = 17;
    */
@@ -509,9 +513,13 @@ export type JobStatusJson = {
   attempt?: number;
 
   /**
-   * Why the job was stopped: OWNER, MAX_DURATION, OPERATOR or POLICY. Unset
-   * for a job nothing stopped, and for one that ended before Toshi recorded
-   * this.
+   * Why the job was stopped: OWNER when it was cancelled or deleted in its
+   * workspace, as an operator's token that calls CancelJob on a job with a
+   * run open also reads; MAX_DURATION when its plan's run cap passed;
+   * OPERATOR when it was cancelled with no workspace caller and no other
+   * reason recorded, by an operator or by Toshi with no one calling; POLICY
+   * when Toshi stopped it for a policy. Unset for a job nothing stopped, and
+   * for one that ended before Toshi recorded this.
    *
    * @generated from field: toshi.workspace.v1.StopReason stop_reason = 17;
    */
@@ -14532,7 +14540,8 @@ export enum StopReason {
   WORKSPACE_DELETED = 5,
 
   /**
-   * An operator cancelled it.
+   * It was cancelled with no workspace caller and no other reason recorded:
+   * by an operator, or by Toshi with no one calling, as when a server closes.
    *
    * @generated from enum value: STOP_REASON_OPERATOR = 6;
    */
