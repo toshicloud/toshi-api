@@ -183,6 +183,8 @@ message JobStatus {
   // for a job nothing stopped, and for one that ended before Toshi recorded
   // this.
   StopReason stop_reason = 17;
+  // The cause of a policy stop; unspecified for another stop.
+  StopCause stop_cause = 18;
 }
 
 // JobAttempt is one attempt of a job: one assignment to a runner, and how
