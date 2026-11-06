@@ -140,6 +140,7 @@ export const reasons = {
   STORAGE_PROVIDER_EXPORT_COPIES: { code: "FAILED_PRECONDITION", metadata: ["count"], text: "This storage provider holds export copies; wait for their deletion or force retirement." },
   STORAGE_PROVIDER_IMAGE_VERSIONS: { code: "FAILED_PRECONDITION", metadata: ["count"], text: "This storage provider holds image versions; delete those images or force retirement and leave them unreadable." },
   STORAGE_PROVIDER_RAW_BODIES: { code: "FAILED_PRECONDITION", metadata: ["count"], text: "This storage provider holds raw delivery bodies; wait for them to expire or force retirement and lose them." },
+  STORE_HARD_LINKED: { code: "FAILED_PRECONDITION", metadata: ["key", "cause"], text: "This SQLite store has more than one name; remove the other links, then start." },
   STORE_IN_USE: { code: "FAILED_PRECONDITION", metadata: ["key", "cause"], text: "Another process holds this SQLite store; stop it, then try again." },
   TOSHI_LICENSED_WINDOWS: { code: "FAILED_PRECONDITION", metadata: [], text: "Displays are not available on Windows jobs in cloud pools." },
   WORKLOAD_HELD: { code: "FAILED_PRECONDITION", metadata: ["hold"], text: "This workload is on hold; ask the operator to release it.", values: { hold: ["abuse_suspected", "abuse_confirmed"] } },

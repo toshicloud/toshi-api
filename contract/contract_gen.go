@@ -310,6 +310,8 @@ const (
 	ReasonStorageProviderImageVersions = "STORAGE_PROVIDER_IMAGE_VERSIONS"
 	// ReasonStorageProviderRawBodies: `DeleteStorageProvider` while the provider holds raw delivery bodies; the metadata `count` is the number of bodies.
 	ReasonStorageProviderRawBodies = "STORAGE_PROVIDER_RAW_BODIES"
+	// ReasonStoreHardLinked: Not sent by the API: a control plane or `toshi-control admin` command opening a SQLite store with more than one hard link prints it, and a control plane exits 5; `key` is `store.dsn` and `cause` says the file has more than one name.
+	ReasonStoreHardLinked = "STORE_HARD_LINKED"
 	// ReasonStoreInUse: Not sent by the API: a control plane, `toshi-control admin migrate --apply` or `admin restore` whose SQLite store another process holds prints it and exits 5; `key` is `store.dsn` and `cause` says the file is held by another process.
 	ReasonStoreInUse = "STORE_IN_USE"
 	// ReasonToshiLicensedWindows: Any display open on a Windows job on a cloud pool.
