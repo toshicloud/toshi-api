@@ -320,13 +320,13 @@ const (
 	ReasonWorkloadHeld = "WORKLOAD_HELD"
 	// ReasonWorkspaceActive: `DeleteWorkspace` races with another workspace state change and the re-read finds the workspace active.
 	ReasonWorkspaceActive = "WORKSPACE_ACTIVE"
-	// ReasonWorkspaceDeleted: `DeleteWorkspace` or `CancelWorkspaceDeletion` on a deleted workspace.
+	// ReasonWorkspaceDeleted: A write to a deleted workspace, or `DeleteWorkspace` or `CancelWorkspaceDeletion` on one; the metadata as for `WORKSPACE_SUSPENDED`.
 	ReasonWorkspaceDeleted = "WORKSPACE_DELETED"
-	// ReasonWorkspaceDeleting: `DeleteWorkspace` or `CancelWorkspaceDeletion` on a workspace being deleted.
+	// ReasonWorkspaceDeleting: A write to a workspace being deleted, or `DeleteWorkspace` or `CancelWorkspaceDeletion` on one; the metadata as for `WORKSPACE_SUSPENDED`.
 	ReasonWorkspaceDeleting = "WORKSPACE_DELETING"
-	// ReasonWorkspaceDeletionScheduled: `DeleteWorkspace` on a workspace whose deletion is already scheduled.
+	// ReasonWorkspaceDeletionScheduled: A write to a workspace whose deletion is scheduled, or `DeleteWorkspace` on one; the metadata as for `WORKSPACE_SUSPENDED`.
 	ReasonWorkspaceDeletionScheduled = "WORKSPACE_DELETION_SCHEDULED"
-	// ReasonWorkspaceSuspended: `DeleteWorkspace` on a workspace the operator suspended; the metadata `state` carries the state.
+	// ReasonWorkspaceSuspended: A write to a workspace the operator suspended, or `DeleteWorkspace` on one.
 	ReasonWorkspaceSuspended = "WORKSPACE_SUSPENDED"
 	// ReasonImageBaseUnknown: `CreateImage` with a `base` that is not one of Toshi's.
 	ReasonImageBaseUnknown = "IMAGE_BASE_UNKNOWN"
