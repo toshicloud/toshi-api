@@ -754,8 +754,10 @@ export const own: GenExtension<MethodOptions, boolean> = /*@__PURE__*/
   extDesc(file_toshi_permission, 5);
 
 /**
- * key_mode marks how a changing Workspace or Operator API call is retried.
- * KEY uses a request key; NATURAL needs no key. Reads carry no mark.
+ * key_mode marks how a changing Workspace, Operator, GitHub or GitHub Core
+ * API call is retried. KEY uses a request key; NATURAL needs no key,
+ * including when a retry intentionally starts a fresh attempt. Reads carry
+ * no mark.
  *
  * @generated from extension: toshi.KeyMode key_mode = 51010;
  */

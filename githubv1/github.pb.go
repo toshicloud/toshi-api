@@ -1099,15 +1099,17 @@ const file_toshi_github_v1_github_proto_rawDesc = "" +
 	"\alacking\x18\x01 \x03(\v2\x1d.toshi.github.v1.InstallationR\alacking\"8\n" +
 	"\fInstallation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
-	"\aaccount\x18\x02 \x01(\tR\aaccount2\xdc\x05\n" +
-	"\rGitHubService\x12\x7f\n" +
-	"\x0fMapInstallation\x12'.toshi.github.v1.MapInstallationRequest\x1a(.toshi.github.v1.MapInstallationResponse\"\x19\xd2\xf3\x18\x15\n" +
-	"\x13installation.mapped\x12p\n" +
-	"\x13ListOpenSourceRepos\x12+.toshi.github.v1.ListOpenSourceReposRequest\x1a,.toshi.github.v1.ListOpenSourceReposResponse\x12v\n" +
-	"\x15SetOpenSourceApproval\x12-.toshi.github.v1.SetOpenSourceApprovalRequest\x1a..toshi.github.v1.SetOpenSourceApprovalResponse\x12\xed\x01\n" +
+	"\aaccount\x18\x02 \x01(\tR\aaccount2\xa6\a\n" +
+	"\rGitHubService\x12\x83\x01\n" +
+	"\x0fMapInstallation\x12'.toshi.github.v1.MapInstallationRequest\x1a(.toshi.github.v1.MapInstallationResponse\"\x1d\xd2\xf3\x18\x15\n" +
+	"\x13installation.mapped\x90\xf4\x18\x02\x12p\n" +
+	"\x13ListOpenSourceRepos\x12+.toshi.github.v1.ListOpenSourceReposRequest\x1a,.toshi.github.v1.ListOpenSourceReposResponse\x12\x8e\x02\n" +
+	"\x15SetOpenSourceApproval\x12-.toshi.github.v1.SetOpenSourceApprovalRequest\x1a..toshi.github.v1.SetOpenSourceApprovalResponse\"\x95\x01\xd2\xf3\x18\x8c\x01\n" +
+	"\x04none\x1a\x83\x01The handler records open_source.approved or open_source.revoked for each workspace row changed or kept approval created or removed.\x90\xf4\x18\x02\x12\xed\x01\n" +
 	"\rGetJobFailure\x12%.toshi.github.v1.GetJobFailureRequest\x1a&.toshi.github.v1.GetJobFailureResponse\"\x8c\x01\xd2\xf3\x18\x87\x01\n" +
-	"\x04none\x1a\x7fA read; the failing step it stores belongs to the job the host already reported, so the write is not a change of the workspace.\x12p\n" +
-	"\x13CheckSecretDelivery\x12+.toshi.github.v1.CheckSecretDeliveryRequest\x1a,.toshi.github.v1.CheckSecretDeliveryResponseB\x1fZ\x1dgo.toshicloud.io/api/githubv1b\x06proto3"
+	"\x04none\x1a\x7fA read; the failing step it stores belongs to the job the host already reported, so the write is not a change of the workspace.\x12\x9b\x01\n" +
+	"\x13CheckSecretDelivery\x12+.toshi.github.v1.CheckSecretDeliveryRequest\x1a,.toshi.github.v1.CheckSecretDeliveryResponse\")\xd2\xf3\x18!\n" +
+	"\x1fsecret_delivery.check_published\x90\xf4\x18\x02B\x1fZ\x1dgo.toshicloud.io/api/githubv1b\x06proto3"
 
 var (
 	file_toshi_github_v1_github_proto_rawDescOnce sync.Once

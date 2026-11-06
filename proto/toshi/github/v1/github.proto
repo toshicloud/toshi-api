@@ -21,6 +21,7 @@ service GitHubService {
   // and a deleted one with FAILED_PRECONDITION. The operator token only.
   rpc MapInstallation(MapInstallationRequest) returns (MapInstallationResponse) {
     option (toshi.audit) = {action: "installation.mapped"};
+    option (toshi.key_mode) = NATURAL;
   }
 
   // ListOpenSourceRepos lists the open-source gate's repositories, one row
@@ -39,7 +40,10 @@ service GitHubService {
   // such a repository removes its kept approval. The operator token only. A
   // repo that is not owner/name fails with INVALID_ARGUMENT; a revocation of
   // a repository with neither a row nor a kept approval fails with NOT_FOUND.
-  rpc SetOpenSourceApproval(SetOpenSourceApprovalRequest) returns (SetOpenSourceApprovalResponse);
+  rpc SetOpenSourceApproval(SetOpenSourceApprovalRequest) returns (SetOpenSourceApprovalResponse) {
+    option (toshi.audit) = {action: "none", reason: "The handler records open_source.approved or open_source.revoked for each workspace row changed or kept approval created or removed."};
+    option (toshi.key_mode) = NATURAL;
+  }
 
   // GetJobFailure reads what GitHub says about a job that ended without
   // succeeding: its failing step and its check run's annotations, or why
@@ -65,7 +69,10 @@ service GitHubService {
   // installation ids only, for OperatorService.UpdateSecretDelivery to turn
   // delivery on, unless a newer check started first; a failed
   // read is stored as such. The operator token only.
-  rpc CheckSecretDelivery(CheckSecretDeliveryRequest) returns (CheckSecretDeliveryResponse);
+  rpc CheckSecretDelivery(CheckSecretDeliveryRequest) returns (CheckSecretDeliveryResponse) {
+    option (toshi.audit) = {action: "secret_delivery.check_published"};
+    option (toshi.key_mode) = NATURAL;
+  }
 }
 
 // MapInstallationRequest maps a GitHub App installation to a workspace,

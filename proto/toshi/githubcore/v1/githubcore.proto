@@ -53,6 +53,7 @@ service GitHubCoreService {
   // once: a second AdmitGrant is refused, whatever its nonce.
   rpc AdmitGrant(AdmitGrantRequest) returns (AdmitGrantResponse) {
     option (toshi.audit) = {action: "none", reason: "It admits an internal grant and changes no state of the workspace."};
+    option (toshi.key_mode) = NATURAL;
   }
 
   // GetJob returns the job the grant names when the grant's caller may
@@ -66,6 +67,7 @@ service GitHubCoreService {
   // ended, did not succeed and has no step stored.
   rpc FillJobFailingStep(FillJobFailingStepRequest) returns (FillJobFailingStepResponse) {
     option (toshi.audit) = {action: "none", reason: "It stores a value derived from a job the host already reported; the host's report is the audited change."};
+    option (toshi.key_mode) = NATURAL;
   }
 
   // ListOpenSourceRepositories lists the open-source gate's rows: for a workspace
@@ -81,13 +83,17 @@ service GitHubCoreService {
   // workspace's row of it, or keeps the decision when no workspace has a row.
   // Revoking a repository that has neither a row nor a kept decision fails
   // with NOT_FOUND. The operator's only.
-  rpc SetOpenSourceApproval(SetOpenSourceApprovalRequest) returns (SetOpenSourceApprovalResponse);
+  rpc SetOpenSourceApproval(SetOpenSourceApprovalRequest) returns (SetOpenSourceApprovalResponse) {
+    option (toshi.audit) = {action: "none", reason: "The handler records open_source.approved or open_source.revoked for each workspace row changed or kept approval created or removed."};
+    option (toshi.key_mode) = NATURAL;
+  }
 
   // MapInstallation maps a GitHub App installation to a workspace. An unknown
   // workspace fails with NOT_FOUND and a deleted one with
   // FAILED_PRECONDITION. The operator's only.
   rpc MapInstallation(MapInstallationRequest) returns (MapInstallationResponse) {
     option (toshi.audit) = {action: "installation.mapped"};
+    option (toshi.key_mode) = NATURAL;
   }
 
   // PublishJobDeliveryCheck publishes the result of the delivery check
@@ -96,6 +102,7 @@ service GitHubCoreService {
   // result published before it. The operator's only.
   rpc PublishJobDeliveryCheck(PublishJobDeliveryCheckRequest) returns (PublishJobDeliveryCheckResponse) {
     option (toshi.audit) = {action: "secret_delivery.check_published"};
+    option (toshi.key_mode) = NATURAL;
   }
 }
 

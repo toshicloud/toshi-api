@@ -791,8 +791,10 @@ var (
 	//
 	// optional bool own = 51006;
 	E_Own = &file_toshi_permission_proto_extTypes[5]
-	// key_mode marks how a changing Workspace or Operator API call is retried.
-	// KEY uses a request key; NATURAL needs no key. Reads carry no mark.
+	// key_mode marks how a changing Workspace, Operator, GitHub or GitHub Core
+	// API call is retried. KEY uses a request key; NATURAL needs no key,
+	// including when a retry intentionally starts a fresh attempt. Reads carry
+	// no mark.
 	//
 	// optional toshi.KeyMode key_mode = 51010;
 	E_KeyMode = &file_toshi_permission_proto_extTypes[6]

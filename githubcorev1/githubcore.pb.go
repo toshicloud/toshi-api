@@ -1355,20 +1355,21 @@ const file_toshi_githubcore_v1_githubcore_proto_rawDesc = "" +
 	"\x06result\x18\x02 \x01(\tR\x06result\x12\x18\n" +
 	"\alacking\x18\x03 \x03(\x03R\alacking\"?\n" +
 	"\x1fPublishJobDeliveryCheckResponse\x12\x1c\n" +
-	"\tpublished\x18\x01 \x01(\bR\tpublished2\xcc\b\n" +
-	"\x11GitHubCoreService\x12\xad\x01\n" +
+	"\tpublished\x18\x01 \x01(\bR\tpublished2\xf5\t\n" +
+	"\x11GitHubCoreService\x12\xb1\x01\n" +
 	"\n" +
-	"AdmitGrant\x12&.toshi.githubcore.v1.AdmitGrantRequest\x1a'.toshi.githubcore.v1.AdmitGrantResponse\"N\xd2\xf3\x18J\n" +
-	"\x04none\x1aBIt admits an internal grant and changes no state of the workspace.\x12Q\n" +
-	"\x06GetJob\x12\".toshi.githubcore.v1.GetJobRequest\x1a#.toshi.githubcore.v1.GetJobResponse\x12\xeb\x01\n" +
-	"\x12FillJobFailingStep\x12..toshi.githubcore.v1.FillJobFailingStepRequest\x1a/.toshi.githubcore.v1.FillJobFailingStepResponse\"t\xd2\xf3\x18p\n" +
-	"\x04none\x1ahIt stores a value derived from a job the host already reported; the host's report is the audited change.\x12\x8d\x01\n" +
-	"\x1aListOpenSourceRepositories\x126.toshi.githubcore.v1.ListOpenSourceRepositoriesRequest\x1a7.toshi.githubcore.v1.ListOpenSourceRepositoriesResponse\x12~\n" +
-	"\x15SetOpenSourceApproval\x121.toshi.githubcore.v1.SetOpenSourceApprovalRequest\x1a2.toshi.githubcore.v1.SetOpenSourceApprovalResponse\x12\x87\x01\n" +
-	"\x0fMapInstallation\x12+.toshi.githubcore.v1.MapInstallationRequest\x1a,.toshi.githubcore.v1.MapInstallationResponse\"\x19\xd2\xf3\x18\x15\n" +
-	"\x13installation.mapped\x12\xab\x01\n" +
-	"\x17PublishJobDeliveryCheck\x123.toshi.githubcore.v1.PublishJobDeliveryCheckRequest\x1a4.toshi.githubcore.v1.PublishJobDeliveryCheckResponse\"%\xd2\xf3\x18!\n" +
-	"\x1fsecret_delivery.check_publishedB#Z!go.toshicloud.io/api/githubcorev1b\x06proto3"
+	"AdmitGrant\x12&.toshi.githubcore.v1.AdmitGrantRequest\x1a'.toshi.githubcore.v1.AdmitGrantResponse\"R\xd2\xf3\x18J\n" +
+	"\x04none\x1aBIt admits an internal grant and changes no state of the workspace.\x90\xf4\x18\x02\x12Q\n" +
+	"\x06GetJob\x12\".toshi.githubcore.v1.GetJobRequest\x1a#.toshi.githubcore.v1.GetJobResponse\x12\xef\x01\n" +
+	"\x12FillJobFailingStep\x12..toshi.githubcore.v1.FillJobFailingStepRequest\x1a/.toshi.githubcore.v1.FillJobFailingStepResponse\"x\xd2\xf3\x18p\n" +
+	"\x04none\x1ahIt stores a value derived from a job the host already reported; the host's report is the audited change.\x90\xf4\x18\x02\x12\x8d\x01\n" +
+	"\x1aListOpenSourceRepositories\x126.toshi.githubcore.v1.ListOpenSourceRepositoriesRequest\x1a7.toshi.githubcore.v1.ListOpenSourceRepositoriesResponse\x12\x96\x02\n" +
+	"\x15SetOpenSourceApproval\x121.toshi.githubcore.v1.SetOpenSourceApprovalRequest\x1a2.toshi.githubcore.v1.SetOpenSourceApprovalResponse\"\x95\x01\xd2\xf3\x18\x8c\x01\n" +
+	"\x04none\x1a\x83\x01The handler records open_source.approved or open_source.revoked for each workspace row changed or kept approval created or removed.\x90\xf4\x18\x02\x12\x8b\x01\n" +
+	"\x0fMapInstallation\x12+.toshi.githubcore.v1.MapInstallationRequest\x1a,.toshi.githubcore.v1.MapInstallationResponse\"\x1d\xd2\xf3\x18\x15\n" +
+	"\x13installation.mapped\x90\xf4\x18\x02\x12\xaf\x01\n" +
+	"\x17PublishJobDeliveryCheck\x123.toshi.githubcore.v1.PublishJobDeliveryCheckRequest\x1a4.toshi.githubcore.v1.PublishJobDeliveryCheckResponse\")\xd2\xf3\x18!\n" +
+	"\x1fsecret_delivery.check_published\x90\xf4\x18\x02B#Z!go.toshicloud.io/api/githubcorev1b\x06proto3"
 
 var (
 	file_toshi_githubcore_v1_githubcore_proto_rawDescOnce sync.Once
