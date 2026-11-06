@@ -1693,6 +1693,18 @@ func Labels() map[string]map[string]string {
 			"STOPPING":  "Stopping",
 			"DEBUGGING": "Debugging",
 		},
+		"SuspendCause": {
+			"ABUSE":    "Abuse",
+			"PAYMENT":  "Payment",
+			"REQUEST":  "Owner or legal request",
+			"OPERATOR": "Operator's decision",
+		},
+		"OperatorSuspendCause": {
+			"ABUSE":    "Abuse",
+			"PAYMENT":  "Payment",
+			"REQUEST":  "Owner or legal request",
+			"OPERATOR": "Operator's decision",
+		},
 		"ServiceRunState": {
 			"QUEUED":    "Queued",
 			"STARTING":  "Starting",

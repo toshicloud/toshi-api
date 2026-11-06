@@ -213,10 +213,10 @@ service OperatorService {
 
   // SuspendWorkspace suspends an active workspace: its new and queued jobs are
   // held with hold reason workspace_suspended, its running jobs finish, and its
-  // users keep read-only access. A suspended workspace is returned unchanged. An
-  // empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
-  // NOT_FOUND, and a workspace that is deleting or deleted with
-  // FAILED_PRECONDITION. Operator only.
+  // users keep read-only access. A suspended workspace is returned unchanged,
+  // with the reason and cause it has. An empty ID or reason, or no cause, fails
+  // with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
+  // deleting or deleted with FAILED_PRECONDITION. Operator only.
   rpc SuspendWorkspace(SuspendWorkspaceRequest) returns (SuspendWorkspaceResponse) {
     option (toshi.key_mode) = NATURAL;
   }
@@ -1480,6 +1480,8 @@ message Workspace {
   string state = 17;
   // Why the operator suspended or deleted the workspace; empty when active.
   string state_reason = 18;
+  // Why the workspace was suspended; unset when none was recorded.
+  SuspendCause cause = 40;
   // When the workspace entered its state; unset for a workspace always active.
   google.protobuf.Timestamp state_since = 19;
   // When a scheduled deletion purges the workspace; unset when none.
@@ -1723,12 +1725,30 @@ message SeatMonth {
   bool billed = 3;
 }
 
+// SuspendCause is why a workspace was suspended.
+enum SuspendCause {
+  // No cause was recorded.
+  SUSPEND_CAUSE_UNSPECIFIED = 0;
+  // Conduct the operator confirmed.
+  SUSPEND_CAUSE_ABUSE = 1;
+  // The workspace's payment is unpaid, disputed or reversed.
+  SUSPEND_CAUSE_PAYMENT = 2;
+  // The owner or a legal request asked for a freeze.
+  SUSPEND_CAUSE_REQUEST = 3;
+  // Any other reason the operator suspended it.
+  SUSPEND_CAUSE_OPERATOR = 4;
+}
+
 // SuspendWorkspaceRequest names the workspace to suspend.
 message SuspendWorkspaceRequest {
   // The workspace's id.
   string id = 1;
-  // Why it is suspended; recorded in the audit event.
+  // Why it is suspended; recorded in the audit event and as the workspace's
+  // cause.
   string reason = 2;
+  // Why the workspace is suspended. Required: the call is refused when it is
+  // unset.
+  SuspendCause cause = 3;
 }
 
 // SuspendWorkspaceResponse carries the workspace as stored.

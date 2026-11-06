@@ -330,10 +330,10 @@ type OperatorServiceClient interface {
 	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
 	// SuspendWorkspace suspends an active workspace: its new and queued jobs are
 	// held with hold reason workspace_suspended, its running jobs finish, and its
-	// users keep read-only access. A suspended workspace is returned unchanged. An
-	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
-	// NOT_FOUND, and a workspace that is deleting or deleted with
-	// FAILED_PRECONDITION. Operator only.
+	// users keep read-only access. A suspended workspace is returned unchanged,
+	// with the reason and cause it has. An empty ID or reason, or no cause, fails
+	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
+	// deleting or deleted with FAILED_PRECONDITION. Operator only.
 	SuspendWorkspace(context.Context, *connect.Request[operatorv1.SuspendWorkspaceRequest]) (*connect.Response[operatorv1.SuspendWorkspaceResponse], error)
 	// UnsuspendWorkspace returns a suspended workspace to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active
@@ -1335,10 +1335,10 @@ type OperatorServiceHandler interface {
 	RunChecks(context.Context, *connect.Request[operatorv1.RunChecksRequest]) (*connect.Response[operatorv1.RunChecksResponse], error)
 	// SuspendWorkspace suspends an active workspace: its new and queued jobs are
 	// held with hold reason workspace_suspended, its running jobs finish, and its
-	// users keep read-only access. A suspended workspace is returned unchanged. An
-	// empty ID or reason fails with INVALID_ARGUMENT, an unknown ID with
-	// NOT_FOUND, and a workspace that is deleting or deleted with
-	// FAILED_PRECONDITION. Operator only.
+	// users keep read-only access. A suspended workspace is returned unchanged,
+	// with the reason and cause it has. An empty ID or reason, or no cause, fails
+	// with INVALID_ARGUMENT, an unknown ID with NOT_FOUND, and a workspace that is
+	// deleting or deleted with FAILED_PRECONDITION. Operator only.
 	SuspendWorkspace(context.Context, *connect.Request[operatorv1.SuspendWorkspaceRequest]) (*connect.Response[operatorv1.SuspendWorkspaceResponse], error)
 	// UnsuspendWorkspace returns a suspended workspace to active and cancels a
 	// scheduled deletion; held jobs run at the next scheduler pass. An active

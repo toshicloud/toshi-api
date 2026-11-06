@@ -24,6 +24,67 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// SuspendCause is why a workspace was suspended.
+type SuspendCause int32
+
+const (
+	// No cause was recorded.
+	SuspendCause_SUSPEND_CAUSE_UNSPECIFIED SuspendCause = 0
+	// Conduct the operator confirmed.
+	SuspendCause_SUSPEND_CAUSE_ABUSE SuspendCause = 1
+	// The workspace's payment is unpaid, disputed or reversed.
+	SuspendCause_SUSPEND_CAUSE_PAYMENT SuspendCause = 2
+	// The owner or a legal request asked for a freeze.
+	SuspendCause_SUSPEND_CAUSE_REQUEST SuspendCause = 3
+	// Any other reason the operator suspended it.
+	SuspendCause_SUSPEND_CAUSE_OPERATOR SuspendCause = 4
+)
+
+// Enum value maps for SuspendCause.
+var (
+	SuspendCause_name = map[int32]string{
+		0: "SUSPEND_CAUSE_UNSPECIFIED",
+		1: "SUSPEND_CAUSE_ABUSE",
+		2: "SUSPEND_CAUSE_PAYMENT",
+		3: "SUSPEND_CAUSE_REQUEST",
+		4: "SUSPEND_CAUSE_OPERATOR",
+	}
+	SuspendCause_value = map[string]int32{
+		"SUSPEND_CAUSE_UNSPECIFIED": 0,
+		"SUSPEND_CAUSE_ABUSE":       1,
+		"SUSPEND_CAUSE_PAYMENT":     2,
+		"SUSPEND_CAUSE_REQUEST":     3,
+		"SUSPEND_CAUSE_OPERATOR":    4,
+	}
+)
+
+func (x SuspendCause) Enum() *SuspendCause {
+	p := new(SuspendCause)
+	*p = x
+	return p
+}
+
+func (x SuspendCause) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SuspendCause) Descriptor() protoreflect.EnumDescriptor {
+	return file_toshi_workspace_v1_workspace_service_proto_enumTypes[0].Descriptor()
+}
+
+func (SuspendCause) Type() protoreflect.EnumType {
+	return &file_toshi_workspace_v1_workspace_service_proto_enumTypes[0]
+}
+
+func (x SuspendCause) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SuspendCause.Descriptor instead.
+func (SuspendCause) EnumDescriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{0}
+}
+
 type HostingCertificateState int32
 
 const (
@@ -76,11 +137,11 @@ func (x HostingCertificateState) String() string {
 }
 
 func (HostingCertificateState) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_workspace_service_proto_enumTypes[0].Descriptor()
+	return file_toshi_workspace_v1_workspace_service_proto_enumTypes[1].Descriptor()
 }
 
 func (HostingCertificateState) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_workspace_service_proto_enumTypes[0]
+	return &file_toshi_workspace_v1_workspace_service_proto_enumTypes[1]
 }
 
 func (x HostingCertificateState) Number() protoreflect.EnumNumber {
@@ -89,7 +150,7 @@ func (x HostingCertificateState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use HostingCertificateState.Descriptor instead.
 func (HostingCertificateState) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{0}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{1}
 }
 
 // InboundMailPastCap chooses whether to accept mail beyond the daily cap.
@@ -129,11 +190,11 @@ func (x InboundMailPastCap) String() string {
 }
 
 func (InboundMailPastCap) Descriptor() protoreflect.EnumDescriptor {
-	return file_toshi_workspace_v1_workspace_service_proto_enumTypes[1].Descriptor()
+	return file_toshi_workspace_v1_workspace_service_proto_enumTypes[2].Descriptor()
 }
 
 func (InboundMailPastCap) Type() protoreflect.EnumType {
-	return &file_toshi_workspace_v1_workspace_service_proto_enumTypes[1]
+	return &file_toshi_workspace_v1_workspace_service_proto_enumTypes[2]
 }
 
 func (x InboundMailPastCap) Number() protoreflect.EnumNumber {
@@ -142,7 +203,7 @@ func (x InboundMailPastCap) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use InboundMailPastCap.Descriptor instead.
 func (InboundMailPastCap) EnumDescriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP(), []int{2}
 }
 
 // GetWorkspaceRequest has no fields: the call reads the caller's workspace.
@@ -3652,6 +3713,8 @@ type Workspace struct {
 	// Why the operator suspended the workspace, or why it is deleted; empty
 	// when active.
 	StateReason string `protobuf:"bytes,18,opt,name=state_reason,json=stateReason,proto3" json:"state_reason,omitempty"`
+	// Why the workspace was suspended; unset when none was recorded.
+	Cause SuspendCause `protobuf:"varint,45,opt,name=cause,proto3,enum=toshi.workspace.v1.SuspendCause" json:"cause,omitempty"`
 	// When the workspace entered its state; unset for a workspace always active.
 	StateSince *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=state_since,json=stateSince,proto3" json:"state_since,omitempty"`
 	// When a scheduled deletion purges the workspace; unset when none.
@@ -3835,6 +3898,13 @@ func (x *Workspace) GetStateReason() string {
 		return x.StateReason
 	}
 	return ""
+}
+
+func (x *Workspace) GetCause() SuspendCause {
+	if x != nil {
+		return x.Cause
+	}
+	return SuspendCause_SUSPEND_CAUSE_UNSPECIFIED
 }
 
 func (x *Workspace) GetStateSince() *timestamppb.Timestamp {
@@ -7333,7 +7403,7 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x02 \x01(\tR\x06commit\x12\x12\n" +
 	"\x04date\x18\x03 \x01(\tR\x04date\x122\n" +
-	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xf0\x11\n" +
+	"\x15minimum_agent_version\x18\x04 \x01(\tR\x13minimumAgentVersion\"\xa8\x12\n" +
 	"\tWorkspace\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
@@ -7348,7 +7418,8 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"\x19starter_credit_granted_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\x16starterCreditGrantedAt\x12C\n" +
 	"\freservations\x18\x10 \x03(\v2\x1f.toshi.workspace.v1.ReservationR\freservations\x12\x14\n" +
 	"\x05state\x18\x11 \x01(\tR\x05state\x12!\n" +
-	"\fstate_reason\x18\x12 \x01(\tR\vstateReason\x12;\n" +
+	"\fstate_reason\x18\x12 \x01(\tR\vstateReason\x126\n" +
+	"\x05cause\x18- \x01(\x0e2 .toshi.workspace.v1.SuspendCauseR\x05cause\x12;\n" +
 	"\vstate_since\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"stateSince\x12;\n" +
 	"\vpurge_after\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -7673,7 +7744,13 @@ const file_toshi_workspace_v1_workspace_service_proto_rawDesc = "" +
 	"recent_ips\x18\x05 \x03(\tR\trecentIps\x12\x14\n" +
 	"\x05cloud\x18\x06 \x01(\tR\x05cloud\x12!\n" +
 	"\fcloud_egress\x18\a \x01(\tR\vcloudEgress\x12\x1c\n" +
-	"\tconfirmed\x18\b \x01(\bR\tconfirmed*\x96\x02\n" +
+	"\tconfirmed\x18\b \x01(\bR\tconfirmed*\x98\x01\n" +
+	"\fSuspendCause\x12\x1d\n" +
+	"\x19SUSPEND_CAUSE_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x13SUSPEND_CAUSE_ABUSE\x10\x01\x12\x19\n" +
+	"\x15SUSPEND_CAUSE_PAYMENT\x10\x02\x12\x19\n" +
+	"\x15SUSPEND_CAUSE_REQUEST\x10\x03\x12\x1a\n" +
+	"\x16SUSPEND_CAUSE_OPERATOR\x10\x04*\x96\x02\n" +
 	"\x17HostingCertificateState\x12)\n" +
 	"%HOSTING_CERTIFICATE_STATE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!HOSTING_CERTIFICATE_STATE_ISSUING\x10\x01\x12*\n" +
@@ -7731,260 +7808,262 @@ func file_toshi_workspace_v1_workspace_service_proto_rawDescGZIP() []byte {
 	return file_toshi_workspace_v1_workspace_service_proto_rawDescData
 }
 
-var file_toshi_workspace_v1_workspace_service_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_toshi_workspace_v1_workspace_service_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_toshi_workspace_v1_workspace_service_proto_msgTypes = make([]protoimpl.MessageInfo, 81)
 var file_toshi_workspace_v1_workspace_service_proto_goTypes = []any{
-	(HostingCertificateState)(0),                // 0: toshi.workspace.v1.HostingCertificateState
-	(InboundMailPastCap)(0),                     // 1: toshi.workspace.v1.InboundMailPastCap
-	(*GetWorkspaceRequest)(nil),                 // 2: toshi.workspace.v1.GetWorkspaceRequest
-	(*GetWorkspaceResponse)(nil),                // 3: toshi.workspace.v1.GetWorkspaceResponse
-	(*DeleteWorkspaceRequest)(nil),              // 4: toshi.workspace.v1.DeleteWorkspaceRequest
-	(*DeleteWorkspaceResponse)(nil),             // 5: toshi.workspace.v1.DeleteWorkspaceResponse
-	(*CancelWorkspaceDeletionRequest)(nil),      // 6: toshi.workspace.v1.CancelWorkspaceDeletionRequest
-	(*CancelWorkspaceDeletionResponse)(nil),     // 7: toshi.workspace.v1.CancelWorkspaceDeletionResponse
-	(*UpdateWorkspaceRequest)(nil),              // 8: toshi.workspace.v1.UpdateWorkspaceRequest
-	(*UpdateWorkspaceResponse)(nil),             // 9: toshi.workspace.v1.UpdateWorkspaceResponse
-	(*ListWorkspacesRequest)(nil),               // 10: toshi.workspace.v1.ListWorkspacesRequest
-	(*ListWorkspacesResponse)(nil),              // 11: toshi.workspace.v1.ListWorkspacesResponse
-	(*GetWorkspaceBillingRequest)(nil),          // 12: toshi.workspace.v1.GetWorkspaceBillingRequest
-	(*GetWorkspaceBillingResponse)(nil),         // 13: toshi.workspace.v1.GetWorkspaceBillingResponse
-	(*GetWorkspaceStatementRequest)(nil),        // 14: toshi.workspace.v1.GetWorkspaceStatementRequest
-	(*GetWorkspaceStatementResponse)(nil),       // 15: toshi.workspace.v1.GetWorkspaceStatementResponse
-	(*GetWorkspaceUpcomingInvoiceRequest)(nil),  // 16: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest
-	(*GetWorkspaceUpcomingInvoiceResponse)(nil), // 17: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse
-	(*UpcomingInvoice)(nil),                     // 18: toshi.workspace.v1.UpcomingInvoice
-	(*ProjectCost)(nil),                         // 19: toshi.workspace.v1.ProjectCost
-	(*Seat)(nil),                                // 20: toshi.workspace.v1.Seat
-	(*ListSeatsRequest)(nil),                    // 21: toshi.workspace.v1.ListSeatsRequest
-	(*ListSeatsResponse)(nil),                   // 22: toshi.workspace.v1.ListSeatsResponse
-	(*AssignSeatRequest)(nil),                   // 23: toshi.workspace.v1.AssignSeatRequest
-	(*AssignSeatResponse)(nil),                  // 24: toshi.workspace.v1.AssignSeatResponse
-	(*RemoveSeatRequest)(nil),                   // 25: toshi.workspace.v1.RemoveSeatRequest
-	(*RemoveSeatResponse)(nil),                  // 26: toshi.workspace.v1.RemoveSeatResponse
-	(*ListEgressIPsRequest)(nil),                // 27: toshi.workspace.v1.ListEgressIPsRequest
-	(*ListEgressIPsResponse)(nil),               // 28: toshi.workspace.v1.ListEgressIPsResponse
-	(*GetUsageRequest)(nil),                     // 29: toshi.workspace.v1.GetUsageRequest
-	(*GetUsageResponse)(nil),                    // 30: toshi.workspace.v1.GetUsageResponse
-	(*GetQueueTimesRequest)(nil),                // 31: toshi.workspace.v1.GetQueueTimesRequest
-	(*GetQueueTimesResponse)(nil),               // 32: toshi.workspace.v1.GetQueueTimesResponse
-	(*GetStartWindowsRequest)(nil),              // 33: toshi.workspace.v1.GetStartWindowsRequest
-	(*GetStartWindowsResponse)(nil),             // 34: toshi.workspace.v1.GetStartWindowsResponse
-	(*GetWorkspaceLimitsRequest)(nil),           // 35: toshi.workspace.v1.GetWorkspaceLimitsRequest
-	(*GetWorkspaceLimitsResponse)(nil),          // 36: toshi.workspace.v1.GetWorkspaceLimitsResponse
-	(*WorkspaceLimitRow)(nil),                   // 37: toshi.workspace.v1.WorkspaceLimitRow
-	(*WorkspaceSpendLimit)(nil),                 // 38: toshi.workspace.v1.WorkspaceSpendLimit
-	(*WorkspacePaidStarts)(nil),                 // 39: toshi.workspace.v1.WorkspacePaidStarts
-	(*WorkspaceStorageLimits)(nil),              // 40: toshi.workspace.v1.WorkspaceStorageLimits
-	(*WorkspaceMonthEstimate)(nil),              // 41: toshi.workspace.v1.WorkspaceMonthEstimate
-	(*GetVolumeCapsRequest)(nil),                // 42: toshi.workspace.v1.GetVolumeCapsRequest
-	(*GetVolumeCapsResponse)(nil),               // 43: toshi.workspace.v1.GetVolumeCapsResponse
-	(*VolumeCapsProject)(nil),                   // 44: toshi.workspace.v1.VolumeCapsProject
-	(*StartWindow)(nil),                         // 45: toshi.workspace.v1.StartWindow
-	(*GetWorkflowUsageRequest)(nil),             // 46: toshi.workspace.v1.GetWorkflowUsageRequest
-	(*GetWorkflowUsageResponse)(nil),            // 47: toshi.workspace.v1.GetWorkflowUsageResponse
-	(*ListPlansRequest)(nil),                    // 48: toshi.workspace.v1.ListPlansRequest
-	(*ListPlansResponse)(nil),                   // 49: toshi.workspace.v1.ListPlansResponse
-	(*CreateCheckoutSessionRequest)(nil),        // 50: toshi.workspace.v1.CreateCheckoutSessionRequest
-	(*CreateCheckoutSessionResponse)(nil),       // 51: toshi.workspace.v1.CreateCheckoutSessionResponse
-	(*CreateBillingPortalSessionRequest)(nil),   // 52: toshi.workspace.v1.CreateBillingPortalSessionRequest
-	(*CreateBillingPortalSessionResponse)(nil),  // 53: toshi.workspace.v1.CreateBillingPortalSessionResponse
-	(*GetVersionRequest)(nil),                   // 54: toshi.workspace.v1.GetVersionRequest
-	(*GetVersionResponse)(nil),                  // 55: toshi.workspace.v1.GetVersionResponse
-	(*Workspace)(nil),                           // 56: toshi.workspace.v1.Workspace
-	(*HostingCertificate)(nil),                  // 57: toshi.workspace.v1.HostingCertificate
-	(*WorkspaceSettings)(nil),                   // 58: toshi.workspace.v1.WorkspaceSettings
-	(*WorkspaceSettingChange)(nil),              // 59: toshi.workspace.v1.WorkspaceSettingChange
-	(*WorkspaceSignIn)(nil),                     // 60: toshi.workspace.v1.WorkspaceSignIn
-	(*Reservation)(nil),                         // 61: toshi.workspace.v1.Reservation
-	(*WorkspaceBilling)(nil),                    // 62: toshi.workspace.v1.WorkspaceBilling
-	(*BillingTotals)(nil),                       // 63: toshi.workspace.v1.BillingTotals
-	(*BillingEventFailure)(nil),                 // 64: toshi.workspace.v1.BillingEventFailure
-	(*WorkspaceStatement)(nil),                  // 65: toshi.workspace.v1.WorkspaceStatement
-	(*DesktopSeats)(nil),                        // 66: toshi.workspace.v1.DesktopSeats
-	(*PaidStarts)(nil),                          // 67: toshi.workspace.v1.PaidStarts
-	(*StatementSeat)(nil),                       // 68: toshi.workspace.v1.StatementSeat
-	(*OwnHostFee)(nil),                          // 69: toshi.workspace.v1.OwnHostFee
-	(*Awake)(nil),                               // 70: toshi.workspace.v1.Awake
-	(*Storage)(nil),                             // 71: toshi.workspace.v1.Storage
-	(*StoredKind)(nil),                          // 72: toshi.workspace.v1.StoredKind
-	(*StorageUsageRow)(nil),                     // 73: toshi.workspace.v1.StorageUsageRow
-	(*StatementUsage)(nil),                      // 74: toshi.workspace.v1.StatementUsage
-	(*StatementCharge)(nil),                     // 75: toshi.workspace.v1.StatementCharge
-	(*HoldTimes)(nil),                           // 76: toshi.workspace.v1.HoldTimes
-	(*FillerUsage)(nil),                         // 77: toshi.workspace.v1.FillerUsage
-	(*UsageRow)(nil),                            // 78: toshi.workspace.v1.UsageRow
-	(*WorkflowUsageRow)(nil),                    // 79: toshi.workspace.v1.WorkflowUsageRow
-	(*Plan)(nil),                                // 80: toshi.workspace.v1.Plan
-	(*EgressHost)(nil),                          // 81: toshi.workspace.v1.EgressHost
-	(*WorkspaceBilling_HeldJobs)(nil),           // 82: toshi.workspace.v1.WorkspaceBilling.HeldJobs
-	(*fieldmaskpb.FieldMask)(nil),               // 83: google.protobuf.FieldMask
-	(*timestamppb.Timestamp)(nil),               // 84: google.protobuf.Timestamp
-	(*Subject)(nil),                             // 85: toshi.workspace.v1.Subject
-	(FeatureSource)(0),                          // 86: toshi.workspace.v1.FeatureSource
-	(*ModelCredentialDefault)(nil),              // 87: toshi.workspace.v1.ModelCredentialDefault
-	(*EndpointDefault)(nil),                     // 88: toshi.workspace.v1.EndpointDefault
-	(*HostEgress)(nil),                          // 89: toshi.workspace.v1.HostEgress
+	(SuspendCause)(0),                           // 0: toshi.workspace.v1.SuspendCause
+	(HostingCertificateState)(0),                // 1: toshi.workspace.v1.HostingCertificateState
+	(InboundMailPastCap)(0),                     // 2: toshi.workspace.v1.InboundMailPastCap
+	(*GetWorkspaceRequest)(nil),                 // 3: toshi.workspace.v1.GetWorkspaceRequest
+	(*GetWorkspaceResponse)(nil),                // 4: toshi.workspace.v1.GetWorkspaceResponse
+	(*DeleteWorkspaceRequest)(nil),              // 5: toshi.workspace.v1.DeleteWorkspaceRequest
+	(*DeleteWorkspaceResponse)(nil),             // 6: toshi.workspace.v1.DeleteWorkspaceResponse
+	(*CancelWorkspaceDeletionRequest)(nil),      // 7: toshi.workspace.v1.CancelWorkspaceDeletionRequest
+	(*CancelWorkspaceDeletionResponse)(nil),     // 8: toshi.workspace.v1.CancelWorkspaceDeletionResponse
+	(*UpdateWorkspaceRequest)(nil),              // 9: toshi.workspace.v1.UpdateWorkspaceRequest
+	(*UpdateWorkspaceResponse)(nil),             // 10: toshi.workspace.v1.UpdateWorkspaceResponse
+	(*ListWorkspacesRequest)(nil),               // 11: toshi.workspace.v1.ListWorkspacesRequest
+	(*ListWorkspacesResponse)(nil),              // 12: toshi.workspace.v1.ListWorkspacesResponse
+	(*GetWorkspaceBillingRequest)(nil),          // 13: toshi.workspace.v1.GetWorkspaceBillingRequest
+	(*GetWorkspaceBillingResponse)(nil),         // 14: toshi.workspace.v1.GetWorkspaceBillingResponse
+	(*GetWorkspaceStatementRequest)(nil),        // 15: toshi.workspace.v1.GetWorkspaceStatementRequest
+	(*GetWorkspaceStatementResponse)(nil),       // 16: toshi.workspace.v1.GetWorkspaceStatementResponse
+	(*GetWorkspaceUpcomingInvoiceRequest)(nil),  // 17: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest
+	(*GetWorkspaceUpcomingInvoiceResponse)(nil), // 18: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse
+	(*UpcomingInvoice)(nil),                     // 19: toshi.workspace.v1.UpcomingInvoice
+	(*ProjectCost)(nil),                         // 20: toshi.workspace.v1.ProjectCost
+	(*Seat)(nil),                                // 21: toshi.workspace.v1.Seat
+	(*ListSeatsRequest)(nil),                    // 22: toshi.workspace.v1.ListSeatsRequest
+	(*ListSeatsResponse)(nil),                   // 23: toshi.workspace.v1.ListSeatsResponse
+	(*AssignSeatRequest)(nil),                   // 24: toshi.workspace.v1.AssignSeatRequest
+	(*AssignSeatResponse)(nil),                  // 25: toshi.workspace.v1.AssignSeatResponse
+	(*RemoveSeatRequest)(nil),                   // 26: toshi.workspace.v1.RemoveSeatRequest
+	(*RemoveSeatResponse)(nil),                  // 27: toshi.workspace.v1.RemoveSeatResponse
+	(*ListEgressIPsRequest)(nil),                // 28: toshi.workspace.v1.ListEgressIPsRequest
+	(*ListEgressIPsResponse)(nil),               // 29: toshi.workspace.v1.ListEgressIPsResponse
+	(*GetUsageRequest)(nil),                     // 30: toshi.workspace.v1.GetUsageRequest
+	(*GetUsageResponse)(nil),                    // 31: toshi.workspace.v1.GetUsageResponse
+	(*GetQueueTimesRequest)(nil),                // 32: toshi.workspace.v1.GetQueueTimesRequest
+	(*GetQueueTimesResponse)(nil),               // 33: toshi.workspace.v1.GetQueueTimesResponse
+	(*GetStartWindowsRequest)(nil),              // 34: toshi.workspace.v1.GetStartWindowsRequest
+	(*GetStartWindowsResponse)(nil),             // 35: toshi.workspace.v1.GetStartWindowsResponse
+	(*GetWorkspaceLimitsRequest)(nil),           // 36: toshi.workspace.v1.GetWorkspaceLimitsRequest
+	(*GetWorkspaceLimitsResponse)(nil),          // 37: toshi.workspace.v1.GetWorkspaceLimitsResponse
+	(*WorkspaceLimitRow)(nil),                   // 38: toshi.workspace.v1.WorkspaceLimitRow
+	(*WorkspaceSpendLimit)(nil),                 // 39: toshi.workspace.v1.WorkspaceSpendLimit
+	(*WorkspacePaidStarts)(nil),                 // 40: toshi.workspace.v1.WorkspacePaidStarts
+	(*WorkspaceStorageLimits)(nil),              // 41: toshi.workspace.v1.WorkspaceStorageLimits
+	(*WorkspaceMonthEstimate)(nil),              // 42: toshi.workspace.v1.WorkspaceMonthEstimate
+	(*GetVolumeCapsRequest)(nil),                // 43: toshi.workspace.v1.GetVolumeCapsRequest
+	(*GetVolumeCapsResponse)(nil),               // 44: toshi.workspace.v1.GetVolumeCapsResponse
+	(*VolumeCapsProject)(nil),                   // 45: toshi.workspace.v1.VolumeCapsProject
+	(*StartWindow)(nil),                         // 46: toshi.workspace.v1.StartWindow
+	(*GetWorkflowUsageRequest)(nil),             // 47: toshi.workspace.v1.GetWorkflowUsageRequest
+	(*GetWorkflowUsageResponse)(nil),            // 48: toshi.workspace.v1.GetWorkflowUsageResponse
+	(*ListPlansRequest)(nil),                    // 49: toshi.workspace.v1.ListPlansRequest
+	(*ListPlansResponse)(nil),                   // 50: toshi.workspace.v1.ListPlansResponse
+	(*CreateCheckoutSessionRequest)(nil),        // 51: toshi.workspace.v1.CreateCheckoutSessionRequest
+	(*CreateCheckoutSessionResponse)(nil),       // 52: toshi.workspace.v1.CreateCheckoutSessionResponse
+	(*CreateBillingPortalSessionRequest)(nil),   // 53: toshi.workspace.v1.CreateBillingPortalSessionRequest
+	(*CreateBillingPortalSessionResponse)(nil),  // 54: toshi.workspace.v1.CreateBillingPortalSessionResponse
+	(*GetVersionRequest)(nil),                   // 55: toshi.workspace.v1.GetVersionRequest
+	(*GetVersionResponse)(nil),                  // 56: toshi.workspace.v1.GetVersionResponse
+	(*Workspace)(nil),                           // 57: toshi.workspace.v1.Workspace
+	(*HostingCertificate)(nil),                  // 58: toshi.workspace.v1.HostingCertificate
+	(*WorkspaceSettings)(nil),                   // 59: toshi.workspace.v1.WorkspaceSettings
+	(*WorkspaceSettingChange)(nil),              // 60: toshi.workspace.v1.WorkspaceSettingChange
+	(*WorkspaceSignIn)(nil),                     // 61: toshi.workspace.v1.WorkspaceSignIn
+	(*Reservation)(nil),                         // 62: toshi.workspace.v1.Reservation
+	(*WorkspaceBilling)(nil),                    // 63: toshi.workspace.v1.WorkspaceBilling
+	(*BillingTotals)(nil),                       // 64: toshi.workspace.v1.BillingTotals
+	(*BillingEventFailure)(nil),                 // 65: toshi.workspace.v1.BillingEventFailure
+	(*WorkspaceStatement)(nil),                  // 66: toshi.workspace.v1.WorkspaceStatement
+	(*DesktopSeats)(nil),                        // 67: toshi.workspace.v1.DesktopSeats
+	(*PaidStarts)(nil),                          // 68: toshi.workspace.v1.PaidStarts
+	(*StatementSeat)(nil),                       // 69: toshi.workspace.v1.StatementSeat
+	(*OwnHostFee)(nil),                          // 70: toshi.workspace.v1.OwnHostFee
+	(*Awake)(nil),                               // 71: toshi.workspace.v1.Awake
+	(*Storage)(nil),                             // 72: toshi.workspace.v1.Storage
+	(*StoredKind)(nil),                          // 73: toshi.workspace.v1.StoredKind
+	(*StorageUsageRow)(nil),                     // 74: toshi.workspace.v1.StorageUsageRow
+	(*StatementUsage)(nil),                      // 75: toshi.workspace.v1.StatementUsage
+	(*StatementCharge)(nil),                     // 76: toshi.workspace.v1.StatementCharge
+	(*HoldTimes)(nil),                           // 77: toshi.workspace.v1.HoldTimes
+	(*FillerUsage)(nil),                         // 78: toshi.workspace.v1.FillerUsage
+	(*UsageRow)(nil),                            // 79: toshi.workspace.v1.UsageRow
+	(*WorkflowUsageRow)(nil),                    // 80: toshi.workspace.v1.WorkflowUsageRow
+	(*Plan)(nil),                                // 81: toshi.workspace.v1.Plan
+	(*EgressHost)(nil),                          // 82: toshi.workspace.v1.EgressHost
+	(*WorkspaceBilling_HeldJobs)(nil),           // 83: toshi.workspace.v1.WorkspaceBilling.HeldJobs
+	(*fieldmaskpb.FieldMask)(nil),               // 84: google.protobuf.FieldMask
+	(*timestamppb.Timestamp)(nil),               // 85: google.protobuf.Timestamp
+	(*Subject)(nil),                             // 86: toshi.workspace.v1.Subject
+	(FeatureSource)(0),                          // 87: toshi.workspace.v1.FeatureSource
+	(*ModelCredentialDefault)(nil),              // 88: toshi.workspace.v1.ModelCredentialDefault
+	(*EndpointDefault)(nil),                     // 89: toshi.workspace.v1.EndpointDefault
+	(*HostEgress)(nil),                          // 90: toshi.workspace.v1.HostEgress
 }
 var file_toshi_workspace_v1_workspace_service_proto_depIdxs = []int32{
-	56,  // 0: toshi.workspace.v1.GetWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
-	56,  // 1: toshi.workspace.v1.DeleteWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
-	56,  // 2: toshi.workspace.v1.CancelWorkspaceDeletionResponse.workspace:type_name -> toshi.workspace.v1.Workspace
-	56,  // 3: toshi.workspace.v1.UpdateWorkspaceRequest.workspace:type_name -> toshi.workspace.v1.Workspace
-	83,  // 4: toshi.workspace.v1.UpdateWorkspaceRequest.update_mask:type_name -> google.protobuf.FieldMask
-	56,  // 5: toshi.workspace.v1.UpdateWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
-	56,  // 6: toshi.workspace.v1.ListWorkspacesResponse.workspaces:type_name -> toshi.workspace.v1.Workspace
-	62,  // 7: toshi.workspace.v1.GetWorkspaceBillingResponse.billing:type_name -> toshi.workspace.v1.WorkspaceBilling
-	65,  // 8: toshi.workspace.v1.GetWorkspaceStatementResponse.statement:type_name -> toshi.workspace.v1.WorkspaceStatement
-	18,  // 9: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse.invoice:type_name -> toshi.workspace.v1.UpcomingInvoice
-	19,  // 10: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse.projects:type_name -> toshi.workspace.v1.ProjectCost
-	84,  // 11: toshi.workspace.v1.UpcomingInvoice.period_start:type_name -> google.protobuf.Timestamp
-	84,  // 12: toshi.workspace.v1.UpcomingInvoice.period_end:type_name -> google.protobuf.Timestamp
-	84,  // 13: toshi.workspace.v1.UpcomingInvoice.meters_read_at:type_name -> google.protobuf.Timestamp
-	84,  // 14: toshi.workspace.v1.Seat.assigned_at:type_name -> google.protobuf.Timestamp
-	85,  // 15: toshi.workspace.v1.Seat.assigned_by:type_name -> toshi.workspace.v1.Subject
-	84,  // 16: toshi.workspace.v1.Seat.removed_at:type_name -> google.protobuf.Timestamp
-	85,  // 17: toshi.workspace.v1.Seat.removed_by:type_name -> toshi.workspace.v1.Subject
-	20,  // 18: toshi.workspace.v1.ListSeatsResponse.seats:type_name -> toshi.workspace.v1.Seat
-	20,  // 19: toshi.workspace.v1.AssignSeatResponse.seat:type_name -> toshi.workspace.v1.Seat
-	20,  // 20: toshi.workspace.v1.RemoveSeatResponse.seat:type_name -> toshi.workspace.v1.Seat
-	81,  // 21: toshi.workspace.v1.ListEgressIPsResponse.hosts:type_name -> toshi.workspace.v1.EgressHost
-	84,  // 22: toshi.workspace.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
-	84,  // 23: toshi.workspace.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
-	78,  // 24: toshi.workspace.v1.GetUsageResponse.rows:type_name -> toshi.workspace.v1.UsageRow
-	84,  // 25: toshi.workspace.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
-	84,  // 26: toshi.workspace.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
-	77,  // 27: toshi.workspace.v1.GetUsageResponse.filler:type_name -> toshi.workspace.v1.FillerUsage
-	73,  // 28: toshi.workspace.v1.GetUsageResponse.storage:type_name -> toshi.workspace.v1.StorageUsageRow
-	84,  // 29: toshi.workspace.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
-	84,  // 30: toshi.workspace.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
-	84,  // 31: toshi.workspace.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
-	84,  // 32: toshi.workspace.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
-	76,  // 33: toshi.workspace.v1.GetQueueTimesResponse.held:type_name -> toshi.workspace.v1.HoldTimes
-	45,  // 34: toshi.workspace.v1.GetStartWindowsResponse.windows:type_name -> toshi.workspace.v1.StartWindow
-	84,  // 35: toshi.workspace.v1.GetStartWindowsResponse.next_at:type_name -> google.protobuf.Timestamp
-	45,  // 36: toshi.workspace.v1.GetWorkspaceLimitsResponse.windows:type_name -> toshi.workspace.v1.StartWindow
-	84,  // 37: toshi.workspace.v1.GetWorkspaceLimitsResponse.next_at:type_name -> google.protobuf.Timestamp
-	37,  // 38: toshi.workspace.v1.GetWorkspaceLimitsResponse.running_at_once:type_name -> toshi.workspace.v1.WorkspaceLimitRow
-	37,  // 39: toshi.workspace.v1.GetWorkspaceLimitsResponse.vcpu:type_name -> toshi.workspace.v1.WorkspaceLimitRow
-	38,  // 40: toshi.workspace.v1.GetWorkspaceLimitsResponse.spend:type_name -> toshi.workspace.v1.WorkspaceSpendLimit
-	39,  // 41: toshi.workspace.v1.GetWorkspaceLimitsResponse.paid_starts:type_name -> toshi.workspace.v1.WorkspacePaidStarts
-	40,  // 42: toshi.workspace.v1.GetWorkspaceLimitsResponse.storage:type_name -> toshi.workspace.v1.WorkspaceStorageLimits
-	41,  // 43: toshi.workspace.v1.GetWorkspaceLimitsResponse.month_estimate:type_name -> toshi.workspace.v1.WorkspaceMonthEstimate
-	37,  // 44: toshi.workspace.v1.WorkspaceStorageLimits.volume_size_cap_total_gb:type_name -> toshi.workspace.v1.WorkspaceLimitRow
-	37,  // 45: toshi.workspace.v1.WorkspaceStorageLimits.volume_size_cap_total_max_gb:type_name -> toshi.workspace.v1.WorkspaceLimitRow
-	73,  // 46: toshi.workspace.v1.WorkspaceStorageLimits.usage:type_name -> toshi.workspace.v1.StorageUsageRow
-	44,  // 47: toshi.workspace.v1.GetVolumeCapsResponse.projects:type_name -> toshi.workspace.v1.VolumeCapsProject
-	84,  // 48: toshi.workspace.v1.StartWindow.resets_at:type_name -> google.protobuf.Timestamp
-	84,  // 49: toshi.workspace.v1.StartWindow.next_at:type_name -> google.protobuf.Timestamp
-	84,  // 50: toshi.workspace.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
-	84,  // 51: toshi.workspace.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
-	79,  // 52: toshi.workspace.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.workspace.v1.WorkflowUsageRow
-	84,  // 53: toshi.workspace.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
-	84,  // 54: toshi.workspace.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
-	80,  // 55: toshi.workspace.v1.ListPlansResponse.plans:type_name -> toshi.workspace.v1.Plan
-	84,  // 56: toshi.workspace.v1.Workspace.created_at:type_name -> google.protobuf.Timestamp
-	84,  // 57: toshi.workspace.v1.Workspace.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
-	61,  // 58: toshi.workspace.v1.Workspace.reservations:type_name -> toshi.workspace.v1.Reservation
-	84,  // 59: toshi.workspace.v1.Workspace.state_since:type_name -> google.protobuf.Timestamp
-	84,  // 60: toshi.workspace.v1.Workspace.purge_after:type_name -> google.protobuf.Timestamp
-	58,  // 61: toshi.workspace.v1.Workspace.settings:type_name -> toshi.workspace.v1.WorkspaceSettings
-	57,  // 62: toshi.workspace.v1.Workspace.hosting_certificate:type_name -> toshi.workspace.v1.HostingCertificate
-	86,  // 63: toshi.workspace.v1.Workspace.keep_vm_max_source:type_name -> toshi.workspace.v1.FeatureSource
-	59,  // 64: toshi.workspace.v1.Workspace.recording_changed:type_name -> toshi.workspace.v1.WorkspaceSettingChange
-	59,  // 65: toshi.workspace.v1.Workspace.recording_human_spans_changed:type_name -> toshi.workspace.v1.WorkspaceSettingChange
-	84,  // 66: toshi.workspace.v1.Workspace.closed_at:type_name -> google.protobuf.Timestamp
-	84,  // 67: toshi.workspace.v1.Workspace.read_only_expires_at:type_name -> google.protobuf.Timestamp
-	0,   // 68: toshi.workspace.v1.HostingCertificate.state:type_name -> toshi.workspace.v1.HostingCertificateState
-	84,  // 69: toshi.workspace.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
-	84,  // 70: toshi.workspace.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
-	84,  // 71: toshi.workspace.v1.HostingCertificate.retry_at:type_name -> google.protobuf.Timestamp
-	60,  // 72: toshi.workspace.v1.WorkspaceSettings.sign_in:type_name -> toshi.workspace.v1.WorkspaceSignIn
-	87,  // 73: toshi.workspace.v1.WorkspaceSettings.model_credential_defaults:type_name -> toshi.workspace.v1.ModelCredentialDefault
-	1,   // 74: toshi.workspace.v1.WorkspaceSettings.inbound_mail_past_cap:type_name -> toshi.workspace.v1.InboundMailPastCap
-	88,  // 75: toshi.workspace.v1.WorkspaceSettings.endpoint_defaults:type_name -> toshi.workspace.v1.EndpointDefault
-	85,  // 76: toshi.workspace.v1.WorkspaceSettingChange.changed_by:type_name -> toshi.workspace.v1.Subject
-	84,  // 77: toshi.workspace.v1.WorkspaceSettingChange.changed_at:type_name -> google.protobuf.Timestamp
-	84,  // 78: toshi.workspace.v1.WorkspaceSignIn.set_at:type_name -> google.protobuf.Timestamp
-	84,  // 79: toshi.workspace.v1.WorkspaceBilling.billing_started_at:type_name -> google.protobuf.Timestamp
-	84,  // 80: toshi.workspace.v1.WorkspaceBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
-	63,  // 81: toshi.workspace.v1.WorkspaceBilling.totals:type_name -> toshi.workspace.v1.BillingTotals
-	64,  // 82: toshi.workspace.v1.WorkspaceBilling.failed_events:type_name -> toshi.workspace.v1.BillingEventFailure
-	84,  // 83: toshi.workspace.v1.WorkspaceBilling.card_verified_at:type_name -> google.protobuf.Timestamp
-	84,  // 84: toshi.workspace.v1.WorkspaceBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	82,  // 85: toshi.workspace.v1.WorkspaceBilling.held_now:type_name -> toshi.workspace.v1.WorkspaceBilling.HeldJobs
-	84,  // 86: toshi.workspace.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
-	84,  // 87: toshi.workspace.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
-	84,  // 88: toshi.workspace.v1.WorkspaceStatement.from:type_name -> google.protobuf.Timestamp
-	84,  // 89: toshi.workspace.v1.WorkspaceStatement.to:type_name -> google.protobuf.Timestamp
-	74,  // 90: toshi.workspace.v1.WorkspaceStatement.usage:type_name -> toshi.workspace.v1.StatementUsage
-	74,  // 91: toshi.workspace.v1.WorkspaceStatement.total:type_name -> toshi.workspace.v1.StatementUsage
-	75,  // 92: toshi.workspace.v1.WorkspaceStatement.charges:type_name -> toshi.workspace.v1.StatementCharge
-	84,  // 93: toshi.workspace.v1.WorkspaceStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
-	76,  // 94: toshi.workspace.v1.WorkspaceStatement.held:type_name -> toshi.workspace.v1.HoldTimes
-	77,  // 95: toshi.workspace.v1.WorkspaceStatement.filler:type_name -> toshi.workspace.v1.FillerUsage
-	84,  // 96: toshi.workspace.v1.WorkspaceStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
-	69,  // 97: toshi.workspace.v1.WorkspaceStatement.own_host_fee:type_name -> toshi.workspace.v1.OwnHostFee
-	70,  // 98: toshi.workspace.v1.WorkspaceStatement.awake:type_name -> toshi.workspace.v1.Awake
-	71,  // 99: toshi.workspace.v1.WorkspaceStatement.storage:type_name -> toshi.workspace.v1.Storage
-	66,  // 100: toshi.workspace.v1.WorkspaceStatement.desktop_seats:type_name -> toshi.workspace.v1.DesktopSeats
-	67,  // 101: toshi.workspace.v1.WorkspaceStatement.paid_starts:type_name -> toshi.workspace.v1.PaidStarts
-	68,  // 102: toshi.workspace.v1.DesktopSeats.seats:type_name -> toshi.workspace.v1.StatementSeat
-	84,  // 103: toshi.workspace.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
-	84,  // 104: toshi.workspace.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
-	72,  // 105: toshi.workspace.v1.Storage.kinds:type_name -> toshi.workspace.v1.StoredKind
-	84,  // 106: toshi.workspace.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
-	89,  // 107: toshi.workspace.v1.EgressHost.egress:type_name -> toshi.workspace.v1.HostEgress
-	84,  // 108: toshi.workspace.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
-	84,  // 109: toshi.workspace.v1.WorkspaceBilling.HeldJobs.next_at:type_name -> google.protobuf.Timestamp
-	2,   // 110: toshi.workspace.v1.WorkspaceService.GetWorkspace:input_type -> toshi.workspace.v1.GetWorkspaceRequest
-	8,   // 111: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:input_type -> toshi.workspace.v1.UpdateWorkspaceRequest
-	10,  // 112: toshi.workspace.v1.WorkspaceService.ListWorkspaces:input_type -> toshi.workspace.v1.ListWorkspacesRequest
-	12,  // 113: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:input_type -> toshi.workspace.v1.GetWorkspaceBillingRequest
-	14,  // 114: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:input_type -> toshi.workspace.v1.GetWorkspaceStatementRequest
-	16,  // 115: toshi.workspace.v1.WorkspaceService.GetWorkspaceUpcomingInvoice:input_type -> toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest
-	21,  // 116: toshi.workspace.v1.WorkspaceService.ListSeats:input_type -> toshi.workspace.v1.ListSeatsRequest
-	23,  // 117: toshi.workspace.v1.WorkspaceService.AssignSeat:input_type -> toshi.workspace.v1.AssignSeatRequest
-	25,  // 118: toshi.workspace.v1.WorkspaceService.RemoveSeat:input_type -> toshi.workspace.v1.RemoveSeatRequest
-	27,  // 119: toshi.workspace.v1.WorkspaceService.ListEgressIPs:input_type -> toshi.workspace.v1.ListEgressIPsRequest
-	29,  // 120: toshi.workspace.v1.WorkspaceService.GetUsage:input_type -> toshi.workspace.v1.GetUsageRequest
-	31,  // 121: toshi.workspace.v1.WorkspaceService.GetQueueTimes:input_type -> toshi.workspace.v1.GetQueueTimesRequest
-	33,  // 122: toshi.workspace.v1.WorkspaceService.GetStartWindows:input_type -> toshi.workspace.v1.GetStartWindowsRequest
-	35,  // 123: toshi.workspace.v1.WorkspaceService.GetWorkspaceLimits:input_type -> toshi.workspace.v1.GetWorkspaceLimitsRequest
-	42,  // 124: toshi.workspace.v1.WorkspaceService.GetVolumeCaps:input_type -> toshi.workspace.v1.GetVolumeCapsRequest
-	46,  // 125: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:input_type -> toshi.workspace.v1.GetWorkflowUsageRequest
-	48,  // 126: toshi.workspace.v1.WorkspaceService.ListPlans:input_type -> toshi.workspace.v1.ListPlansRequest
-	50,  // 127: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:input_type -> toshi.workspace.v1.CreateCheckoutSessionRequest
-	52,  // 128: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:input_type -> toshi.workspace.v1.CreateBillingPortalSessionRequest
-	54,  // 129: toshi.workspace.v1.WorkspaceService.GetVersion:input_type -> toshi.workspace.v1.GetVersionRequest
-	4,   // 130: toshi.workspace.v1.WorkspaceService.DeleteWorkspace:input_type -> toshi.workspace.v1.DeleteWorkspaceRequest
-	6,   // 131: toshi.workspace.v1.WorkspaceService.CancelWorkspaceDeletion:input_type -> toshi.workspace.v1.CancelWorkspaceDeletionRequest
-	3,   // 132: toshi.workspace.v1.WorkspaceService.GetWorkspace:output_type -> toshi.workspace.v1.GetWorkspaceResponse
-	9,   // 133: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:output_type -> toshi.workspace.v1.UpdateWorkspaceResponse
-	11,  // 134: toshi.workspace.v1.WorkspaceService.ListWorkspaces:output_type -> toshi.workspace.v1.ListWorkspacesResponse
-	13,  // 135: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:output_type -> toshi.workspace.v1.GetWorkspaceBillingResponse
-	15,  // 136: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:output_type -> toshi.workspace.v1.GetWorkspaceStatementResponse
-	17,  // 137: toshi.workspace.v1.WorkspaceService.GetWorkspaceUpcomingInvoice:output_type -> toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse
-	22,  // 138: toshi.workspace.v1.WorkspaceService.ListSeats:output_type -> toshi.workspace.v1.ListSeatsResponse
-	24,  // 139: toshi.workspace.v1.WorkspaceService.AssignSeat:output_type -> toshi.workspace.v1.AssignSeatResponse
-	26,  // 140: toshi.workspace.v1.WorkspaceService.RemoveSeat:output_type -> toshi.workspace.v1.RemoveSeatResponse
-	28,  // 141: toshi.workspace.v1.WorkspaceService.ListEgressIPs:output_type -> toshi.workspace.v1.ListEgressIPsResponse
-	30,  // 142: toshi.workspace.v1.WorkspaceService.GetUsage:output_type -> toshi.workspace.v1.GetUsageResponse
-	32,  // 143: toshi.workspace.v1.WorkspaceService.GetQueueTimes:output_type -> toshi.workspace.v1.GetQueueTimesResponse
-	34,  // 144: toshi.workspace.v1.WorkspaceService.GetStartWindows:output_type -> toshi.workspace.v1.GetStartWindowsResponse
-	36,  // 145: toshi.workspace.v1.WorkspaceService.GetWorkspaceLimits:output_type -> toshi.workspace.v1.GetWorkspaceLimitsResponse
-	43,  // 146: toshi.workspace.v1.WorkspaceService.GetVolumeCaps:output_type -> toshi.workspace.v1.GetVolumeCapsResponse
-	47,  // 147: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:output_type -> toshi.workspace.v1.GetWorkflowUsageResponse
-	49,  // 148: toshi.workspace.v1.WorkspaceService.ListPlans:output_type -> toshi.workspace.v1.ListPlansResponse
-	51,  // 149: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:output_type -> toshi.workspace.v1.CreateCheckoutSessionResponse
-	53,  // 150: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:output_type -> toshi.workspace.v1.CreateBillingPortalSessionResponse
-	55,  // 151: toshi.workspace.v1.WorkspaceService.GetVersion:output_type -> toshi.workspace.v1.GetVersionResponse
-	5,   // 152: toshi.workspace.v1.WorkspaceService.DeleteWorkspace:output_type -> toshi.workspace.v1.DeleteWorkspaceResponse
-	7,   // 153: toshi.workspace.v1.WorkspaceService.CancelWorkspaceDeletion:output_type -> toshi.workspace.v1.CancelWorkspaceDeletionResponse
-	132, // [132:154] is the sub-list for method output_type
-	110, // [110:132] is the sub-list for method input_type
-	110, // [110:110] is the sub-list for extension type_name
-	110, // [110:110] is the sub-list for extension extendee
-	0,   // [0:110] is the sub-list for field type_name
+	57,  // 0: toshi.workspace.v1.GetWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
+	57,  // 1: toshi.workspace.v1.DeleteWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
+	57,  // 2: toshi.workspace.v1.CancelWorkspaceDeletionResponse.workspace:type_name -> toshi.workspace.v1.Workspace
+	57,  // 3: toshi.workspace.v1.UpdateWorkspaceRequest.workspace:type_name -> toshi.workspace.v1.Workspace
+	84,  // 4: toshi.workspace.v1.UpdateWorkspaceRequest.update_mask:type_name -> google.protobuf.FieldMask
+	57,  // 5: toshi.workspace.v1.UpdateWorkspaceResponse.workspace:type_name -> toshi.workspace.v1.Workspace
+	57,  // 6: toshi.workspace.v1.ListWorkspacesResponse.workspaces:type_name -> toshi.workspace.v1.Workspace
+	63,  // 7: toshi.workspace.v1.GetWorkspaceBillingResponse.billing:type_name -> toshi.workspace.v1.WorkspaceBilling
+	66,  // 8: toshi.workspace.v1.GetWorkspaceStatementResponse.statement:type_name -> toshi.workspace.v1.WorkspaceStatement
+	19,  // 9: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse.invoice:type_name -> toshi.workspace.v1.UpcomingInvoice
+	20,  // 10: toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse.projects:type_name -> toshi.workspace.v1.ProjectCost
+	85,  // 11: toshi.workspace.v1.UpcomingInvoice.period_start:type_name -> google.protobuf.Timestamp
+	85,  // 12: toshi.workspace.v1.UpcomingInvoice.period_end:type_name -> google.protobuf.Timestamp
+	85,  // 13: toshi.workspace.v1.UpcomingInvoice.meters_read_at:type_name -> google.protobuf.Timestamp
+	85,  // 14: toshi.workspace.v1.Seat.assigned_at:type_name -> google.protobuf.Timestamp
+	86,  // 15: toshi.workspace.v1.Seat.assigned_by:type_name -> toshi.workspace.v1.Subject
+	85,  // 16: toshi.workspace.v1.Seat.removed_at:type_name -> google.protobuf.Timestamp
+	86,  // 17: toshi.workspace.v1.Seat.removed_by:type_name -> toshi.workspace.v1.Subject
+	21,  // 18: toshi.workspace.v1.ListSeatsResponse.seats:type_name -> toshi.workspace.v1.Seat
+	21,  // 19: toshi.workspace.v1.AssignSeatResponse.seat:type_name -> toshi.workspace.v1.Seat
+	21,  // 20: toshi.workspace.v1.RemoveSeatResponse.seat:type_name -> toshi.workspace.v1.Seat
+	82,  // 21: toshi.workspace.v1.ListEgressIPsResponse.hosts:type_name -> toshi.workspace.v1.EgressHost
+	85,  // 22: toshi.workspace.v1.GetUsageRequest.from:type_name -> google.protobuf.Timestamp
+	85,  // 23: toshi.workspace.v1.GetUsageRequest.to:type_name -> google.protobuf.Timestamp
+	79,  // 24: toshi.workspace.v1.GetUsageResponse.rows:type_name -> toshi.workspace.v1.UsageRow
+	85,  // 25: toshi.workspace.v1.GetUsageResponse.from:type_name -> google.protobuf.Timestamp
+	85,  // 26: toshi.workspace.v1.GetUsageResponse.to:type_name -> google.protobuf.Timestamp
+	78,  // 27: toshi.workspace.v1.GetUsageResponse.filler:type_name -> toshi.workspace.v1.FillerUsage
+	74,  // 28: toshi.workspace.v1.GetUsageResponse.storage:type_name -> toshi.workspace.v1.StorageUsageRow
+	85,  // 29: toshi.workspace.v1.GetQueueTimesRequest.from:type_name -> google.protobuf.Timestamp
+	85,  // 30: toshi.workspace.v1.GetQueueTimesRequest.to:type_name -> google.protobuf.Timestamp
+	85,  // 31: toshi.workspace.v1.GetQueueTimesResponse.from:type_name -> google.protobuf.Timestamp
+	85,  // 32: toshi.workspace.v1.GetQueueTimesResponse.to:type_name -> google.protobuf.Timestamp
+	77,  // 33: toshi.workspace.v1.GetQueueTimesResponse.held:type_name -> toshi.workspace.v1.HoldTimes
+	46,  // 34: toshi.workspace.v1.GetStartWindowsResponse.windows:type_name -> toshi.workspace.v1.StartWindow
+	85,  // 35: toshi.workspace.v1.GetStartWindowsResponse.next_at:type_name -> google.protobuf.Timestamp
+	46,  // 36: toshi.workspace.v1.GetWorkspaceLimitsResponse.windows:type_name -> toshi.workspace.v1.StartWindow
+	85,  // 37: toshi.workspace.v1.GetWorkspaceLimitsResponse.next_at:type_name -> google.protobuf.Timestamp
+	38,  // 38: toshi.workspace.v1.GetWorkspaceLimitsResponse.running_at_once:type_name -> toshi.workspace.v1.WorkspaceLimitRow
+	38,  // 39: toshi.workspace.v1.GetWorkspaceLimitsResponse.vcpu:type_name -> toshi.workspace.v1.WorkspaceLimitRow
+	39,  // 40: toshi.workspace.v1.GetWorkspaceLimitsResponse.spend:type_name -> toshi.workspace.v1.WorkspaceSpendLimit
+	40,  // 41: toshi.workspace.v1.GetWorkspaceLimitsResponse.paid_starts:type_name -> toshi.workspace.v1.WorkspacePaidStarts
+	41,  // 42: toshi.workspace.v1.GetWorkspaceLimitsResponse.storage:type_name -> toshi.workspace.v1.WorkspaceStorageLimits
+	42,  // 43: toshi.workspace.v1.GetWorkspaceLimitsResponse.month_estimate:type_name -> toshi.workspace.v1.WorkspaceMonthEstimate
+	38,  // 44: toshi.workspace.v1.WorkspaceStorageLimits.volume_size_cap_total_gb:type_name -> toshi.workspace.v1.WorkspaceLimitRow
+	38,  // 45: toshi.workspace.v1.WorkspaceStorageLimits.volume_size_cap_total_max_gb:type_name -> toshi.workspace.v1.WorkspaceLimitRow
+	74,  // 46: toshi.workspace.v1.WorkspaceStorageLimits.usage:type_name -> toshi.workspace.v1.StorageUsageRow
+	45,  // 47: toshi.workspace.v1.GetVolumeCapsResponse.projects:type_name -> toshi.workspace.v1.VolumeCapsProject
+	85,  // 48: toshi.workspace.v1.StartWindow.resets_at:type_name -> google.protobuf.Timestamp
+	85,  // 49: toshi.workspace.v1.StartWindow.next_at:type_name -> google.protobuf.Timestamp
+	85,  // 50: toshi.workspace.v1.GetWorkflowUsageRequest.from:type_name -> google.protobuf.Timestamp
+	85,  // 51: toshi.workspace.v1.GetWorkflowUsageRequest.to:type_name -> google.protobuf.Timestamp
+	80,  // 52: toshi.workspace.v1.GetWorkflowUsageResponse.rows:type_name -> toshi.workspace.v1.WorkflowUsageRow
+	85,  // 53: toshi.workspace.v1.GetWorkflowUsageResponse.from:type_name -> google.protobuf.Timestamp
+	85,  // 54: toshi.workspace.v1.GetWorkflowUsageResponse.to:type_name -> google.protobuf.Timestamp
+	81,  // 55: toshi.workspace.v1.ListPlansResponse.plans:type_name -> toshi.workspace.v1.Plan
+	85,  // 56: toshi.workspace.v1.Workspace.created_at:type_name -> google.protobuf.Timestamp
+	85,  // 57: toshi.workspace.v1.Workspace.starter_credit_granted_at:type_name -> google.protobuf.Timestamp
+	62,  // 58: toshi.workspace.v1.Workspace.reservations:type_name -> toshi.workspace.v1.Reservation
+	0,   // 59: toshi.workspace.v1.Workspace.cause:type_name -> toshi.workspace.v1.SuspendCause
+	85,  // 60: toshi.workspace.v1.Workspace.state_since:type_name -> google.protobuf.Timestamp
+	85,  // 61: toshi.workspace.v1.Workspace.purge_after:type_name -> google.protobuf.Timestamp
+	59,  // 62: toshi.workspace.v1.Workspace.settings:type_name -> toshi.workspace.v1.WorkspaceSettings
+	58,  // 63: toshi.workspace.v1.Workspace.hosting_certificate:type_name -> toshi.workspace.v1.HostingCertificate
+	87,  // 64: toshi.workspace.v1.Workspace.keep_vm_max_source:type_name -> toshi.workspace.v1.FeatureSource
+	60,  // 65: toshi.workspace.v1.Workspace.recording_changed:type_name -> toshi.workspace.v1.WorkspaceSettingChange
+	60,  // 66: toshi.workspace.v1.Workspace.recording_human_spans_changed:type_name -> toshi.workspace.v1.WorkspaceSettingChange
+	85,  // 67: toshi.workspace.v1.Workspace.closed_at:type_name -> google.protobuf.Timestamp
+	85,  // 68: toshi.workspace.v1.Workspace.read_only_expires_at:type_name -> google.protobuf.Timestamp
+	1,   // 69: toshi.workspace.v1.HostingCertificate.state:type_name -> toshi.workspace.v1.HostingCertificateState
+	85,  // 70: toshi.workspace.v1.HostingCertificate.not_after:type_name -> google.protobuf.Timestamp
+	85,  // 71: toshi.workspace.v1.HostingCertificate.renew_at:type_name -> google.protobuf.Timestamp
+	85,  // 72: toshi.workspace.v1.HostingCertificate.retry_at:type_name -> google.protobuf.Timestamp
+	61,  // 73: toshi.workspace.v1.WorkspaceSettings.sign_in:type_name -> toshi.workspace.v1.WorkspaceSignIn
+	88,  // 74: toshi.workspace.v1.WorkspaceSettings.model_credential_defaults:type_name -> toshi.workspace.v1.ModelCredentialDefault
+	2,   // 75: toshi.workspace.v1.WorkspaceSettings.inbound_mail_past_cap:type_name -> toshi.workspace.v1.InboundMailPastCap
+	89,  // 76: toshi.workspace.v1.WorkspaceSettings.endpoint_defaults:type_name -> toshi.workspace.v1.EndpointDefault
+	86,  // 77: toshi.workspace.v1.WorkspaceSettingChange.changed_by:type_name -> toshi.workspace.v1.Subject
+	85,  // 78: toshi.workspace.v1.WorkspaceSettingChange.changed_at:type_name -> google.protobuf.Timestamp
+	85,  // 79: toshi.workspace.v1.WorkspaceSignIn.set_at:type_name -> google.protobuf.Timestamp
+	85,  // 80: toshi.workspace.v1.WorkspaceBilling.billing_started_at:type_name -> google.protobuf.Timestamp
+	85,  // 81: toshi.workspace.v1.WorkspaceBilling.subscription_status_since:type_name -> google.protobuf.Timestamp
+	64,  // 82: toshi.workspace.v1.WorkspaceBilling.totals:type_name -> toshi.workspace.v1.BillingTotals
+	65,  // 83: toshi.workspace.v1.WorkspaceBilling.failed_events:type_name -> toshi.workspace.v1.BillingEventFailure
+	85,  // 84: toshi.workspace.v1.WorkspaceBilling.card_verified_at:type_name -> google.protobuf.Timestamp
+	85,  // 85: toshi.workspace.v1.WorkspaceBilling.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	83,  // 86: toshi.workspace.v1.WorkspaceBilling.held_now:type_name -> toshi.workspace.v1.WorkspaceBilling.HeldJobs
+	85,  // 87: toshi.workspace.v1.BillingEventFailure.occurred_at:type_name -> google.protobuf.Timestamp
+	85,  // 88: toshi.workspace.v1.BillingEventFailure.failed_at:type_name -> google.protobuf.Timestamp
+	85,  // 89: toshi.workspace.v1.WorkspaceStatement.from:type_name -> google.protobuf.Timestamp
+	85,  // 90: toshi.workspace.v1.WorkspaceStatement.to:type_name -> google.protobuf.Timestamp
+	75,  // 91: toshi.workspace.v1.WorkspaceStatement.usage:type_name -> toshi.workspace.v1.StatementUsage
+	75,  // 92: toshi.workspace.v1.WorkspaceStatement.total:type_name -> toshi.workspace.v1.StatementUsage
+	76,  // 93: toshi.workspace.v1.WorkspaceStatement.charges:type_name -> toshi.workspace.v1.StatementCharge
+	85,  // 94: toshi.workspace.v1.WorkspaceStatement.starter_credit_applied_at:type_name -> google.protobuf.Timestamp
+	77,  // 95: toshi.workspace.v1.WorkspaceStatement.held:type_name -> toshi.workspace.v1.HoldTimes
+	78,  // 96: toshi.workspace.v1.WorkspaceStatement.filler:type_name -> toshi.workspace.v1.FillerUsage
+	85,  // 97: toshi.workspace.v1.WorkspaceStatement.spend_cap_reached_at:type_name -> google.protobuf.Timestamp
+	70,  // 98: toshi.workspace.v1.WorkspaceStatement.own_host_fee:type_name -> toshi.workspace.v1.OwnHostFee
+	71,  // 99: toshi.workspace.v1.WorkspaceStatement.awake:type_name -> toshi.workspace.v1.Awake
+	72,  // 100: toshi.workspace.v1.WorkspaceStatement.storage:type_name -> toshi.workspace.v1.Storage
+	67,  // 101: toshi.workspace.v1.WorkspaceStatement.desktop_seats:type_name -> toshi.workspace.v1.DesktopSeats
+	68,  // 102: toshi.workspace.v1.WorkspaceStatement.paid_starts:type_name -> toshi.workspace.v1.PaidStarts
+	69,  // 103: toshi.workspace.v1.DesktopSeats.seats:type_name -> toshi.workspace.v1.StatementSeat
+	85,  // 104: toshi.workspace.v1.StatementSeat.assigned_at:type_name -> google.protobuf.Timestamp
+	85,  // 105: toshi.workspace.v1.StatementSeat.removed_at:type_name -> google.protobuf.Timestamp
+	73,  // 106: toshi.workspace.v1.Storage.kinds:type_name -> toshi.workspace.v1.StoredKind
+	85,  // 107: toshi.workspace.v1.HoldTimes.open_since:type_name -> google.protobuf.Timestamp
+	90,  // 108: toshi.workspace.v1.EgressHost.egress:type_name -> toshi.workspace.v1.HostEgress
+	85,  // 109: toshi.workspace.v1.WorkspaceBilling.HeldJobs.since:type_name -> google.protobuf.Timestamp
+	85,  // 110: toshi.workspace.v1.WorkspaceBilling.HeldJobs.next_at:type_name -> google.protobuf.Timestamp
+	3,   // 111: toshi.workspace.v1.WorkspaceService.GetWorkspace:input_type -> toshi.workspace.v1.GetWorkspaceRequest
+	9,   // 112: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:input_type -> toshi.workspace.v1.UpdateWorkspaceRequest
+	11,  // 113: toshi.workspace.v1.WorkspaceService.ListWorkspaces:input_type -> toshi.workspace.v1.ListWorkspacesRequest
+	13,  // 114: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:input_type -> toshi.workspace.v1.GetWorkspaceBillingRequest
+	15,  // 115: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:input_type -> toshi.workspace.v1.GetWorkspaceStatementRequest
+	17,  // 116: toshi.workspace.v1.WorkspaceService.GetWorkspaceUpcomingInvoice:input_type -> toshi.workspace.v1.GetWorkspaceUpcomingInvoiceRequest
+	22,  // 117: toshi.workspace.v1.WorkspaceService.ListSeats:input_type -> toshi.workspace.v1.ListSeatsRequest
+	24,  // 118: toshi.workspace.v1.WorkspaceService.AssignSeat:input_type -> toshi.workspace.v1.AssignSeatRequest
+	26,  // 119: toshi.workspace.v1.WorkspaceService.RemoveSeat:input_type -> toshi.workspace.v1.RemoveSeatRequest
+	28,  // 120: toshi.workspace.v1.WorkspaceService.ListEgressIPs:input_type -> toshi.workspace.v1.ListEgressIPsRequest
+	30,  // 121: toshi.workspace.v1.WorkspaceService.GetUsage:input_type -> toshi.workspace.v1.GetUsageRequest
+	32,  // 122: toshi.workspace.v1.WorkspaceService.GetQueueTimes:input_type -> toshi.workspace.v1.GetQueueTimesRequest
+	34,  // 123: toshi.workspace.v1.WorkspaceService.GetStartWindows:input_type -> toshi.workspace.v1.GetStartWindowsRequest
+	36,  // 124: toshi.workspace.v1.WorkspaceService.GetWorkspaceLimits:input_type -> toshi.workspace.v1.GetWorkspaceLimitsRequest
+	43,  // 125: toshi.workspace.v1.WorkspaceService.GetVolumeCaps:input_type -> toshi.workspace.v1.GetVolumeCapsRequest
+	47,  // 126: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:input_type -> toshi.workspace.v1.GetWorkflowUsageRequest
+	49,  // 127: toshi.workspace.v1.WorkspaceService.ListPlans:input_type -> toshi.workspace.v1.ListPlansRequest
+	51,  // 128: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:input_type -> toshi.workspace.v1.CreateCheckoutSessionRequest
+	53,  // 129: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:input_type -> toshi.workspace.v1.CreateBillingPortalSessionRequest
+	55,  // 130: toshi.workspace.v1.WorkspaceService.GetVersion:input_type -> toshi.workspace.v1.GetVersionRequest
+	5,   // 131: toshi.workspace.v1.WorkspaceService.DeleteWorkspace:input_type -> toshi.workspace.v1.DeleteWorkspaceRequest
+	7,   // 132: toshi.workspace.v1.WorkspaceService.CancelWorkspaceDeletion:input_type -> toshi.workspace.v1.CancelWorkspaceDeletionRequest
+	4,   // 133: toshi.workspace.v1.WorkspaceService.GetWorkspace:output_type -> toshi.workspace.v1.GetWorkspaceResponse
+	10,  // 134: toshi.workspace.v1.WorkspaceService.UpdateWorkspace:output_type -> toshi.workspace.v1.UpdateWorkspaceResponse
+	12,  // 135: toshi.workspace.v1.WorkspaceService.ListWorkspaces:output_type -> toshi.workspace.v1.ListWorkspacesResponse
+	14,  // 136: toshi.workspace.v1.WorkspaceService.GetWorkspaceBilling:output_type -> toshi.workspace.v1.GetWorkspaceBillingResponse
+	16,  // 137: toshi.workspace.v1.WorkspaceService.GetWorkspaceStatement:output_type -> toshi.workspace.v1.GetWorkspaceStatementResponse
+	18,  // 138: toshi.workspace.v1.WorkspaceService.GetWorkspaceUpcomingInvoice:output_type -> toshi.workspace.v1.GetWorkspaceUpcomingInvoiceResponse
+	23,  // 139: toshi.workspace.v1.WorkspaceService.ListSeats:output_type -> toshi.workspace.v1.ListSeatsResponse
+	25,  // 140: toshi.workspace.v1.WorkspaceService.AssignSeat:output_type -> toshi.workspace.v1.AssignSeatResponse
+	27,  // 141: toshi.workspace.v1.WorkspaceService.RemoveSeat:output_type -> toshi.workspace.v1.RemoveSeatResponse
+	29,  // 142: toshi.workspace.v1.WorkspaceService.ListEgressIPs:output_type -> toshi.workspace.v1.ListEgressIPsResponse
+	31,  // 143: toshi.workspace.v1.WorkspaceService.GetUsage:output_type -> toshi.workspace.v1.GetUsageResponse
+	33,  // 144: toshi.workspace.v1.WorkspaceService.GetQueueTimes:output_type -> toshi.workspace.v1.GetQueueTimesResponse
+	35,  // 145: toshi.workspace.v1.WorkspaceService.GetStartWindows:output_type -> toshi.workspace.v1.GetStartWindowsResponse
+	37,  // 146: toshi.workspace.v1.WorkspaceService.GetWorkspaceLimits:output_type -> toshi.workspace.v1.GetWorkspaceLimitsResponse
+	44,  // 147: toshi.workspace.v1.WorkspaceService.GetVolumeCaps:output_type -> toshi.workspace.v1.GetVolumeCapsResponse
+	48,  // 148: toshi.workspace.v1.WorkspaceService.GetWorkflowUsage:output_type -> toshi.workspace.v1.GetWorkflowUsageResponse
+	50,  // 149: toshi.workspace.v1.WorkspaceService.ListPlans:output_type -> toshi.workspace.v1.ListPlansResponse
+	52,  // 150: toshi.workspace.v1.WorkspaceService.CreateCheckoutSession:output_type -> toshi.workspace.v1.CreateCheckoutSessionResponse
+	54,  // 151: toshi.workspace.v1.WorkspaceService.CreateBillingPortalSession:output_type -> toshi.workspace.v1.CreateBillingPortalSessionResponse
+	56,  // 152: toshi.workspace.v1.WorkspaceService.GetVersion:output_type -> toshi.workspace.v1.GetVersionResponse
+	6,   // 153: toshi.workspace.v1.WorkspaceService.DeleteWorkspace:output_type -> toshi.workspace.v1.DeleteWorkspaceResponse
+	8,   // 154: toshi.workspace.v1.WorkspaceService.CancelWorkspaceDeletion:output_type -> toshi.workspace.v1.CancelWorkspaceDeletionResponse
+	133, // [133:155] is the sub-list for method output_type
+	111, // [111:133] is the sub-list for method input_type
+	111, // [111:111] is the sub-list for extension type_name
+	111, // [111:111] is the sub-list for extension extendee
+	0,   // [0:111] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_workspace_service_proto_init() }
@@ -8007,7 +8086,7 @@ func file_toshi_workspace_v1_workspace_service_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_workspace_service_proto_rawDesc), len(file_toshi_workspace_v1_workspace_service_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   81,
 			NumExtensions: 0,
 			NumServices:   1,

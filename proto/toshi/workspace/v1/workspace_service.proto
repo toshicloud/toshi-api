@@ -876,6 +876,20 @@ message GetVersionResponse {
   string minimum_agent_version = 4;
 }
 
+// SuspendCause is why a workspace was suspended.
+enum SuspendCause {
+  // No cause was recorded.
+  SUSPEND_CAUSE_UNSPECIFIED = 0;
+  // Conduct the operator confirmed.
+  SUSPEND_CAUSE_ABUSE = 1;
+  // The workspace's payment is unpaid, disputed or reversed.
+  SUSPEND_CAUSE_PAYMENT = 2;
+  // The owner or a legal request asked for a freeze.
+  SUSPEND_CAUSE_REQUEST = 3;
+  // Any other reason the operator suspended it.
+  SUSPEND_CAUSE_OPERATOR = 4;
+}
+
 // Workspace owns a plan, an optional concurrency override, and its GitHub
 // App installations.
 message Workspace {
@@ -913,6 +927,8 @@ message Workspace {
   // Why the operator suspended the workspace, or why it is deleted; empty
   // when active.
   string state_reason = 18;
+  // Why the workspace was suspended; unset when none was recorded.
+  SuspendCause cause = 45;
   // When the workspace entered its state; unset for a workspace always active.
   google.protobuf.Timestamp state_since = 19;
   // When a scheduled deletion purges the workspace; unset when none.
