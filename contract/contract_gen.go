@@ -939,6 +939,8 @@ const (
 	AuditActionImageVersionPending = "image.version.pending"
 	// AuditActionImageVersionDeleted is the "image.version.deleted" audit action.
 	AuditActionImageVersionDeleted = "image.version.deleted"
+	// AuditActionImageVersionExported is the "image_version.exported" audit action.
+	AuditActionImageVersionExported = "image_version.exported"
 	// AuditActionImageUpdated is the "image.updated" audit action.
 	AuditActionImageUpdated = "image.updated"
 	// AuditActionConnectionCreated is the "connection.created" audit action.
@@ -1001,6 +1003,8 @@ const (
 	AuditActionArtifactExpired = "artifact.expired"
 	// AuditActionVolumeVersionsExpired is the "volume.versions_expired" audit action.
 	AuditActionVolumeVersionsExpired = "volume.versions_expired"
+	// AuditActionVolumeVersionExported is the "volume_version.exported" audit action.
+	AuditActionVolumeVersionExported = "volume_version.exported"
 	// AuditActionVolumeSaveRefused is the "volume.save_refused" audit action.
 	AuditActionVolumeSaveRefused = "volume.save_refused"
 	// AuditActionVolumeClaimTakenOver is the "volume.claim_taken_over" audit action.
@@ -1471,6 +1475,7 @@ func AuditActionNames() []string {
 		"image.deleted",
 		"image.version.pending",
 		"image.version.deleted",
+		"image_version.exported",
 		"image.updated",
 		"connection.created",
 		"connection.deleted",
@@ -1502,6 +1507,7 @@ func AuditActionNames() []string {
 		"artifact.viewed",
 		"artifact.expired",
 		"volume.versions_expired",
+		"volume_version.exported",
 		"volume.save_refused",
 		"volume.claim_taken_over",
 		"volume.mounted",

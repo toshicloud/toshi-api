@@ -56,6 +56,9 @@ const (
 	// VolumeServiceListVolumeVersionsProcedure is the fully-qualified name of the VolumeService's
 	// ListVolumeVersions RPC.
 	VolumeServiceListVolumeVersionsProcedure = "/toshi.workspace.v1.VolumeService/ListVolumeVersions"
+	// VolumeServiceGetVolumeVersionDownloadURLProcedure is the fully-qualified name of the
+	// VolumeService's GetVolumeVersionDownloadURL RPC.
+	VolumeServiceGetVolumeVersionDownloadURLProcedure = "/toshi.workspace.v1.VolumeService/GetVolumeVersionDownloadURL"
 	// VolumeServiceRestoreVolumeProcedure is the fully-qualified name of the VolumeService's
 	// RestoreVolume RPC.
 	VolumeServiceRestoreVolumeProcedure = "/toshi.workspace.v1.VolumeService/RestoreVolume"
@@ -129,6 +132,15 @@ type VolumeServiceClient interface {
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error)
+	// GetVolumeVersionDownloadURL returns signed GETs for a saved version and
+	// its required backing layers, oldest first. Each request is signed for 15
+	// minutes; its returned expiry is the provider's actual expiry. Retention
+	// can remove data before a URL expires. Fetch each layer's parts in order,
+	// open encrypted parts using the returned volume data key, verify each
+	// layer's size and SHA-256, then merge the layers oldest first and the
+	// selected version last. The data key is empty when all layers are plain.
+	// The audit target combines volume_id and the decimal version number.
+	GetVolumeVersionDownloadURL(context.Context, *connect.Request[workspacev1.GetVolumeVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetVolumeVersionDownloadURLResponse], error)
 	// RestoreVolume copies one of a state volume's versions as its next
 	// version, so the next run that mounts the volume starts from that data.
 	// The new version names the version it was copied from. A volume a run
@@ -199,6 +211,12 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(volumeServiceMethods.ByName("ListVolumeVersions")),
 			connect.WithClientOptions(opts...),
 		),
+		getVolumeVersionDownloadURL: connect.NewClient[workspacev1.GetVolumeVersionDownloadURLRequest, workspacev1.GetVolumeVersionDownloadURLResponse](
+			httpClient,
+			baseURL+VolumeServiceGetVolumeVersionDownloadURLProcedure,
+			connect.WithSchema(volumeServiceMethods.ByName("GetVolumeVersionDownloadURL")),
+			connect.WithClientOptions(opts...),
+		),
 		restoreVolume: connect.NewClient[workspacev1.RestoreVolumeRequest, workspacev1.RestoreVolumeResponse](
 			httpClient,
 			baseURL+VolumeServiceRestoreVolumeProcedure,
@@ -210,15 +228,16 @@ func NewVolumeServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 
 // volumeServiceClient implements VolumeServiceClient.
 type volumeServiceClient struct {
-	listVolumes        *connect.Client[workspacev1.ListVolumesRequest, workspacev1.ListVolumesResponse]
-	getVolume          *connect.Client[workspacev1.GetVolumeRequest, workspacev1.GetVolumeResponse]
-	createVolume       *connect.Client[workspacev1.CreateVolumeRequest, workspacev1.CreateVolumeResponse]
-	updateVolume       *connect.Client[workspacev1.UpdateVolumeRequest, workspacev1.UpdateVolumeResponse]
-	attachVolume       *connect.Client[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse]
-	detachVolume       *connect.Client[workspacev1.DetachVolumeRequest, workspacev1.DetachVolumeResponse]
-	deleteVolume       *connect.Client[workspacev1.DeleteVolumeRequest, workspacev1.DeleteVolumeResponse]
-	listVolumeVersions *connect.Client[workspacev1.ListVolumeVersionsRequest, workspacev1.ListVolumeVersionsResponse]
-	restoreVolume      *connect.Client[workspacev1.RestoreVolumeRequest, workspacev1.RestoreVolumeResponse]
+	listVolumes                 *connect.Client[workspacev1.ListVolumesRequest, workspacev1.ListVolumesResponse]
+	getVolume                   *connect.Client[workspacev1.GetVolumeRequest, workspacev1.GetVolumeResponse]
+	createVolume                *connect.Client[workspacev1.CreateVolumeRequest, workspacev1.CreateVolumeResponse]
+	updateVolume                *connect.Client[workspacev1.UpdateVolumeRequest, workspacev1.UpdateVolumeResponse]
+	attachVolume                *connect.Client[workspacev1.AttachVolumeRequest, workspacev1.AttachVolumeResponse]
+	detachVolume                *connect.Client[workspacev1.DetachVolumeRequest, workspacev1.DetachVolumeResponse]
+	deleteVolume                *connect.Client[workspacev1.DeleteVolumeRequest, workspacev1.DeleteVolumeResponse]
+	listVolumeVersions          *connect.Client[workspacev1.ListVolumeVersionsRequest, workspacev1.ListVolumeVersionsResponse]
+	getVolumeVersionDownloadURL *connect.Client[workspacev1.GetVolumeVersionDownloadURLRequest, workspacev1.GetVolumeVersionDownloadURLResponse]
+	restoreVolume               *connect.Client[workspacev1.RestoreVolumeRequest, workspacev1.RestoreVolumeResponse]
 }
 
 // ListVolumes calls toshi.workspace.v1.VolumeService.ListVolumes.
@@ -259,6 +278,11 @@ func (c *volumeServiceClient) DeleteVolume(ctx context.Context, req *connect.Req
 // ListVolumeVersions calls toshi.workspace.v1.VolumeService.ListVolumeVersions.
 func (c *volumeServiceClient) ListVolumeVersions(ctx context.Context, req *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error) {
 	return c.listVolumeVersions.CallUnary(ctx, req)
+}
+
+// GetVolumeVersionDownloadURL calls toshi.workspace.v1.VolumeService.GetVolumeVersionDownloadURL.
+func (c *volumeServiceClient) GetVolumeVersionDownloadURL(ctx context.Context, req *connect.Request[workspacev1.GetVolumeVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetVolumeVersionDownloadURLResponse], error) {
+	return c.getVolumeVersionDownloadURL.CallUnary(ctx, req)
 }
 
 // RestoreVolume calls toshi.workspace.v1.VolumeService.RestoreVolume.
@@ -334,6 +358,15 @@ type VolumeServiceHandler interface {
 	//
 	// A page holds 100 versions when page_size is zero, and 1000 at most.
 	ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error)
+	// GetVolumeVersionDownloadURL returns signed GETs for a saved version and
+	// its required backing layers, oldest first. Each request is signed for 15
+	// minutes; its returned expiry is the provider's actual expiry. Retention
+	// can remove data before a URL expires. Fetch each layer's parts in order,
+	// open encrypted parts using the returned volume data key, verify each
+	// layer's size and SHA-256, then merge the layers oldest first and the
+	// selected version last. The data key is empty when all layers are plain.
+	// The audit target combines volume_id and the decimal version number.
+	GetVolumeVersionDownloadURL(context.Context, *connect.Request[workspacev1.GetVolumeVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetVolumeVersionDownloadURLResponse], error)
 	// RestoreVolume copies one of a state volume's versions as its next
 	// version, so the next run that mounts the volume starts from that data.
 	// The new version names the version it was copied from. A volume a run
@@ -400,6 +433,12 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(volumeServiceMethods.ByName("ListVolumeVersions")),
 		connect.WithHandlerOptions(opts...),
 	)
+	volumeServiceGetVolumeVersionDownloadURLHandler := connect.NewUnaryHandler(
+		VolumeServiceGetVolumeVersionDownloadURLProcedure,
+		svc.GetVolumeVersionDownloadURL,
+		connect.WithSchema(volumeServiceMethods.ByName("GetVolumeVersionDownloadURL")),
+		connect.WithHandlerOptions(opts...),
+	)
 	volumeServiceRestoreVolumeHandler := connect.NewUnaryHandler(
 		VolumeServiceRestoreVolumeProcedure,
 		svc.RestoreVolume,
@@ -424,6 +463,8 @@ func NewVolumeServiceHandler(svc VolumeServiceHandler, opts ...connect.HandlerOp
 			volumeServiceDeleteVolumeHandler.ServeHTTP(w, r)
 		case VolumeServiceListVolumeVersionsProcedure:
 			volumeServiceListVolumeVersionsHandler.ServeHTTP(w, r)
+		case VolumeServiceGetVolumeVersionDownloadURLProcedure:
+			volumeServiceGetVolumeVersionDownloadURLHandler.ServeHTTP(w, r)
 		case VolumeServiceRestoreVolumeProcedure:
 			volumeServiceRestoreVolumeHandler.ServeHTTP(w, r)
 		default:
@@ -465,6 +506,10 @@ func (UnimplementedVolumeServiceHandler) DeleteVolume(context.Context, *connect.
 
 func (UnimplementedVolumeServiceHandler) ListVolumeVersions(context.Context, *connect.Request[workspacev1.ListVolumeVersionsRequest]) (*connect.Response[workspacev1.ListVolumeVersionsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.ListVolumeVersions is not implemented"))
+}
+
+func (UnimplementedVolumeServiceHandler) GetVolumeVersionDownloadURL(context.Context, *connect.Request[workspacev1.GetVolumeVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetVolumeVersionDownloadURLResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.VolumeService.GetVolumeVersionDownloadURL is not implemented"))
 }
 
 func (UnimplementedVolumeServiceHandler) RestoreVolume(context.Context, *connect.Request[workspacev1.RestoreVolumeRequest]) (*connect.Response[workspacev1.RestoreVolumeResponse], error) {

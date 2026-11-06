@@ -257,6 +257,252 @@ func (VolumeConsistency) EnumDescriptor() ([]byte, []int) {
 	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{3}
 }
 
+// GetVolumeVersionDownloadURLRequest names one volume version.
+type GetVolumeVersionDownloadURLRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The project name; empty selects the default project.
+	Project string `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	// The volume's id.
+	VolumeId string `protobuf:"bytes,2,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	// The version number, starting at one.
+	Version       int64 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetVolumeVersionDownloadURLRequest) Reset() {
+	*x = GetVolumeVersionDownloadURLRequest{}
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetVolumeVersionDownloadURLRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVolumeVersionDownloadURLRequest) ProtoMessage() {}
+
+func (x *GetVolumeVersionDownloadURLRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVolumeVersionDownloadURLRequest.ProtoReflect.Descriptor instead.
+func (*GetVolumeVersionDownloadURLRequest) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GetVolumeVersionDownloadURLRequest) GetProject() string {
+	if x != nil {
+		return x.Project
+	}
+	return ""
+}
+
+func (x *GetVolumeVersionDownloadURLRequest) GetVolumeId() string {
+	if x != nil {
+		return x.VolumeId
+	}
+	return ""
+}
+
+func (x *GetVolumeVersionDownloadURLRequest) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+// VolumeVersionDownloadLayer describes one backing layer.
+type VolumeVersionDownloadLayer struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The version number.
+	Number int64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	// The opened layer's length in bytes.
+	SizeBytes int64 `protobuf:"varint,2,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	// The SHA-256 digest of the opened layer, in lowercase hex.
+	Sha256 string `protobuf:"bytes,3,opt,name=sha256,proto3" json:"sha256,omitempty"`
+	// Signed requests for the layer's parts, in order.
+	Parts []*VersionDownloadPart `protobuf:"bytes,4,rep,name=parts,proto3" json:"parts,omitempty"`
+	// Whether the parts are encrypted under the returned data key.
+	Encrypted     bool `protobuf:"varint,5,opt,name=encrypted,proto3" json:"encrypted,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VolumeVersionDownloadLayer) Reset() {
+	*x = VolumeVersionDownloadLayer{}
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VolumeVersionDownloadLayer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VolumeVersionDownloadLayer) ProtoMessage() {}
+
+func (x *VolumeVersionDownloadLayer) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VolumeVersionDownloadLayer.ProtoReflect.Descriptor instead.
+func (*VolumeVersionDownloadLayer) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *VolumeVersionDownloadLayer) GetNumber() int64 {
+	if x != nil {
+		return x.Number
+	}
+	return 0
+}
+
+func (x *VolumeVersionDownloadLayer) GetSizeBytes() int64 {
+	if x != nil {
+		return x.SizeBytes
+	}
+	return 0
+}
+
+func (x *VolumeVersionDownloadLayer) GetSha256() string {
+	if x != nil {
+		return x.Sha256
+	}
+	return ""
+}
+
+func (x *VolumeVersionDownloadLayer) GetParts() []*VersionDownloadPart {
+	if x != nil {
+		return x.Parts
+	}
+	return nil
+}
+
+func (x *VolumeVersionDownloadLayer) GetEncrypted() bool {
+	if x != nil {
+		return x.Encrypted
+	}
+	return false
+}
+
+// GetVolumeVersionDownloadURLResponse describes a version and its backing.
+type GetVolumeVersionDownloadURLResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The selected version number.
+	Number int64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	// The selected opened layer's length in bytes.
+	SizeBytes int64 `protobuf:"varint,2,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	// The SHA-256 digest of the selected opened layer, in lowercase hex.
+	Sha256 string `protobuf:"bytes,3,opt,name=sha256,proto3" json:"sha256,omitempty"`
+	// Signed requests for the selected layer's parts, in order.
+	Parts []*VersionDownloadPart `protobuf:"bytes,4,rep,name=parts,proto3" json:"parts,omitempty"`
+	// Whether the selected layer's parts are encrypted.
+	Encrypted bool `protobuf:"varint,5,opt,name=encrypted,proto3" json:"encrypted,omitempty"`
+	// Required backing layers, oldest first.
+	Backing []*VolumeVersionDownloadLayer `protobuf:"bytes,6,rep,name=backing,proto3" json:"backing,omitempty"`
+	// The opened volume data key if any layer is encrypted; otherwise empty.
+	DataKey       []byte `protobuf:"bytes,7,opt,name=data_key,json=dataKey,proto3" json:"data_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) Reset() {
+	*x = GetVolumeVersionDownloadURLResponse{}
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVolumeVersionDownloadURLResponse) ProtoMessage() {}
+
+func (x *GetVolumeVersionDownloadURLResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVolumeVersionDownloadURLResponse.ProtoReflect.Descriptor instead.
+func (*GetVolumeVersionDownloadURLResponse) Descriptor() ([]byte, []int) {
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) GetNumber() int64 {
+	if x != nil {
+		return x.Number
+	}
+	return 0
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) GetSizeBytes() int64 {
+	if x != nil {
+		return x.SizeBytes
+	}
+	return 0
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) GetSha256() string {
+	if x != nil {
+		return x.Sha256
+	}
+	return ""
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) GetParts() []*VersionDownloadPart {
+	if x != nil {
+		return x.Parts
+	}
+	return nil
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) GetEncrypted() bool {
+	if x != nil {
+		return x.Encrypted
+	}
+	return false
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) GetBacking() []*VolumeVersionDownloadLayer {
+	if x != nil {
+		return x.Backing
+	}
+	return nil
+}
+
+func (x *GetVolumeVersionDownloadURLResponse) GetDataKey() []byte {
+	if x != nil {
+		return x.DataKey
+	}
+	return nil
+}
+
 // Volume is a disk of a project.
 type Volume struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -343,7 +589,7 @@ type Volume struct {
 
 func (x *Volume) Reset() {
 	*x = Volume{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[0]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -355,7 +601,7 @@ func (x *Volume) String() string {
 func (*Volume) ProtoMessage() {}
 
 func (x *Volume) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[0]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -368,7 +614,7 @@ func (x *Volume) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Volume.ProtoReflect.Descriptor instead.
 func (*Volume) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{0}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Volume) GetId() string {
@@ -571,7 +817,7 @@ type VolumeVersion struct {
 
 func (x *VolumeVersion) Reset() {
 	*x = VolumeVersion{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -583,7 +829,7 @@ func (x *VolumeVersion) String() string {
 func (*VolumeVersion) ProtoMessage() {}
 
 func (x *VolumeVersion) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[1]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -596,7 +842,7 @@ func (x *VolumeVersion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VolumeVersion.ProtoReflect.Descriptor instead.
 func (*VolumeVersion) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{1}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *VolumeVersion) GetNumber() int64 {
@@ -667,7 +913,7 @@ type ListVolumesRequest struct {
 
 func (x *ListVolumesRequest) Reset() {
 	*x = ListVolumesRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -679,7 +925,7 @@ func (x *ListVolumesRequest) String() string {
 func (*ListVolumesRequest) ProtoMessage() {}
 
 func (x *ListVolumesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[2]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -692,7 +938,7 @@ func (x *ListVolumesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListVolumesRequest.ProtoReflect.Descriptor instead.
 func (*ListVolumesRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{2}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListVolumesRequest) GetProject() string {
@@ -736,7 +982,7 @@ type ListVolumesResponse struct {
 
 func (x *ListVolumesResponse) Reset() {
 	*x = ListVolumesResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -748,7 +994,7 @@ func (x *ListVolumesResponse) String() string {
 func (*ListVolumesResponse) ProtoMessage() {}
 
 func (x *ListVolumesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[3]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -761,7 +1007,7 @@ func (x *ListVolumesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListVolumesResponse.ProtoReflect.Descriptor instead.
 func (*ListVolumesResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{3}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListVolumesResponse) GetVolumes() []*Volume {
@@ -792,7 +1038,7 @@ type GetVolumeRequest struct {
 
 func (x *GetVolumeRequest) Reset() {
 	*x = GetVolumeRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -804,7 +1050,7 @@ func (x *GetVolumeRequest) String() string {
 func (*GetVolumeRequest) ProtoMessage() {}
 
 func (x *GetVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[4]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -817,7 +1063,7 @@ func (x *GetVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetVolumeRequest.ProtoReflect.Descriptor instead.
 func (*GetVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{4}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetVolumeRequest) GetProject() string {
@@ -847,7 +1093,7 @@ type GetVolumeResponse struct {
 
 func (x *GetVolumeResponse) Reset() {
 	*x = GetVolumeResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -859,7 +1105,7 @@ func (x *GetVolumeResponse) String() string {
 func (*GetVolumeResponse) ProtoMessage() {}
 
 func (x *GetVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[5]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -872,7 +1118,7 @@ func (x *GetVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetVolumeResponse.ProtoReflect.Descriptor instead.
 func (*GetVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{5}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetVolumeResponse) GetVolume() *Volume {
@@ -915,7 +1161,7 @@ type CreateVolumeRequest struct {
 
 func (x *CreateVolumeRequest) Reset() {
 	*x = CreateVolumeRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -927,7 +1173,7 @@ func (x *CreateVolumeRequest) String() string {
 func (*CreateVolumeRequest) ProtoMessage() {}
 
 func (x *CreateVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[6]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -940,7 +1186,7 @@ func (x *CreateVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateVolumeRequest.ProtoReflect.Descriptor instead.
 func (*CreateVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{6}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateVolumeRequest) GetProject() string {
@@ -1018,7 +1264,7 @@ type CreateVolumeResponse struct {
 
 func (x *CreateVolumeResponse) Reset() {
 	*x = CreateVolumeResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1030,7 +1276,7 @@ func (x *CreateVolumeResponse) String() string {
 func (*CreateVolumeResponse) ProtoMessage() {}
 
 func (x *CreateVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[7]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1043,7 +1289,7 @@ func (x *CreateVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateVolumeResponse.ProtoReflect.Descriptor instead.
 func (*CreateVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{7}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CreateVolumeResponse) GetVolume() *Volume {
@@ -1075,7 +1321,7 @@ type UpdateVolumeRequest struct {
 
 func (x *UpdateVolumeRequest) Reset() {
 	*x = UpdateVolumeRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1087,7 +1333,7 @@ func (x *UpdateVolumeRequest) String() string {
 func (*UpdateVolumeRequest) ProtoMessage() {}
 
 func (x *UpdateVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[8]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1100,7 +1346,7 @@ func (x *UpdateVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateVolumeRequest.ProtoReflect.Descriptor instead.
 func (*UpdateVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{8}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpdateVolumeRequest) GetProject() string {
@@ -1135,7 +1381,7 @@ type UpdateVolumeResponse struct {
 
 func (x *UpdateVolumeResponse) Reset() {
 	*x = UpdateVolumeResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1147,7 +1393,7 @@ func (x *UpdateVolumeResponse) String() string {
 func (*UpdateVolumeResponse) ProtoMessage() {}
 
 func (x *UpdateVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[9]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1160,7 +1406,7 @@ func (x *UpdateVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateVolumeResponse.ProtoReflect.Descriptor instead.
 func (*UpdateVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{9}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateVolumeResponse) GetVolume() *Volume {
@@ -1185,7 +1431,7 @@ type DeleteVolumeRequest struct {
 
 func (x *DeleteVolumeRequest) Reset() {
 	*x = DeleteVolumeRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1197,7 +1443,7 @@ func (x *DeleteVolumeRequest) String() string {
 func (*DeleteVolumeRequest) ProtoMessage() {}
 
 func (x *DeleteVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[10]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1210,7 +1456,7 @@ func (x *DeleteVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteVolumeRequest.ProtoReflect.Descriptor instead.
 func (*DeleteVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{10}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteVolumeRequest) GetProject() string {
@@ -1236,7 +1482,7 @@ type DeleteVolumeResponse struct {
 
 func (x *DeleteVolumeResponse) Reset() {
 	*x = DeleteVolumeResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1248,7 +1494,7 @@ func (x *DeleteVolumeResponse) String() string {
 func (*DeleteVolumeResponse) ProtoMessage() {}
 
 func (x *DeleteVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[11]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1261,7 +1507,7 @@ func (x *DeleteVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteVolumeResponse.ProtoReflect.Descriptor instead.
 func (*DeleteVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{11}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{14}
 }
 
 // AttachVolumeRequest is a call to AttachVolume: the volume and the service
@@ -1281,7 +1527,7 @@ type AttachVolumeRequest struct {
 
 func (x *AttachVolumeRequest) Reset() {
 	*x = AttachVolumeRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1293,7 +1539,7 @@ func (x *AttachVolumeRequest) String() string {
 func (*AttachVolumeRequest) ProtoMessage() {}
 
 func (x *AttachVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[12]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1306,7 +1552,7 @@ func (x *AttachVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttachVolumeRequest.ProtoReflect.Descriptor instead.
 func (*AttachVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{12}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *AttachVolumeRequest) GetProject() string {
@@ -1341,7 +1587,7 @@ type AttachVolumeResponse struct {
 
 func (x *AttachVolumeResponse) Reset() {
 	*x = AttachVolumeResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1353,7 +1599,7 @@ func (x *AttachVolumeResponse) String() string {
 func (*AttachVolumeResponse) ProtoMessage() {}
 
 func (x *AttachVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[13]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1366,7 +1612,7 @@ func (x *AttachVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttachVolumeResponse.ProtoReflect.Descriptor instead.
 func (*AttachVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{13}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *AttachVolumeResponse) GetVolume() *Volume {
@@ -1391,7 +1637,7 @@ type DetachVolumeRequest struct {
 
 func (x *DetachVolumeRequest) Reset() {
 	*x = DetachVolumeRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1403,7 +1649,7 @@ func (x *DetachVolumeRequest) String() string {
 func (*DetachVolumeRequest) ProtoMessage() {}
 
 func (x *DetachVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[14]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1416,7 +1662,7 @@ func (x *DetachVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DetachVolumeRequest.ProtoReflect.Descriptor instead.
 func (*DetachVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{14}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DetachVolumeRequest) GetProject() string {
@@ -1444,7 +1690,7 @@ type DetachVolumeResponse struct {
 
 func (x *DetachVolumeResponse) Reset() {
 	*x = DetachVolumeResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1456,7 +1702,7 @@ func (x *DetachVolumeResponse) String() string {
 func (*DetachVolumeResponse) ProtoMessage() {}
 
 func (x *DetachVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[15]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1469,7 +1715,7 @@ func (x *DetachVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DetachVolumeResponse.ProtoReflect.Descriptor instead.
 func (*DetachVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{15}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *DetachVolumeResponse) GetVolume() *Volume {
@@ -1499,7 +1745,7 @@ type ListVolumeVersionsRequest struct {
 
 func (x *ListVolumeVersionsRequest) Reset() {
 	*x = ListVolumeVersionsRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1511,7 +1757,7 @@ func (x *ListVolumeVersionsRequest) String() string {
 func (*ListVolumeVersionsRequest) ProtoMessage() {}
 
 func (x *ListVolumeVersionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[16]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1524,7 +1770,7 @@ func (x *ListVolumeVersionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListVolumeVersionsRequest.ProtoReflect.Descriptor instead.
 func (*ListVolumeVersionsRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{16}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ListVolumeVersionsRequest) GetProject() string {
@@ -1569,7 +1815,7 @@ type ListVolumeVersionsResponse struct {
 
 func (x *ListVolumeVersionsResponse) Reset() {
 	*x = ListVolumeVersionsResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1581,7 +1827,7 @@ func (x *ListVolumeVersionsResponse) String() string {
 func (*ListVolumeVersionsResponse) ProtoMessage() {}
 
 func (x *ListVolumeVersionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[17]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1594,7 +1840,7 @@ func (x *ListVolumeVersionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListVolumeVersionsResponse.ProtoReflect.Descriptor instead.
 func (*ListVolumeVersionsResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{17}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListVolumeVersionsResponse) GetVersions() []*VolumeVersion {
@@ -1628,7 +1874,7 @@ type RestoreVolumeRequest struct {
 
 func (x *RestoreVolumeRequest) Reset() {
 	*x = RestoreVolumeRequest{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1640,7 +1886,7 @@ func (x *RestoreVolumeRequest) String() string {
 func (*RestoreVolumeRequest) ProtoMessage() {}
 
 func (x *RestoreVolumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[18]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1653,7 +1899,7 @@ func (x *RestoreVolumeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreVolumeRequest.ProtoReflect.Descriptor instead.
 func (*RestoreVolumeRequest) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{18}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RestoreVolumeRequest) GetProject() string {
@@ -1691,7 +1937,7 @@ type RestoreVolumeResponse struct {
 
 func (x *RestoreVolumeResponse) Reset() {
 	*x = RestoreVolumeResponse{}
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1703,7 +1949,7 @@ func (x *RestoreVolumeResponse) String() string {
 func (*RestoreVolumeResponse) ProtoMessage() {}
 
 func (x *RestoreVolumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[19]
+	mi := &file_toshi_workspace_v1_volumes_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1716,7 +1962,7 @@ func (x *RestoreVolumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreVolumeResponse.ProtoReflect.Descriptor instead.
 func (*RestoreVolumeResponse) Descriptor() ([]byte, []int) {
-	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{19}
+	return file_toshi_workspace_v1_volumes_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RestoreVolumeResponse) GetVersion() *VolumeVersion {
@@ -1737,7 +1983,27 @@ var File_toshi_workspace_v1_volumes_proto protoreflect.FileDescriptor
 
 const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\n" +
-	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\"\xa8\t\n" +
+	" toshi/workspace/v1/volumes.proto\x12\x12toshi.workspace.v1\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x16toshi/permission.proto\x1a)toshi/workspace/v1/version_download.proto\"u\n" +
+	"\"GetVolumeVersionDownloadURLRequest\x12\x18\n" +
+	"\aproject\x18\x01 \x01(\tR\aproject\x12\x1b\n" +
+	"\tvolume_id\x18\x02 \x01(\tR\bvolumeId\x12\x18\n" +
+	"\aversion\x18\x03 \x01(\x03R\aversion\"\xc8\x01\n" +
+	"\x1aVolumeVersionDownloadLayer\x12\x16\n" +
+	"\x06number\x18\x01 \x01(\x03R\x06number\x12\x1d\n" +
+	"\n" +
+	"size_bytes\x18\x02 \x01(\x03R\tsizeBytes\x12\x16\n" +
+	"\x06sha256\x18\x03 \x01(\tR\x06sha256\x12=\n" +
+	"\x05parts\x18\x04 \x03(\v2'.toshi.workspace.v1.VersionDownloadPartR\x05parts\x12\x1c\n" +
+	"\tencrypted\x18\x05 \x01(\bR\tencrypted\"\xb6\x02\n" +
+	"#GetVolumeVersionDownloadURLResponse\x12\x16\n" +
+	"\x06number\x18\x01 \x01(\x03R\x06number\x12\x1d\n" +
+	"\n" +
+	"size_bytes\x18\x02 \x01(\x03R\tsizeBytes\x12\x16\n" +
+	"\x06sha256\x18\x03 \x01(\tR\x06sha256\x12=\n" +
+	"\x05parts\x18\x04 \x03(\v2'.toshi.workspace.v1.VersionDownloadPartR\x05parts\x12\x1c\n" +
+	"\tencrypted\x18\x05 \x01(\bR\tencrypted\x12H\n" +
+	"\abacking\x18\x06 \x03(\v2..toshi.workspace.v1.VolumeVersionDownloadLayerR\abacking\x12\x19\n" +
+	"\bdata_key\x18\a \x01(\fR\adataKey\"\xa8\t\n" +
 	"\x06Volume\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -1863,8 +2129,7 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\x11VolumeConsistency\x12\"\n" +
 	"\x1eVOLUME_CONSISTENCY_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18VOLUME_CONSISTENCY_CRASH\x10\x01\x12\"\n" +
-	"\x1eVOLUME_CONSISTENCY_APPLICATION\x10\x022\xbf\n" +
-	"\n" +
+	"\x1eVOLUME_CONSISTENCY_APPLICATION\x10\x022\xaa\f\n" +
 	"\rVolumeService\x12{\n" +
 	"\vListVolumes\x12&.toshi.workspace.v1.ListVolumesRequest\x1a'.toshi.workspace.v1.ListVolumesResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12u\n" +
 	"\tGetVolume\x12$.toshi.workspace.v1.GetVolumeRequest\x1a%.toshi.workspace.v1.GetVolumeResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\x84\x01\n" +
@@ -1873,7 +2138,9 @@ const file_toshi_workspace_v1_volumes_proto_rawDesc = "" +
 	"\fAttachVolume\x12'.toshi.workspace.v1.AttachVolumeRequest\x1a(.toshi.workspace.v1.AttachVolumeResponse\" \xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x90\xf4\x18\x02\x12\x83\x01\n" +
 	"\fDetachVolume\x12'.toshi.workspace.v1.DetachVolumeRequest\x1a(.toshi.workspace.v1.DetachVolumeResponse\" \xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\x90\xf4\x18\x02\x12\xcf\x01\n" +
 	"\fDeleteVolume\x12'.toshi.workspace.v1.DeleteVolumeRequest\x1a(.toshi.workspace.v1.DeleteVolumeResponse\"l\xc2\xf3\x18\x0eprojects.write\xca\xf3\x18\aproject\xfa\xf3\x18G\b\x01\x12CDelete this volume? Its data is deleted and cannot be brought back.\x90\xf4\x18\x02\x12\x90\x01\n" +
-	"\x12ListVolumeVersions\x12-.toshi.workspace.v1.ListVolumeVersionsRequest\x1a..toshi.workspace.v1.ListVolumeVersionsResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\x9b\x01\n" +
+	"\x12ListVolumeVersions\x12-.toshi.workspace.v1.ListVolumeVersionsRequest\x1a..toshi.workspace.v1.ListVolumeVersionsResponse\"\x1b\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\x12\xe8\x01\n" +
+	"\x1bGetVolumeVersionDownloadURL\x126.toshi.workspace.v1.GetVolumeVersionDownloadURLRequest\x1a7.toshi.workspace.v1.GetVolumeVersionDownloadURLResponse\"X\xc2\xf3\x18\fvolumes.read\xca\xf3\x18\aproject\xd2\xf3\x183\n" +
+	"\x17volume_version.exported\x12\x18volume_version:volume_id\xea\xf3\x18\x02(\x01\x12\x9b\x01\n" +
 	"\rRestoreVolume\x12(.toshi.workspace.v1.RestoreVolumeRequest\x1a).toshi.workspace.v1.RestoreVolumeResponse\"5\xc2\xf3\x18\rvolumes.write\xca\xf3\x18\aproject\xd2\xf3\x18\x11\n" +
 	"\x0fvolume.restored\x90\xf4\x18\x02B\"Z go.toshicloud.io/api/workspacev1b\x06proto3"
 
@@ -1890,83 +2157,92 @@ func file_toshi_workspace_v1_volumes_proto_rawDescGZIP() []byte {
 }
 
 var file_toshi_workspace_v1_volumes_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_toshi_workspace_v1_volumes_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_toshi_workspace_v1_volumes_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_toshi_workspace_v1_volumes_proto_goTypes = []any{
-	(VolumeMode)(0),                    // 0: toshi.workspace.v1.VolumeMode
-	(VolumeFormat)(0),                  // 1: toshi.workspace.v1.VolumeFormat
-	(VolumeVersionKind)(0),             // 2: toshi.workspace.v1.VolumeVersionKind
-	(VolumeConsistency)(0),             // 3: toshi.workspace.v1.VolumeConsistency
-	(*Volume)(nil),                     // 4: toshi.workspace.v1.Volume
-	(*VolumeVersion)(nil),              // 5: toshi.workspace.v1.VolumeVersion
-	(*ListVolumesRequest)(nil),         // 6: toshi.workspace.v1.ListVolumesRequest
-	(*ListVolumesResponse)(nil),        // 7: toshi.workspace.v1.ListVolumesResponse
-	(*GetVolumeRequest)(nil),           // 8: toshi.workspace.v1.GetVolumeRequest
-	(*GetVolumeResponse)(nil),          // 9: toshi.workspace.v1.GetVolumeResponse
-	(*CreateVolumeRequest)(nil),        // 10: toshi.workspace.v1.CreateVolumeRequest
-	(*CreateVolumeResponse)(nil),       // 11: toshi.workspace.v1.CreateVolumeResponse
-	(*UpdateVolumeRequest)(nil),        // 12: toshi.workspace.v1.UpdateVolumeRequest
-	(*UpdateVolumeResponse)(nil),       // 13: toshi.workspace.v1.UpdateVolumeResponse
-	(*DeleteVolumeRequest)(nil),        // 14: toshi.workspace.v1.DeleteVolumeRequest
-	(*DeleteVolumeResponse)(nil),       // 15: toshi.workspace.v1.DeleteVolumeResponse
-	(*AttachVolumeRequest)(nil),        // 16: toshi.workspace.v1.AttachVolumeRequest
-	(*AttachVolumeResponse)(nil),       // 17: toshi.workspace.v1.AttachVolumeResponse
-	(*DetachVolumeRequest)(nil),        // 18: toshi.workspace.v1.DetachVolumeRequest
-	(*DetachVolumeResponse)(nil),       // 19: toshi.workspace.v1.DetachVolumeResponse
-	(*ListVolumeVersionsRequest)(nil),  // 20: toshi.workspace.v1.ListVolumeVersionsRequest
-	(*ListVolumeVersionsResponse)(nil), // 21: toshi.workspace.v1.ListVolumeVersionsResponse
-	(*RestoreVolumeRequest)(nil),       // 22: toshi.workspace.v1.RestoreVolumeRequest
-	(*RestoreVolumeResponse)(nil),      // 23: toshi.workspace.v1.RestoreVolumeResponse
-	(*timestamppb.Timestamp)(nil),      // 24: google.protobuf.Timestamp
-	(*durationpb.Duration)(nil),        // 25: google.protobuf.Duration
-	(*fieldmaskpb.FieldMask)(nil),      // 26: google.protobuf.FieldMask
+	(VolumeMode)(0),                             // 0: toshi.workspace.v1.VolumeMode
+	(VolumeFormat)(0),                           // 1: toshi.workspace.v1.VolumeFormat
+	(VolumeVersionKind)(0),                      // 2: toshi.workspace.v1.VolumeVersionKind
+	(VolumeConsistency)(0),                      // 3: toshi.workspace.v1.VolumeConsistency
+	(*GetVolumeVersionDownloadURLRequest)(nil),  // 4: toshi.workspace.v1.GetVolumeVersionDownloadURLRequest
+	(*VolumeVersionDownloadLayer)(nil),          // 5: toshi.workspace.v1.VolumeVersionDownloadLayer
+	(*GetVolumeVersionDownloadURLResponse)(nil), // 6: toshi.workspace.v1.GetVolumeVersionDownloadURLResponse
+	(*Volume)(nil),                              // 7: toshi.workspace.v1.Volume
+	(*VolumeVersion)(nil),                       // 8: toshi.workspace.v1.VolumeVersion
+	(*ListVolumesRequest)(nil),                  // 9: toshi.workspace.v1.ListVolumesRequest
+	(*ListVolumesResponse)(nil),                 // 10: toshi.workspace.v1.ListVolumesResponse
+	(*GetVolumeRequest)(nil),                    // 11: toshi.workspace.v1.GetVolumeRequest
+	(*GetVolumeResponse)(nil),                   // 12: toshi.workspace.v1.GetVolumeResponse
+	(*CreateVolumeRequest)(nil),                 // 13: toshi.workspace.v1.CreateVolumeRequest
+	(*CreateVolumeResponse)(nil),                // 14: toshi.workspace.v1.CreateVolumeResponse
+	(*UpdateVolumeRequest)(nil),                 // 15: toshi.workspace.v1.UpdateVolumeRequest
+	(*UpdateVolumeResponse)(nil),                // 16: toshi.workspace.v1.UpdateVolumeResponse
+	(*DeleteVolumeRequest)(nil),                 // 17: toshi.workspace.v1.DeleteVolumeRequest
+	(*DeleteVolumeResponse)(nil),                // 18: toshi.workspace.v1.DeleteVolumeResponse
+	(*AttachVolumeRequest)(nil),                 // 19: toshi.workspace.v1.AttachVolumeRequest
+	(*AttachVolumeResponse)(nil),                // 20: toshi.workspace.v1.AttachVolumeResponse
+	(*DetachVolumeRequest)(nil),                 // 21: toshi.workspace.v1.DetachVolumeRequest
+	(*DetachVolumeResponse)(nil),                // 22: toshi.workspace.v1.DetachVolumeResponse
+	(*ListVolumeVersionsRequest)(nil),           // 23: toshi.workspace.v1.ListVolumeVersionsRequest
+	(*ListVolumeVersionsResponse)(nil),          // 24: toshi.workspace.v1.ListVolumeVersionsResponse
+	(*RestoreVolumeRequest)(nil),                // 25: toshi.workspace.v1.RestoreVolumeRequest
+	(*RestoreVolumeResponse)(nil),               // 26: toshi.workspace.v1.RestoreVolumeResponse
+	(*VersionDownloadPart)(nil),                 // 27: toshi.workspace.v1.VersionDownloadPart
+	(*timestamppb.Timestamp)(nil),               // 28: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),                 // 29: google.protobuf.Duration
+	(*fieldmaskpb.FieldMask)(nil),               // 30: google.protobuf.FieldMask
 }
 var file_toshi_workspace_v1_volumes_proto_depIdxs = []int32{
-	0,  // 0: toshi.workspace.v1.Volume.mode:type_name -> toshi.workspace.v1.VolumeMode
-	24, // 1: toshi.workspace.v1.Volume.created_at:type_name -> google.protobuf.Timestamp
-	24, // 2: toshi.workspace.v1.Volume.latest_version_at:type_name -> google.protobuf.Timestamp
-	24, // 3: toshi.workspace.v1.Volume.lost_at:type_name -> google.protobuf.Timestamp
-	3,  // 4: toshi.workspace.v1.Volume.latest_version_consistency:type_name -> toshi.workspace.v1.VolumeConsistency
-	25, // 5: toshi.workspace.v1.Volume.snapshot_interval:type_name -> google.protobuf.Duration
-	24, // 6: toshi.workspace.v1.Volume.last_save_failed_at:type_name -> google.protobuf.Timestamp
-	1,  // 7: toshi.workspace.v1.Volume.format:type_name -> toshi.workspace.v1.VolumeFormat
-	24, // 8: toshi.workspace.v1.VolumeVersion.created_at:type_name -> google.protobuf.Timestamp
-	2,  // 9: toshi.workspace.v1.VolumeVersion.kind:type_name -> toshi.workspace.v1.VolumeVersionKind
-	3,  // 10: toshi.workspace.v1.VolumeVersion.consistency:type_name -> toshi.workspace.v1.VolumeConsistency
-	4,  // 11: toshi.workspace.v1.ListVolumesResponse.volumes:type_name -> toshi.workspace.v1.Volume
-	4,  // 12: toshi.workspace.v1.GetVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	0,  // 13: toshi.workspace.v1.CreateVolumeRequest.mode:type_name -> toshi.workspace.v1.VolumeMode
-	4,  // 14: toshi.workspace.v1.CreateVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	4,  // 15: toshi.workspace.v1.UpdateVolumeRequest.volume:type_name -> toshi.workspace.v1.Volume
-	26, // 16: toshi.workspace.v1.UpdateVolumeRequest.update_mask:type_name -> google.protobuf.FieldMask
-	4,  // 17: toshi.workspace.v1.UpdateVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	4,  // 18: toshi.workspace.v1.AttachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	4,  // 19: toshi.workspace.v1.DetachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	5,  // 20: toshi.workspace.v1.ListVolumeVersionsResponse.versions:type_name -> toshi.workspace.v1.VolumeVersion
-	5,  // 21: toshi.workspace.v1.RestoreVolumeResponse.version:type_name -> toshi.workspace.v1.VolumeVersion
-	4,  // 22: toshi.workspace.v1.RestoreVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
-	6,  // 23: toshi.workspace.v1.VolumeService.ListVolumes:input_type -> toshi.workspace.v1.ListVolumesRequest
-	8,  // 24: toshi.workspace.v1.VolumeService.GetVolume:input_type -> toshi.workspace.v1.GetVolumeRequest
-	10, // 25: toshi.workspace.v1.VolumeService.CreateVolume:input_type -> toshi.workspace.v1.CreateVolumeRequest
-	12, // 26: toshi.workspace.v1.VolumeService.UpdateVolume:input_type -> toshi.workspace.v1.UpdateVolumeRequest
-	16, // 27: toshi.workspace.v1.VolumeService.AttachVolume:input_type -> toshi.workspace.v1.AttachVolumeRequest
-	18, // 28: toshi.workspace.v1.VolumeService.DetachVolume:input_type -> toshi.workspace.v1.DetachVolumeRequest
-	14, // 29: toshi.workspace.v1.VolumeService.DeleteVolume:input_type -> toshi.workspace.v1.DeleteVolumeRequest
-	20, // 30: toshi.workspace.v1.VolumeService.ListVolumeVersions:input_type -> toshi.workspace.v1.ListVolumeVersionsRequest
-	22, // 31: toshi.workspace.v1.VolumeService.RestoreVolume:input_type -> toshi.workspace.v1.RestoreVolumeRequest
-	7,  // 32: toshi.workspace.v1.VolumeService.ListVolumes:output_type -> toshi.workspace.v1.ListVolumesResponse
-	9,  // 33: toshi.workspace.v1.VolumeService.GetVolume:output_type -> toshi.workspace.v1.GetVolumeResponse
-	11, // 34: toshi.workspace.v1.VolumeService.CreateVolume:output_type -> toshi.workspace.v1.CreateVolumeResponse
-	13, // 35: toshi.workspace.v1.VolumeService.UpdateVolume:output_type -> toshi.workspace.v1.UpdateVolumeResponse
-	17, // 36: toshi.workspace.v1.VolumeService.AttachVolume:output_type -> toshi.workspace.v1.AttachVolumeResponse
-	19, // 37: toshi.workspace.v1.VolumeService.DetachVolume:output_type -> toshi.workspace.v1.DetachVolumeResponse
-	15, // 38: toshi.workspace.v1.VolumeService.DeleteVolume:output_type -> toshi.workspace.v1.DeleteVolumeResponse
-	21, // 39: toshi.workspace.v1.VolumeService.ListVolumeVersions:output_type -> toshi.workspace.v1.ListVolumeVersionsResponse
-	23, // 40: toshi.workspace.v1.VolumeService.RestoreVolume:output_type -> toshi.workspace.v1.RestoreVolumeResponse
-	32, // [32:41] is the sub-list for method output_type
-	23, // [23:32] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	27, // 0: toshi.workspace.v1.VolumeVersionDownloadLayer.parts:type_name -> toshi.workspace.v1.VersionDownloadPart
+	27, // 1: toshi.workspace.v1.GetVolumeVersionDownloadURLResponse.parts:type_name -> toshi.workspace.v1.VersionDownloadPart
+	5,  // 2: toshi.workspace.v1.GetVolumeVersionDownloadURLResponse.backing:type_name -> toshi.workspace.v1.VolumeVersionDownloadLayer
+	0,  // 3: toshi.workspace.v1.Volume.mode:type_name -> toshi.workspace.v1.VolumeMode
+	28, // 4: toshi.workspace.v1.Volume.created_at:type_name -> google.protobuf.Timestamp
+	28, // 5: toshi.workspace.v1.Volume.latest_version_at:type_name -> google.protobuf.Timestamp
+	28, // 6: toshi.workspace.v1.Volume.lost_at:type_name -> google.protobuf.Timestamp
+	3,  // 7: toshi.workspace.v1.Volume.latest_version_consistency:type_name -> toshi.workspace.v1.VolumeConsistency
+	29, // 8: toshi.workspace.v1.Volume.snapshot_interval:type_name -> google.protobuf.Duration
+	28, // 9: toshi.workspace.v1.Volume.last_save_failed_at:type_name -> google.protobuf.Timestamp
+	1,  // 10: toshi.workspace.v1.Volume.format:type_name -> toshi.workspace.v1.VolumeFormat
+	28, // 11: toshi.workspace.v1.VolumeVersion.created_at:type_name -> google.protobuf.Timestamp
+	2,  // 12: toshi.workspace.v1.VolumeVersion.kind:type_name -> toshi.workspace.v1.VolumeVersionKind
+	3,  // 13: toshi.workspace.v1.VolumeVersion.consistency:type_name -> toshi.workspace.v1.VolumeConsistency
+	7,  // 14: toshi.workspace.v1.ListVolumesResponse.volumes:type_name -> toshi.workspace.v1.Volume
+	7,  // 15: toshi.workspace.v1.GetVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	0,  // 16: toshi.workspace.v1.CreateVolumeRequest.mode:type_name -> toshi.workspace.v1.VolumeMode
+	7,  // 17: toshi.workspace.v1.CreateVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	7,  // 18: toshi.workspace.v1.UpdateVolumeRequest.volume:type_name -> toshi.workspace.v1.Volume
+	30, // 19: toshi.workspace.v1.UpdateVolumeRequest.update_mask:type_name -> google.protobuf.FieldMask
+	7,  // 20: toshi.workspace.v1.UpdateVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	7,  // 21: toshi.workspace.v1.AttachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	7,  // 22: toshi.workspace.v1.DetachVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	8,  // 23: toshi.workspace.v1.ListVolumeVersionsResponse.versions:type_name -> toshi.workspace.v1.VolumeVersion
+	8,  // 24: toshi.workspace.v1.RestoreVolumeResponse.version:type_name -> toshi.workspace.v1.VolumeVersion
+	7,  // 25: toshi.workspace.v1.RestoreVolumeResponse.volume:type_name -> toshi.workspace.v1.Volume
+	9,  // 26: toshi.workspace.v1.VolumeService.ListVolumes:input_type -> toshi.workspace.v1.ListVolumesRequest
+	11, // 27: toshi.workspace.v1.VolumeService.GetVolume:input_type -> toshi.workspace.v1.GetVolumeRequest
+	13, // 28: toshi.workspace.v1.VolumeService.CreateVolume:input_type -> toshi.workspace.v1.CreateVolumeRequest
+	15, // 29: toshi.workspace.v1.VolumeService.UpdateVolume:input_type -> toshi.workspace.v1.UpdateVolumeRequest
+	19, // 30: toshi.workspace.v1.VolumeService.AttachVolume:input_type -> toshi.workspace.v1.AttachVolumeRequest
+	21, // 31: toshi.workspace.v1.VolumeService.DetachVolume:input_type -> toshi.workspace.v1.DetachVolumeRequest
+	17, // 32: toshi.workspace.v1.VolumeService.DeleteVolume:input_type -> toshi.workspace.v1.DeleteVolumeRequest
+	23, // 33: toshi.workspace.v1.VolumeService.ListVolumeVersions:input_type -> toshi.workspace.v1.ListVolumeVersionsRequest
+	4,  // 34: toshi.workspace.v1.VolumeService.GetVolumeVersionDownloadURL:input_type -> toshi.workspace.v1.GetVolumeVersionDownloadURLRequest
+	25, // 35: toshi.workspace.v1.VolumeService.RestoreVolume:input_type -> toshi.workspace.v1.RestoreVolumeRequest
+	10, // 36: toshi.workspace.v1.VolumeService.ListVolumes:output_type -> toshi.workspace.v1.ListVolumesResponse
+	12, // 37: toshi.workspace.v1.VolumeService.GetVolume:output_type -> toshi.workspace.v1.GetVolumeResponse
+	14, // 38: toshi.workspace.v1.VolumeService.CreateVolume:output_type -> toshi.workspace.v1.CreateVolumeResponse
+	16, // 39: toshi.workspace.v1.VolumeService.UpdateVolume:output_type -> toshi.workspace.v1.UpdateVolumeResponse
+	20, // 40: toshi.workspace.v1.VolumeService.AttachVolume:output_type -> toshi.workspace.v1.AttachVolumeResponse
+	22, // 41: toshi.workspace.v1.VolumeService.DetachVolume:output_type -> toshi.workspace.v1.DetachVolumeResponse
+	18, // 42: toshi.workspace.v1.VolumeService.DeleteVolume:output_type -> toshi.workspace.v1.DeleteVolumeResponse
+	24, // 43: toshi.workspace.v1.VolumeService.ListVolumeVersions:output_type -> toshi.workspace.v1.ListVolumeVersionsResponse
+	6,  // 44: toshi.workspace.v1.VolumeService.GetVolumeVersionDownloadURL:output_type -> toshi.workspace.v1.GetVolumeVersionDownloadURLResponse
+	26, // 45: toshi.workspace.v1.VolumeService.RestoreVolume:output_type -> toshi.workspace.v1.RestoreVolumeResponse
+	36, // [36:46] is the sub-list for method output_type
+	26, // [26:36] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_toshi_workspace_v1_volumes_proto_init() }
@@ -1974,13 +2250,14 @@ func file_toshi_workspace_v1_volumes_proto_init() {
 	if File_toshi_workspace_v1_volumes_proto != nil {
 		return
 	}
+	file_toshi_workspace_v1_version_download_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_toshi_workspace_v1_volumes_proto_rawDesc), len(file_toshi_workspace_v1_volumes_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   20,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

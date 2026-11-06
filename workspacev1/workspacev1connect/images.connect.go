@@ -43,6 +43,9 @@ const (
 	ImageServiceUpdateImageProcedure = "/toshi.workspace.v1.ImageService/UpdateImage"
 	// ImageServiceGetImageProcedure is the fully-qualified name of the ImageService's GetImage RPC.
 	ImageServiceGetImageProcedure = "/toshi.workspace.v1.ImageService/GetImage"
+	// ImageServiceGetImageVersionDownloadURLProcedure is the fully-qualified name of the ImageService's
+	// GetImageVersionDownloadURL RPC.
+	ImageServiceGetImageVersionDownloadURLProcedure = "/toshi.workspace.v1.ImageService/GetImageVersionDownloadURL"
 	// ImageServiceListImagesProcedure is the fully-qualified name of the ImageService's ListImages RPC.
 	ImageServiceListImagesProcedure = "/toshi.workspace.v1.ImageService/ListImages"
 	// ImageServiceDeleteImageProcedure is the fully-qualified name of the ImageService's DeleteImage
@@ -103,6 +106,13 @@ type ImageServiceClient interface {
 	UpdateImage(context.Context, *connect.Request[workspacev1.UpdateImageRequest]) (*connect.Response[workspacev1.UpdateImageResponse], error)
 	// GetImage returns the image with its versions, newest first.
 	GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error)
+	// GetImageVersionDownloadURL returns signed GETs for a stored ready disk
+	// image version. Each request is signed for 15 minutes; its returned
+	// expiry is the provider's actual expiry, and retention can remove data
+	// before then. Fetch the parts in order and verify the size and SHA-256.
+	// The disk is an overlay on the named base, not a complete base image.
+	// Container images are refused; use their registry reference instead.
+	GetImageVersionDownloadURL(context.Context, *connect.Request[workspacev1.GetImageVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetImageVersionDownloadURLResponse], error)
 	// ListImages returns the project's images that are not deleted, ordered
 	// by name, each with its newest ready version.
 	//
@@ -150,6 +160,12 @@ func NewImageServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(imageServiceMethods.ByName("GetImage")),
 			connect.WithClientOptions(opts...),
 		),
+		getImageVersionDownloadURL: connect.NewClient[workspacev1.GetImageVersionDownloadURLRequest, workspacev1.GetImageVersionDownloadURLResponse](
+			httpClient,
+			baseURL+ImageServiceGetImageVersionDownloadURLProcedure,
+			connect.WithSchema(imageServiceMethods.ByName("GetImageVersionDownloadURL")),
+			connect.WithClientOptions(opts...),
+		),
 		listImages: connect.NewClient[workspacev1.ListImagesRequest, workspacev1.ListImagesResponse](
 			httpClient,
 			baseURL+ImageServiceListImagesProcedure,
@@ -167,12 +183,13 @@ func NewImageServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 
 // imageServiceClient implements ImageServiceClient.
 type imageServiceClient struct {
-	createImage *connect.Client[workspacev1.CreateImageRequest, workspacev1.CreateImageResponse]
-	buildImage  *connect.Client[workspacev1.BuildImageRequest, workspacev1.BuildImageResponse]
-	updateImage *connect.Client[workspacev1.UpdateImageRequest, workspacev1.UpdateImageResponse]
-	getImage    *connect.Client[workspacev1.GetImageRequest, workspacev1.GetImageResponse]
-	listImages  *connect.Client[workspacev1.ListImagesRequest, workspacev1.ListImagesResponse]
-	deleteImage *connect.Client[workspacev1.DeleteImageRequest, workspacev1.DeleteImageResponse]
+	createImage                *connect.Client[workspacev1.CreateImageRequest, workspacev1.CreateImageResponse]
+	buildImage                 *connect.Client[workspacev1.BuildImageRequest, workspacev1.BuildImageResponse]
+	updateImage                *connect.Client[workspacev1.UpdateImageRequest, workspacev1.UpdateImageResponse]
+	getImage                   *connect.Client[workspacev1.GetImageRequest, workspacev1.GetImageResponse]
+	getImageVersionDownloadURL *connect.Client[workspacev1.GetImageVersionDownloadURLRequest, workspacev1.GetImageVersionDownloadURLResponse]
+	listImages                 *connect.Client[workspacev1.ListImagesRequest, workspacev1.ListImagesResponse]
+	deleteImage                *connect.Client[workspacev1.DeleteImageRequest, workspacev1.DeleteImageResponse]
 }
 
 // CreateImage calls toshi.workspace.v1.ImageService.CreateImage.
@@ -193,6 +210,11 @@ func (c *imageServiceClient) UpdateImage(ctx context.Context, req *connect.Reque
 // GetImage calls toshi.workspace.v1.ImageService.GetImage.
 func (c *imageServiceClient) GetImage(ctx context.Context, req *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error) {
 	return c.getImage.CallUnary(ctx, req)
+}
+
+// GetImageVersionDownloadURL calls toshi.workspace.v1.ImageService.GetImageVersionDownloadURL.
+func (c *imageServiceClient) GetImageVersionDownloadURL(ctx context.Context, req *connect.Request[workspacev1.GetImageVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetImageVersionDownloadURLResponse], error) {
+	return c.getImageVersionDownloadURL.CallUnary(ctx, req)
 }
 
 // ListImages calls toshi.workspace.v1.ImageService.ListImages.
@@ -258,6 +280,13 @@ type ImageServiceHandler interface {
 	UpdateImage(context.Context, *connect.Request[workspacev1.UpdateImageRequest]) (*connect.Response[workspacev1.UpdateImageResponse], error)
 	// GetImage returns the image with its versions, newest first.
 	GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error)
+	// GetImageVersionDownloadURL returns signed GETs for a stored ready disk
+	// image version. Each request is signed for 15 minutes; its returned
+	// expiry is the provider's actual expiry, and retention can remove data
+	// before then. Fetch the parts in order and verify the size and SHA-256.
+	// The disk is an overlay on the named base, not a complete base image.
+	// Container images are refused; use their registry reference instead.
+	GetImageVersionDownloadURL(context.Context, *connect.Request[workspacev1.GetImageVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetImageVersionDownloadURLResponse], error)
 	// ListImages returns the project's images that are not deleted, ordered
 	// by name, each with its newest ready version.
 	//
@@ -301,6 +330,12 @@ func NewImageServiceHandler(svc ImageServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(imageServiceMethods.ByName("GetImage")),
 		connect.WithHandlerOptions(opts...),
 	)
+	imageServiceGetImageVersionDownloadURLHandler := connect.NewUnaryHandler(
+		ImageServiceGetImageVersionDownloadURLProcedure,
+		svc.GetImageVersionDownloadURL,
+		connect.WithSchema(imageServiceMethods.ByName("GetImageVersionDownloadURL")),
+		connect.WithHandlerOptions(opts...),
+	)
 	imageServiceListImagesHandler := connect.NewUnaryHandler(
 		ImageServiceListImagesProcedure,
 		svc.ListImages,
@@ -323,6 +358,8 @@ func NewImageServiceHandler(svc ImageServiceHandler, opts ...connect.HandlerOpti
 			imageServiceUpdateImageHandler.ServeHTTP(w, r)
 		case ImageServiceGetImageProcedure:
 			imageServiceGetImageHandler.ServeHTTP(w, r)
+		case ImageServiceGetImageVersionDownloadURLProcedure:
+			imageServiceGetImageVersionDownloadURLHandler.ServeHTTP(w, r)
 		case ImageServiceListImagesProcedure:
 			imageServiceListImagesHandler.ServeHTTP(w, r)
 		case ImageServiceDeleteImageProcedure:
@@ -350,6 +387,10 @@ func (UnimplementedImageServiceHandler) UpdateImage(context.Context, *connect.Re
 
 func (UnimplementedImageServiceHandler) GetImage(context.Context, *connect.Request[workspacev1.GetImageRequest]) (*connect.Response[workspacev1.GetImageResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ImageService.GetImage is not implemented"))
+}
+
+func (UnimplementedImageServiceHandler) GetImageVersionDownloadURL(context.Context, *connect.Request[workspacev1.GetImageVersionDownloadURLRequest]) (*connect.Response[workspacev1.GetImageVersionDownloadURLResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("toshi.workspace.v1.ImageService.GetImageVersionDownloadURL is not implemented"))
 }
 
 func (UnimplementedImageServiceHandler) ListImages(context.Context, *connect.Request[workspacev1.ListImagesRequest]) (*connect.Response[workspacev1.ListImagesResponse], error) {

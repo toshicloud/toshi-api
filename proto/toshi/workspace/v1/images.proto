@@ -5,6 +5,7 @@ package toshi.workspace.v1;
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/version_download.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -110,6 +111,18 @@ service ImageService {
     option (toshi.permission) = "images.read";
     option (toshi.scope) = "project";
   }
+  // GetImageVersionDownloadURL returns signed GETs for a stored ready disk
+  // image version. Each request is signed for 15 minutes; its returned
+  // expiry is the provider's actual expiry, and retention can remove data
+  // before then. Fetch the parts in order and verify the size and SHA-256.
+  // The disk is an overlay on the named base, not a complete base image.
+  // Container images are refused; use their registry reference instead.
+  rpc GetImageVersionDownloadURL(GetImageVersionDownloadURLRequest) returns (GetImageVersionDownloadURLResponse) {
+    option (toshi.permission) = "images.read";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {action: "image_version.exported", target: "image_version:version_id"};
+    option (toshi.mcp) = {exclude: true};
+  }
   // ListImages returns the project's images that are not deleted, ordered
   // by name, each with its newest ready version.
   //
@@ -129,6 +142,34 @@ service ImageService {
     option (toshi.audit) = {target: "image:name"};
     option (toshi.surface) = {asks: ASKS_ALWAYS question: "Delete this image? It is refused while a workload or a rollback pin uses it; otherwise it is deleted now and cannot be used again."};
   }
+}
+
+// GetImageVersionDownloadURLRequest names one image version.
+message GetImageVersionDownloadURLRequest {
+  // The project name; empty selects the default project.
+  string project = 1;
+  // The image's name.
+  string name = 2;
+  // The version's id.
+  string version_id = 3;
+}
+
+// GetImageVersionDownloadURLResponse describes a disk overlay.
+message GetImageVersionDownloadURLResponse {
+  // The version's id.
+  string version_id = 1;
+  // The overlay's length in bytes.
+  int64 size_bytes = 2;
+  // The SHA-256 digest of the overlay, in lowercase hex.
+  string sha256 = 3;
+  // Signed requests for the overlay's parts, in order.
+  repeated VersionDownloadPart parts = 4;
+  // The opened data key; empty for currently stored disk images.
+  bytes data_key = 5;
+  // The base image the overlay applies to.
+  string base = 6;
+  // The SHA-256 digest of the base, in lowercase hex.
+  string base_digest = 7;
 }
 
 // ImageKind is what an image is.

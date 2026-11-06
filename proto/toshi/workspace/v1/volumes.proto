@@ -6,6 +6,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "toshi/permission.proto";
+import "toshi/workspace/v1/version_download.proto";
 
 option go_package = "go.toshicloud.io/api/workspacev1";
 
@@ -133,6 +134,21 @@ service VolumeService {
     option (toshi.scope) = "project";
   }
 
+  // GetVolumeVersionDownloadURL returns signed GETs for a saved version and
+  // its required backing layers, oldest first. Each request is signed for 15
+  // minutes; its returned expiry is the provider's actual expiry. Retention
+  // can remove data before a URL expires. Fetch each layer's parts in order,
+  // open encrypted parts using the returned volume data key, verify each
+  // layer's size and SHA-256, then merge the layers oldest first and the
+  // selected version last. The data key is empty when all layers are plain.
+  // The audit target combines volume_id and the decimal version number.
+  rpc GetVolumeVersionDownloadURL(GetVolumeVersionDownloadURLRequest) returns (GetVolumeVersionDownloadURLResponse) {
+    option (toshi.permission) = "volumes.read";
+    option (toshi.scope) = "project";
+    option (toshi.audit) = {action: "volume_version.exported", target: "volume_version:volume_id"};
+    option (toshi.mcp) = {exclude: true};
+  }
+
   // RestoreVolume copies one of a state volume's versions as its next
   // version, so the next run that mounts the volume starts from that data.
   // The new version names the version it was copied from. A volume a run
@@ -147,6 +163,48 @@ service VolumeService {
     option (toshi.scope) = "project";
     option (toshi.audit) = {action: "volume.restored"};
   }
+}
+
+// GetVolumeVersionDownloadURLRequest names one volume version.
+message GetVolumeVersionDownloadURLRequest {
+  // The project name; empty selects the default project.
+  string project = 1;
+  // The volume's id.
+  string volume_id = 2;
+  // The version number, starting at one.
+  int64 version = 3;
+}
+
+// VolumeVersionDownloadLayer describes one backing layer.
+message VolumeVersionDownloadLayer {
+  // The version number.
+  int64 number = 1;
+  // The opened layer's length in bytes.
+  int64 size_bytes = 2;
+  // The SHA-256 digest of the opened layer, in lowercase hex.
+  string sha256 = 3;
+  // Signed requests for the layer's parts, in order.
+  repeated VersionDownloadPart parts = 4;
+  // Whether the parts are encrypted under the returned data key.
+  bool encrypted = 5;
+}
+
+// GetVolumeVersionDownloadURLResponse describes a version and its backing.
+message GetVolumeVersionDownloadURLResponse {
+  // The selected version number.
+  int64 number = 1;
+  // The selected opened layer's length in bytes.
+  int64 size_bytes = 2;
+  // The SHA-256 digest of the selected opened layer, in lowercase hex.
+  string sha256 = 3;
+  // Signed requests for the selected layer's parts, in order.
+  repeated VersionDownloadPart parts = 4;
+  // Whether the selected layer's parts are encrypted.
+  bool encrypted = 5;
+  // Required backing layers, oldest first.
+  repeated VolumeVersionDownloadLayer backing = 6;
+  // The opened volume data key if any layer is encrypted; otherwise empty.
+  bytes data_key = 7;
 }
 
 // VolumeMode is what a volume holds and how runs use it.

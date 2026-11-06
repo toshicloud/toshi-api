@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package toshi.workspace.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "go.toshicloud.io/api/workspacev1";
+
+// VersionDownloadHeader is one header required by a signed download.
+message VersionDownloadHeader {
+  // The header name.
+  string name = 1;
+  // Every value the signed request requires for this header.
+  repeated string values = 2;
+}
+
+// VersionDownloadPart describes one stored part and its signed request.
+message VersionDownloadPart {
+  // The zero-based index within this layer.
+  uint32 index = 1;
+  // The HTTP method to use.
+  string method = 2;
+  // The signed URL. Treat it as a credential until it expires.
+  string url = 3;
+  // The headers to send with the request.
+  repeated VersionDownloadHeader headers = 4;
+  // The stored part length in bytes, including any sealing overhead.
+  int64 size_bytes = 5;
+  // When this part's signed request expires, as returned by its provider.
+  google.protobuf.Timestamp expires_at = 6;
+}
