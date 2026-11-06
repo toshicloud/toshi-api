@@ -963,6 +963,8 @@ type PutSecretRequest struct {
 	// A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
 	// key and request return the first answer; a different request with the
 	// same key is refused. Keys are kept for 30 days by default.
+	// A retry returns REQUEST_KEY_TARGET_GONE if the secret was deleted before
+	// its first answer was saved.
 	RequestKey    string `protobuf:"bytes,7,opt,name=request_key,json=requestKey,proto3" json:"request_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

@@ -288,7 +288,7 @@ const (
 	ReasonPurgeDue = "PURGE_DUE"
 	// ReasonRequestKeyMismatch: A call whose `request_key` is already stored with a different request's payload.
 	ReasonRequestKeyMismatch = "REQUEST_KEY_MISMATCH"
-	// ReasonRequestKeyTargetGone: A retry whose request key stored a shown-once secret, share link or upload that was rolled, revoked, spent, deleted, closed or expired since.
+	// ReasonRequestKeyTargetGone: A retry whose shown-once secret or share-link copy is unavailable; whose upload reservation or billing session cannot be replayed; whose registered client was deleted; whose operator token rotation or roll succeeded but cannot replay its answer; or whose pending `PutSecret` version was deleted before its answer was saved.
 	ReasonRequestKeyTargetGone = "REQUEST_KEY_TARGET_GONE"
 	// ReasonRestorePeriodEnded: `RestoreProject` after the project's purge time has passed; the metadata `purge_at` (RFC 3339, UTC) is that time.
 	ReasonRestorePeriodEnded = "RESTORE_PERIOD_ENDED"

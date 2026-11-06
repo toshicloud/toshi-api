@@ -976,6 +976,8 @@ export type PutSecretRequest = Message<"toshi.workspace.v1.PutSecretRequest"> & 
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
    * key and request return the first answer; a different request with the
    * same key is refused. Keys are kept for 30 days by default.
+   * A retry returns REQUEST_KEY_TARGET_GONE if the secret was deleted before
+   * its first answer was saved.
    *
    * @generated from field: string request_key = 7;
    */
@@ -1037,6 +1039,8 @@ export type PutSecretRequestJson = {
    * A key of the caller's choice, 1 to 200 printable ASCII bytes. The same
    * key and request return the first answer; a different request with the
    * same key is refused. Keys are kept for 30 days by default.
+   * A retry returns REQUEST_KEY_TARGET_GONE if the secret was deleted before
+   * its first answer was saved.
    *
    * @generated from field: string request_key = 7;
    */
