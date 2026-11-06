@@ -292,7 +292,7 @@ const (
 	ReasonRequestKeyTargetGone = "REQUEST_KEY_TARGET_GONE"
 	// ReasonRestorePeriodEnded: `RestoreProject` after the project's purge time has passed; the metadata `purge_at` (RFC 3339, UTC) is that time.
 	ReasonRestorePeriodEnded = "RESTORE_PERIOD_ENDED"
-	// ReasonRootKeyMismatch: Not sent by the API: a control plane start stops with it, before it serves, when the key provider cannot unwrap the store's key check row or the value differs, and a store with no row stops with it when none of its newest wrapped values opens.
+	// ReasonRootKeyMismatch: Not sent by the API: `toshi-control admin restore` stops with it before it replaces the store, a restore drill fails with it, and a control plane start stops with it, before it serves, when the key provider cannot unwrap the store's key check row or the value differs, and a store with no row stops with it when none of its newest wrapped values opens.
 	ReasonRootKeyMismatch = "ROOT_KEY_MISMATCH"
 	// ReasonSigninUntested: Setting `settings.sign_in` from a session or token not signed in through that provider.
 	ReasonSigninUntested = "SIGNIN_UNTESTED"
