@@ -302,8 +302,10 @@ const (
 	ReasonStorageFull = "STORAGE_FULL"
 	// ReasonStorageProviderArtifacts: `DeleteStorageProvider` while the provider holds artifacts; the metadata `count` is the number of artifacts.
 	ReasonStorageProviderArtifacts = "STORAGE_PROVIDER_ARTIFACTS"
-	// ReasonStorageProviderDeletionsInFlight: `DeleteStorageProvider` while the provider has unfinished deletions; the metadata `count` is the number of open deletions.
+	// ReasonStorageProviderDeletionsInFlight: `DeleteStorageProvider` while the provider has unfinished deletions other than export copies; the metadata `count` is the number of those open deletions.
 	ReasonStorageProviderDeletionsInFlight = "STORAGE_PROVIDER_DELETIONS_IN_FLIGHT"
+	// ReasonStorageProviderExportCopies: `DeleteStorageProvider` while the provider has open export deletions; the metadata `count` is the number of copies.
+	ReasonStorageProviderExportCopies = "STORAGE_PROVIDER_EXPORT_COPIES"
 	// ReasonStorageProviderImageVersions: `DeleteStorageProvider` while the provider holds image versions; the metadata `count` is the number of image versions.
 	ReasonStorageProviderImageVersions = "STORAGE_PROVIDER_IMAGE_VERSIONS"
 	// ReasonStorageProviderRawBodies: `DeleteStorageProvider` while the provider holds raw delivery bodies; the metadata `count` is the number of bodies.
@@ -350,6 +352,8 @@ const (
 	ReasonRecentSigninRequired = "RECENT_SIGNIN_REQUIRED"
 	// ReasonSigninRequired: A dashboard session or a person's token that is not signed in through the workspace's required provider; the metadata carries `workspace`, `provider` and `sign_in_url`.
 	ReasonSigninRequired = "SIGNIN_REQUIRED"
+	// ReasonExportTooLarge: A download URL export exceeds 8 GiB while collecting or before storage, or recording and storing it exceeds 15 minutes.
+	ReasonExportTooLarge = "EXPORT_TOO_LARGE"
 	// ReasonPlanLimit: A call that would pass a plan cap, including the workspace volume ceiling; ordinary count-cap metadata carries `key`, `limit` and sometimes `plan`; volume-cap metadata is described under Project rules and the storage ceiling.
 	ReasonPlanLimit = "PLAN_LIMIT"
 	// ReasonProjectLimit: Creating a volume or raising its cap would pass the project's volume ceiling; metadata carries `key`, `cause`, `limit`, `requested`, `raisable`, `in_use_bytes` and `unit`.
