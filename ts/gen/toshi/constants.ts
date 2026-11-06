@@ -1047,6 +1047,16 @@ export const labels = {
     sandbox_stop_snapshot: "Saved disk expired",
     sandbox_stop_orphan: "Saved disk never finished",
   },
+  StorageKind: {
+    images: "Images",
+    volume_versions: "Volume versions",
+    artifacts: "Artifacts",
+    recordings: "Recordings",
+    held_disks: "Held disks",
+    service_snapshots: "Service snapshots",
+    sandbox_stop_snapshot: "Saved disks",
+    mail: "Raw messages",
+  },
   WorkloadKind: {
     job: "Job",
     sandbox: "Sandbox",
