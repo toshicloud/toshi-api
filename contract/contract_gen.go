@@ -354,10 +354,12 @@ const (
 	ReasonSigninRequired = "SIGNIN_REQUIRED"
 	// ReasonExportTooLarge: A download URL export exceeds 8 GiB while collecting or before storage, or recording and storing it exceeds 15 minutes.
 	ReasonExportTooLarge = "EXPORT_TOO_LARGE"
-	// ReasonPlanLimit: A call that would pass a plan cap, including the workspace volume ceiling; ordinary count-cap metadata carries `key`, `limit` and sometimes `plan`; volume-cap metadata is described under Project rules and the storage ceiling.
+	// ReasonPlanLimit: A call that would pass a plan cap, including the workspace volume ceiling; ordinary count-cap metadata carries `key`, `limit` and sometimes `plan`; a recording share link over its rate and a preview over its hourly bytes also carry `next_at` (RFC 3339, UTC), when to try again; volume-cap metadata is described under Project rules and the storage ceiling.
 	ReasonPlanLimit = "PLAN_LIMIT"
 	// ReasonProjectLimit: Creating a volume or raising its cap would pass the project's volume ceiling; metadata carries `key`, `cause`, `limit`, `requested`, `raisable`, `in_use_bytes` and `unit`.
 	ReasonProjectLimit = "PROJECT_LIMIT"
+	// ReasonRateLimited: A rate no plan owns, set in the deployment's configuration: a Workspace API caller, a webhook connection, agent registration from one address, or failed host enrollments; `key` names the configuration key, `limit` its value and `next_at` (RFC 3339, UTC) when to try again.
+	ReasonRateLimited = "RATE_LIMITED"
 	// ReasonStartRate: `CreateSandbox` past the ceiling of one of the plan's start windows (docs/contracts/plans.md, Held by the start windows); the metadata `next_at` (RFC 3339, UTC) is the earliest time every window has room again, and `Retry-After` and the `google.rpc.RetryInfo` detail give the seconds until then, rounded up.
 	ReasonStartRate = "START_RATE"
 	// ReasonCodeExpired: A short-lived code, such as an OAuth authorization code, is presented after its life ends; the refusal's credential.refused audit row carries this reason.
